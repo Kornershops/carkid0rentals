@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_DB: carkid0_rentals
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  mqtt:
+    image: emqx/emqx:latest
+    ports:
+      - "1883:1883" # MQTT
+      - "8083:8083" # WebSocket
+      - "18083:18083" # Dashboard
+    environment:
+      - "EMQX_DASHBOARD__ADMIN_PASSWORD=password"
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+
+volumes:
+  postgres_data:

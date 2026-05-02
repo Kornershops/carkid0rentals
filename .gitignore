@@ -1,0 +1,22 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+.env*
+!.env.example
+*.log
+.DS_Store
+apps/web/node_modules/
+apps/api/bin/
+infra/data/
+
+# Planning and Blueprint files
+proj blueprint.txt
+*blueprint*.txt
+*blueprint*.md
+*roadmap*.md
+*tasks*.md
+docs/
+planning/
+architecture/
