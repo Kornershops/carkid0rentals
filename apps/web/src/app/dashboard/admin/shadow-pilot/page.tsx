@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Server, Activity, ShieldAlert, CheckCircle2, Play, Square, Settings } from "lucide-react";
+import { Server, Activity, ShieldAlert, CheckCircle2, Play, Square, Settings, Car } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function ShadowPilotPage() {
