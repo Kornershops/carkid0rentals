@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { TrendingUp, Car, Activity, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { TrendingUp, Car, Activity, AlertTriangle, CheckCircle2, Clock, Wrench } from "lucide-react";
 import { MOCK_FLEET } from "@/data/mock-fleet";
 
 export default function CompanyDashboardPage() {
