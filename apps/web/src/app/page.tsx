@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Car, Truck, Zap, Shield, ChevronRight, ChevronDown, Layers, AlertCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useStore } from "@/store/use-store";

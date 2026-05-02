@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Clock, ShieldAlert, Key, Camera, CheckCircle2, AlertTriangle, WifiOff, Map as MapIcon } from "lucide-react";
+import { MapPin, Clock, ShieldAlert, Key, Camera, CheckCircle2, AlertTriangle, WifiOff, Map as MapIcon, Car } from "lucide-react";
 
 export default function CustomerActiveTripPage() {
   const [tripState, setTripState] = useState<"pending_walkaround" | "recording" | "active" | "offline">("pending_walkaround");
