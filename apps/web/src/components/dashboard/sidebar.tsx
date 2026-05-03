@@ -5,7 +5,7 @@ import {
   Car, 
   MapPin, 
   Clock, 
-  History, 
+  ClockCounterClockwise, 
   Wallet, 
   UserCircle, 
   SignOut,
@@ -38,7 +38,7 @@ export default function DashboardSidebar({ role }: SidebarProps) {
   const navItems = {
     customer: [
       { href: "/dashboard/customer", label: "Active Trip", icon: <MapPin size={18} /> },
-      { href: "/dashboard/customer/history", label: "Rentals", icon: <History size={18} /> },
+      { href: "/dashboard/customer/history", label: "Rentals", icon: <ClockCounterClockwise size={18} /> },
       { href: "/dashboard/customer/wallet", label: "Wallet", icon: <Wallet size={18} /> },
     ],
     company: [
