@@ -11,12 +11,15 @@ import {
   CaretRight, 
   CaretDown, 
   Stack, 
-  WarningCircle,
   MagnifyingGlass,
-  UserCircle
+  UserCircle,
+  Globe,
+  Database,
+  LockKey
 } from "@phosphor-icons/react";
 import { useState, useRef, useEffect } from "react";
 import { useStore } from "@/store/use-store";
+import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
   const { tier, setTier } = useStore();
@@ -35,143 +38,131 @@ export default function Home() {
 
   const tierContent = {
     "all": {
-      title: "Rent with Intelligence",
-      subtitle: "Drive with Freedom.",
-      description: "The enterprise-grade vehicle platform featuring real-time Safe-Halt™ IoT enforcement. From daily gig commutes to heavy logistics.",
-      primaryAction: "Explore Fleet",
-      features: ["Multi-tier Vehicles", "IoT Enforcement", "Real-time Verification"],
+      title: "Logistics",
+      subtitle: "Unified Infrastructure.",
+      description: "The multi-tier vehicle deployment platform featuring real-time Safe-Halt™ hardware enforcement and institutional-grade fleet governance.",
+      primaryAction: "Browse Ecosystem",
+      features: ["Sovereign Fleet Management", "IoT Telemetry", "Identity Proofing"],
       color: "text-primary",
-      icon: <Stack size={48} className="text-primary" weight="duotone" />,
-      label: "All Services"
+      icon: <Stack size={64} weight="duotone" className="text-primary" />,
+      label: "Institutional Core"
     },
     "eco-gig": {
-      title: "Drive & Earn",
-      subtitle: "Smart rentals for Gig Drivers.",
-      description: "Optimized for Bolt & Uber. Track your daily revenue, maximize fuel efficiency, and explore rent-to-own options.",
-      primaryAction: "Find a Car",
-      features: ["Daily Revenue Tracker", "High-Efficiency Vehicles", "Rent-to-Own Path"],
+      title: "Commerce",
+      subtitle: "High-Yield Commute.",
+      description: "Optimized for high-utilization gig economies. Integrated revenue monitoring and real-time efficiency analytics for professional drivers.",
+      primaryAction: "Initialize Fleet",
+      features: ["Yield Analytics", "Fuel Optimization", "Direct Ledger Settlement"],
       color: "text-amber-500",
-      icon: <Lightning size={48} className="text-amber-500" weight="duotone" />,
-      label: "Eco-Gig (Bolt/Uber)"
+      icon: <Lightning size={64} weight="duotone" className="text-amber-500" />,
+      label: "Eco-Gig (Commerce)"
     },
     "elite": {
-      title: "Premium Luxury",
-      subtitle: "Exotic rentals for every occasion.",
-      description: "Experience high-performance supercars and luxury sedans. Concierge booking and 360° inspections included.",
-      primaryAction: "Book Luxury",
-      features: ["Concierge Delivery", "360° Video Inspection", "Insurance Waivers"],
+      title: "Premium",
+      subtitle: "Concierge Mobility.",
+      description: "Private asset deployment for high-performance supercars and luxury sedans. 360° digital verification and concierge delivery as standard.",
+      primaryAction: "Secure Asset",
+      features: ["White-Glove Delivery", "Digital Verification", "Risk-Neutral Insurance"],
       color: "text-primary",
-      icon: <ShieldCheck size={48} className="text-primary" weight="duotone" />,
-      label: "Elite & Exotic"
+      icon: <ShieldCheck size={64} weight="duotone" className="text-primary" />,
+      label: "Elite (Exclusive)"
     },
     "heavy-haul": {
-      title: "Heavy Haulage",
-      subtitle: "Logistics-ready trucks & vans.",
-      description: "Built for businesses. Filter by payload capacity, monitor load weights via OBD-II, and avoid low-clearance routes.",
-      primaryAction: "Explore Trucks",
-      features: ["Payload Filters", "Route Clearance Maps", "Engine-Hour Maintenance"],
+      title: "Industrial",
+      subtitle: "Heavy Haulage.",
+      description: "Mission-critical logistics assets for inter-hub haulage. Payload sensing, route clearance maps, and engine-hour maintenance enforcement.",
+      primaryAction: "Deploy Logistics",
+      features: ["Payload Telemetry", "Geofence Enforcement", "Maintenance Staking"],
       color: "text-blue-500",
-      icon: <Truck size={48} className="text-blue-500" weight="duotone" />,
-      label: "Heavy Haul (Logistics)"
+      icon: <Truck size={64} weight="duotone" className="text-blue-500" />,
+      label: "Industrial (Haulage)"
     }
   };
 
   const currentContent = tierContent[tier];
 
   const tiers = [
-    { id: "all", label: "All Services" },
-    { id: "eco-gig", label: "Eco-Gig (Bolt/Uber)" },
-    { id: "elite", label: "Elite & Exotic" },
-    { id: "heavy-haul", label: "Heavy Haul (Logistics)" }
+    { id: "all", label: "Institutional Core" },
+    { id: "eco-gig", label: "Eco-Gig (Commerce)" },
+    { id: "elite", label: "Elite (Exclusive)" },
+    { id: "heavy-haul", label: "Industrial (Haulage)" }
   ] as const;
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-background font-inter antialiased">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="pwa-container h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-md shadow-primary/10">
-                <Car size={20} weight="bold" className="text-white" />
-              </div>
-              <span className="text-lg font-extrabold tracking-tight text-foreground uppercase">CarKid<span className="text-primary">0</span></span>
-            </Link>
-
-            <div className="hidden lg:flex items-center gap-6">
-              <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">Services</Link>
-              <Link href="/fleet" className="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">Fleet</Link>
-              <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">Pricing</Link>
-              <Link href="#" className="text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors">Security</Link>
+    <main className="min-h-screen bg-background antialiased selection:bg-primary selection:text-primary-foreground">
+      {/* Precision Navigation */}
+      <nav className="fixed top-0 w-full z-50 glass border-b border-border">
+        <div className="pwa-container h-20 flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <Logo />
+            <div className="hidden lg:flex items-center gap-8">
+              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Ecosystem</Link>
+              <Link href="/fleet" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">The Fleet</Link>
+              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Governance</Link>
+              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Security</Link>
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login" className="hidden sm:flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted hover:text-primary transition-colors pr-4 border-r border-border">
+          <div className="flex items-center gap-6">
+            <Link href="/auth/login" className="hidden sm:flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">
               <UserCircle size={20} weight="bold" /> Sign In
             </Link>
-            <Link href="/auth/login" className="btn-primary h-10 px-5">
-              Launch Platform
+            <Link href="/auth/login" className="btn-primary h-12 px-8">
+              Initialize Platform
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 pwa-container min-h-[90vh] flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          
+      {/* Institutional Hero Section */}
+      <section className="pt-48 pb-32 pwa-container">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           <div className="text-left">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={tier}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border text-[9px] font-black uppercase tracking-[0.2em] text-muted mb-6">
-                  <span className={`h-1.5 w-1.5 rounded-full ${currentContent.color.replace('text', 'bg')}`} />
+                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface border border-border text-[9px] font-bold uppercase tracking-[0.3em] text-muted mb-10">
+                  <span className="relative flex h-2 w-2">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentContent.color.replace('text', 'bg')} opacity-75`}></span>
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${currentContent.color.replace('text', 'bg')}`}></span>
+                  </span>
                   {currentContent.label}
                 </div>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tighter leading-[1.1] text-foreground uppercase">
-                  {tier === "all" ? (
-                    <>
-                      Scale Your Fleet with <span className="text-primary">Intelligence</span>.
-                    </>
-                  ) : (
-                    <>
-                      {currentContent.title}.<br />
-                      <span className="text-primary">{currentContent.subtitle}</span>
-                    </>
-                  )}
+                <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-[-0.04em] leading-[0.9] text-foreground uppercase">
+                  {currentContent.title}.<br />
+                  <span className="text-muted opacity-40">{currentContent.subtitle}</span>
                 </h1>
                 
-                <p className="text-base md:text-lg text-muted mb-10 max-w-xl leading-relaxed font-bold uppercase tracking-tight opacity-80">
+                <p className="text-xl md:text-2xl text-muted mb-12 max-w-xl leading-snug font-medium tracking-tight">
                   {currentContent.description}
                 </p>
                 
-                <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-6">
                   <div className="relative w-full sm:w-auto" ref={dropdownRef}>
                     <button 
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="w-full sm:w-64 h-12 px-5 bg-surface border border-border rounded-xl font-black uppercase tracking-widest flex items-center justify-between hover:bg-border/30 transition-all text-[11px]"
+                      className="w-full sm:w-72 h-14 px-6 bg-surface border border-border rounded-2xl font-bold uppercase tracking-widest flex items-center justify-between hover:bg-border/30 transition-all text-[11px]"
                     >
-                      <span className="flex items-center gap-2">
-                        <Stack size={18} weight="duotone" className="text-primary" />
+                      <span className="flex items-center gap-3">
+                        <Database size={20} weight="duotone" className="text-accent" />
                         {tierContent[tier].label}
                       </span>
-                      <CaretDown size={14} weight="bold" className={`transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
+                      <CaretDown size={14} weight="bold" className={`transition-transform duration-500 ${isDropdownOpen ? "rotate-180" : ""}`} />
                     </button>
 
                     <AnimatePresence>
                       {isDropdownOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 4 }}
+                          initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 4 }}
-                          className="absolute top-full mt-2 left-0 w-full bg-surface border border-border rounded-xl shadow-2xl overflow-hidden z-50 p-1.5"
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute top-full mt-3 left-0 w-full bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden z-50 p-2"
                         >
                           {tiers.map((t) => (
                             <button
@@ -180,8 +171,8 @@ export default function Home() {
                                 setTier(t.id);
                                 setIsDropdownOpen(false);
                               }}
-                              className={`w-full text-left px-4 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                                tier === t.id ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-background text-muted hover:text-foreground"
+                              className={`w-full text-left px-5 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                                tier === t.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-background text-muted hover:text-foreground"
                               }`}
                             >
                               {t.label}
@@ -194,17 +185,17 @@ export default function Home() {
 
                   <Link 
                     href="/fleet"
-                    className="btn-primary h-12 w-full sm:w-auto px-8"
+                    className="btn-primary h-14 w-full sm:w-auto px-10 text-xs"
                   >
                     {currentContent.primaryAction}
-                    <CaretRight size={18} weight="bold" />
+                    <CaretRight size={20} weight="bold" />
                   </Link>
                 </div>
 
-                <div className="mt-12 flex flex-wrap items-center gap-6">
+                <div className="mt-16 flex flex-wrap items-center gap-10">
                   {currentContent.features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 text-[9px] font-black text-muted uppercase tracking-[0.2em]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                    <div key={i} className="flex items-center gap-3 text-[10px] font-bold text-muted uppercase tracking-[0.3em]">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent" />
                       {feature}
                     </div>
                   ))}
@@ -213,35 +204,40 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          <div className="hidden lg:block relative aspect-square w-full max-w-md ml-auto">
-            <div className="absolute inset-0 bg-surface border border-border rounded-[40px] shadow-2xl overflow-hidden flex items-center justify-center">
-              <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#2563eb_1px,transparent_1px)] [background-size:20px_20px]" />
+          <div className="hidden lg:block relative aspect-square w-full max-w-xl ml-auto group">
+            <div className="absolute inset-0 bg-surface border border-border rounded-[60px] shadow-2xl overflow-hidden flex items-center justify-center transition-all duration-700 group-hover:scale-[1.02]">
+              <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] [background-size:32px_32px]" />
               <AnimatePresence mode="wait">
                 <motion.div
                   key={tier + "-icon"}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
+                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 >
                   {currentContent.icon}
                 </motion.div>
               </AnimatePresence>
               
-              <div className="absolute bottom-8 left-8 right-8 p-5 bg-background border border-border rounded-2xl shadow-xl">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[9px] font-black uppercase text-muted tracking-[0.2em]">Safe-Halt™ Telemetry</span>
-                  <div className="flex gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse delay-75" />
+              {/* Telemetry Indicator */}
+              <div className="absolute bottom-12 left-12 right-12 p-8 bg-background border border-border rounded-[32px] shadow-2xl">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] font-black uppercase text-foreground tracking-[0.3em]">Infrastructure Telemetry</span>
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+                    <div className="w-2 h-2 rounded-full bg-success animate-pulse delay-150" />
                   </div>
                 </div>
-                <div className="h-1.5 w-full bg-surface rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-surface rounded-full overflow-hidden">
                   <motion.div 
                     animate={{ width: ["20%", "85%", "40%", "95%"] }}
-                    transition={{ repeat: Infinity, duration: 5 }}
-                    className="h-full bg-primary" 
+                    transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+                    className="h-full bg-accent" 
                   />
+                </div>
+                <div className="mt-4 flex justify-between text-[8px] font-black uppercase tracking-widest text-muted">
+                   <span>Buffer: 12.4GB</span>
+                   <span>Sync: 100%</span>
                 </div>
               </div>
             </div>
@@ -249,37 +245,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Fleet Showcase */}
-      <section className="py-24 bg-surface/50 border-t border-border">
+      {/* Infrastructure Specs Section */}
+      <section className="py-32 bg-surface border-y border-border">
         <div className="pwa-container">
-          <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-3 text-foreground uppercase">Managed Fleet Ecosystem</h2>
-            <p className="text-xs font-bold text-muted uppercase tracking-[0.2em] max-w-lg leading-relaxed">
-              Explore professional-grade vehicle tiers optimized for high-utilization environments in Nigeria.
-            </p>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+              <div className="space-y-6">
+                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
+                    <LockKey size={28} weight="duotone" className="text-accent" />
+                 </div>
+                 <h3 className="text-2xl font-black uppercase tracking-tighter">Safe-Halt™ Protcol</h3>
+                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
+                    Proprietary hardware-level engine encryption ensures assets remain within authorized geofences at all times.
+                 </p>
+              </div>
+              <div className="space-y-6">
+                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
+                    <Globe size={28} weight="duotone" className="text-accent" />
+                 </div>
+                 <h3 className="text-2xl font-black uppercase tracking-tighter">Multi-Hub Sync</h3>
+                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
+                    Seamless regional asset rotation across 7 major Nigerian hubs with real-time availability updates.
+                 </p>
+              </div>
+              <div className="space-y-6">
+                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
+                    <Database size={28} weight="duotone" className="text-accent" />
+                 </div>
+                 <h3 className="text-2xl font-black uppercase tracking-tighter">Institutional Ledger</h3>
+                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
+                    Every transaction and telemetry packet is logged to a high-fidelity audit trail for corporate compliance.
+                 </p>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* Fleet Showcase - Professional Grid */}
+      <section className="py-32 bg-background">
+        <div className="pwa-container">
+          <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-black tracking-[-0.04em] mb-4 text-foreground uppercase">Managed Ecosystem</h2>
+              <p className="text-[11px] font-bold text-muted uppercase tracking-[0.4em] max-w-xl leading-loose">
+                High-precision vehicle assets optimized for high-utilization environments across Nigeria.
+              </p>
+            </div>
+            <Link href="/fleet" className="btn-secondary h-12 px-10">
+               View Full Ecosystem
+            </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
              {MOCK_FLEET.slice(0, 3).map((vehicle) => (
-                <Link key={vehicle.id} href={`/fleet/${vehicle.id}`} className="bg-surface border border-border rounded-3xl p-5 flex flex-col group hover:border-primary/50 hover:shadow-2xl transition-all">
-                   <div className="w-full h-48 bg-background border border-border rounded-2xl mb-6 overflow-hidden relative">
+                <Link key={vehicle.id} href={`/fleet/${vehicle.id}`} className="enterprise-card p-6 flex flex-col group">
+                   <div className="w-full h-56 bg-background border border-border rounded-[32px] mb-8 overflow-hidden relative">
                       <Image 
-                        src={vehicle.image} 
+                        src={vehicle.images[0]} 
                         alt={vehicle.model} 
                         fill 
-                        className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                        className="object-cover group-hover:scale-105 transition-transform duration-1000" 
                         unoptimized
                       />
-                      <div className="absolute top-4 right-4 px-3 py-1.5 bg-background/90 backdrop-blur rounded-xl text-[9px] font-black uppercase tracking-widest border border-border shadow-sm">
+                      <div className="absolute top-5 right-5 px-4 py-1.5 bg-background/90 backdrop-blur rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-border shadow-sm">
                         {vehicle.tier.replace('-', ' ')}
                       </div>
                    </div>
-                   <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-2">{vehicle.brand}</p>
-                   <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter mb-auto">{vehicle.model}</h3>
-                   <div className="pt-6 mt-6 border-t border-border flex justify-between items-center">
-                      <p className="text-base font-black tracking-tighter uppercase">₦{vehicle.pricePerDay.toLocaleString()}<span className="text-[9px] text-muted ml-1 font-black">/DAY</span></p>
-                      <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center text-muted group-hover:text-primary group-hover:border-primary/30 transition-all shadow-sm">
-                        <CaretRight size={20} weight="bold" />
+                   <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-2">{vehicle.brand}</p>
+                   <h3 className="text-3xl font-black text-foreground uppercase tracking-[-0.04em] mb-auto">{vehicle.model}</h3>
+                   <div className="pt-8 mt-8 border-t border-border flex justify-between items-center">
+                      <div>
+                        <p className="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-1">Base Rate</p>
+                        <p className="text-2xl font-black tracking-tighter uppercase">₦{vehicle.pricePerDay.toLocaleString()}<span className="text-[10px] text-muted ml-1 font-black">/DAY</span></p>
+                      </div>
+                      <div className="w-12 h-12 bg-background border border-border rounded-2xl flex items-center justify-center text-muted group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all shadow-sm">
+                        <CaretRight size={22} weight="bold" />
                       </div>
                    </div>
                 </Link>
@@ -288,53 +327,60 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-background border-t border-border pt-20 pb-12">
-        <div className="pwa-container grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
-          <div className="md:col-span-4">
-            <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                <Car size={24} weight="bold" className="text-white" />
-              </div>
-              <span className="text-xl font-black tracking-tighter uppercase">CarKid<span className="text-primary">0</span></span>
-            </div>
-            <p className="text-[11px] font-bold text-muted uppercase tracking-widest leading-loose mb-10 max-w-xs opacity-70">
-              Institutional-grade vehicle platform in Nigeria. Advanced IoT enforcement, multi-tier solutions, and professional asset management.
+      {/* Global Infrastructure Status Footer */}
+      <footer className="bg-surface border-t border-border pt-32 pb-16">
+        <div className="pwa-container grid grid-cols-1 md:grid-cols-12 gap-20 mb-32">
+          <div className="md:col-span-5">
+            <Logo className="mb-10" />
+            <p className="text-[13px] font-medium text-muted uppercase tracking-tight leading-relaxed mb-12 max-w-sm opacity-60">
+              CarKid0 is the first institutional-grade vehicle infrastructure platform in Nigeria. We provide high-fidelity asset management for gig economies, luxury rentals, and heavy haulage logistics.
             </p>
+            <div className="flex gap-4">
+               <div className="px-6 py-3 bg-background border border-border rounded-2xl flex items-center gap-4 shadow-xl">
+                 <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground">Safe-Halt™ Engine: Online</span>
+               </div>
+            </div>
           </div>
           
           <div className="md:col-span-2">
-            <h4 className="text-[10px] font-black uppercase text-foreground tracking-[0.2em] mb-8">Platform</h4>
-            <ul className="space-y-5 text-[10px] font-black uppercase tracking-widest text-muted">
-              <li><Link href="/fleet" className="hover:text-primary transition-colors">Fleet</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Pricing</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Security</Link></li>
+            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Infrastructure</h4>
+            <ul className="space-y-6 text-[10px] font-bold uppercase tracking-widest text-muted">
+              <li><Link href="/fleet" className="hover:text-accent transition-colors">The Fleet</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">Pricing Ledger</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">Safety Layer</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">IoT API</Link></li>
             </ul>
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="text-[10px] font-black uppercase text-foreground tracking-[0.2em] mb-8">Company</h4>
-            <ul className="space-y-5 text-[10px] font-black uppercase tracking-widest text-muted">
-              <li><Link href="#" className="hover:text-primary transition-colors">About</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Contact</Link></li>
-              <li><Link href="#" className="hover:text-primary transition-colors">Legal</Link></li>
+            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Institutional</h4>
+            <ul className="space-y-6 text-[10px] font-bold uppercase tracking-widest text-muted">
+              <li><Link href="#" className="hover:text-accent transition-colors">Governance</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">Compliance</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">Investors</Link></li>
+              <li><Link href="#" className="hover:text-accent transition-colors">Legal</Link></li>
             </ul>
           </div>
 
-          <div className="md:col-span-4 flex flex-col md:items-end">
-            <h4 className="text-[10px] font-black uppercase text-foreground tracking-[0.2em] mb-8">Global Infrastructure</h4>
-            <div className="px-5 py-3 bg-surface border border-border rounded-2xl flex items-center gap-4 shadow-xl">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted">Safe-Halt™ Engine Online</span>
+          <div className="md:col-span-3">
+            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Regional Hubs</h4>
+            <div className="flex flex-wrap gap-2">
+               {["LAG", "ABJ", "PHC", "KAN", "KAD", "ENU", "WAR"].map((city) => (
+                 <span key={city} className="px-3 py-2 bg-background border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-muted hover:text-foreground hover:border-primary/30 transition-all cursor-default">
+                    {city}
+                 </span>
+               ))}
             </div>
           </div>
         </div>
         
-        <div className="pwa-container pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-6 text-[9px] font-black uppercase tracking-widest text-muted opacity-60">
-          <p>© {new Date().getFullYear()} CarKid0 Rentals. Lagos, Nigeria.</p>
-          <div className="flex gap-10">
-            <Link href="#" className="hover:text-primary transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Terms</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Security</Link>
+        <div className="pwa-container pt-12 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-10 text-[9px] font-bold uppercase tracking-[0.5em] text-muted opacity-40">
+          <p>© {new Date().getFullYear()} CarKid0 Infrastructure Group. Built for Nigeria.</p>
+          <div className="flex gap-12">
+            <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
+            <Link href="#" className="hover:text-foreground transition-colors">Protocol</Link>
+            <Link href="#" className="hover:text-foreground transition-colors">Security</Link>
           </div>
         </div>
       </footer>
