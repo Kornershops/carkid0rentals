@@ -1,386 +1,298 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { MOCK_FLEET } from "@/data/mock-fleet";
-import { 
-  Car, 
-  Truck, 
-  Lightning, 
-  ShieldCheck, 
-  CaretRight, 
-  CaretDown, 
-  Stack, 
-  MagnifyingGlass,
-  UserCircle,
-  Globe,
-  Database,
-  LockKey
-} from "@phosphor-icons/react";
-import { useState, useRef, useEffect } from "react";
+import { CaretRight, MapPin, CalendarBlank, Clock, ShieldCheck, Truck, Lightning, CaretDown } from "@phosphor-icons/react";
+import { useState } from "react";
 import { useStore } from "@/store/use-store";
 import { Logo } from "@/components/ui/logo";
+import { formatPrice } from "@/lib/pricing";
+
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
+const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } };
 
 export default function Home() {
-  const { tier, setTier } = useStore();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { hub, setHub } = useStore();
+  const [selectedHub, setSelectedHub] = useState(hub);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const tierContent = {
-    "all": {
-      title: "Logistics",
-      subtitle: "Unified Infrastructure.",
-      description: "The multi-tier vehicle deployment platform featuring real-time Safe-Halt™ hardware enforcement and institutional-grade fleet governance.",
-      primaryAction: "Browse Ecosystem",
-      features: ["Sovereign Fleet Management", "IoT Telemetry", "Identity Proofing"],
-      color: "text-primary",
-      icon: <Stack size={64} weight="duotone" className="text-primary" />,
-      label: "Institutional Core"
-    },
-    "eco-gig": {
-      title: "Commerce",
-      subtitle: "High-Yield Commute.",
-      description: "Optimized for high-utilization gig economies. Integrated revenue monitoring and real-time efficiency analytics for professional drivers.",
-      primaryAction: "Initialize Fleet",
-      features: ["Yield Analytics", "Fuel Optimization", "Direct Ledger Settlement"],
-      color: "text-amber-500",
-      icon: <Lightning size={64} weight="duotone" className="text-amber-500" />,
-      label: "Eco-Gig (Commerce)"
-    },
-    "elite": {
-      title: "Premium",
-      subtitle: "Concierge Mobility.",
-      description: "Private asset deployment for high-performance supercars and luxury sedans. 360° digital verification and concierge delivery as standard.",
-      primaryAction: "Secure Asset",
-      features: ["White-Glove Delivery", "Digital Verification", "Risk-Neutral Insurance"],
-      color: "text-primary",
-      icon: <ShieldCheck size={64} weight="duotone" className="text-primary" />,
-      label: "Elite (Exclusive)"
-    },
-    "heavy-haul": {
-      title: "Industrial",
-      subtitle: "Heavy Haulage.",
-      description: "Mission-critical logistics assets for inter-hub haulage. Payload sensing, route clearance maps, and engine-hour maintenance enforcement.",
-      primaryAction: "Deploy Logistics",
-      features: ["Payload Telemetry", "Geofence Enforcement", "Maintenance Staking"],
-      color: "text-blue-500",
-      icon: <Truck size={64} weight="duotone" className="text-blue-500" />,
-      label: "Industrial (Haulage)"
-    }
-  };
-
-  const currentContent = tierContent[tier];
-
-  const tiers = [
-    { id: "all", label: "Institutional Core" },
-    { id: "eco-gig", label: "Eco-Gig (Commerce)" },
-    { id: "elite", label: "Elite (Exclusive)" },
-    { id: "heavy-haul", label: "Industrial (Haulage)" }
-  ] as const;
+  const hubs = ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"] as const;
+  const featured = MOCK_FLEET.filter(v => v.hubs.includes(selectedHub)).slice(0, 6);
 
   return (
-    <main className="min-h-screen bg-background antialiased selection:bg-primary selection:text-primary-foreground">
-      {/* Precision Navigation */}
-      <nav className="fixed top-0 w-full z-50 glass border-b border-border">
-        <div className="pwa-container h-20 flex items-center justify-between">
-          <div className="flex items-center gap-12">
+    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
+
+      {/* ── Navigation ──────────────────────────────────── */}
+      <nav className="glass" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50 }}>
+        <div className="container-wide" style={{ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 48 }}>
             <Logo />
-            <div className="hidden lg:flex items-center gap-8">
-              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Ecosystem</Link>
-              <Link href="/fleet" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">The Fleet</Link>
-              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Governance</Link>
-              <Link href="#" className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">Security</Link>
+            <div style={{ display: 'flex', gap: 32 }} className="hidden lg:flex">
+              {["Our Fleet", "Services", "Locations", "About"].map(item => (
+                <Link key={item} href={item === "Our Fleet" ? "/fleet" : "#"} style={{
+                  fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)',
+                  transition: 'color 0.2s',
+                }} className="hover:text-white">{item}</Link>
+              ))}
             </div>
           </div>
-          
-          <div className="flex items-center gap-6">
-            <Link href="/auth/login" className="hidden sm:flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-muted hover:text-foreground transition-all">
-              <UserCircle size={20} weight="bold" /> Sign In
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Link href="/auth/login" className="btn btn-ghost" style={{ height: 40, padding: '0 16px', fontSize: 13 }}>
+              Sign In
             </Link>
-            <Link href="/auth/login" className="btn-primary h-12 px-8">
-              Initialize Platform
+            <Link href="/auth/login" className="btn btn-accent" style={{ height: 40, padding: '0 20px' }}>
+              Get Started
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Institutional Hero Section */}
-      <section className="pt-48 pb-32 pwa-container">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          <div className="text-left">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={tier}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface border border-border text-[9px] font-bold uppercase tracking-[0.3em] text-muted mb-10">
-                  <span className="relative flex h-2 w-2">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentContent.color.replace('text', 'bg')} opacity-75`}></span>
-                    <span className={`relative inline-flex rounded-full h-2 w-2 ${currentContent.color.replace('text', 'bg')}`}></span>
-                  </span>
-                  {currentContent.label}
-                </div>
-                
-                <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-[-0.04em] leading-[0.9] text-foreground uppercase">
-                  {currentContent.title}.<br />
-                  <span className="text-muted opacity-40">{currentContent.subtitle}</span>
-                </h1>
-                
-                <p className="text-xl md:text-2xl text-muted mb-12 max-w-xl leading-snug font-medium tracking-tight">
-                  {currentContent.description}
-                </p>
-                
-                <div className="flex flex-col sm:flex-row items-center gap-6">
-                  <div className="relative w-full sm:w-auto" ref={dropdownRef}>
-                    <button 
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="w-full sm:w-72 h-14 px-6 bg-surface border border-border rounded-2xl font-bold uppercase tracking-widest flex items-center justify-between hover:bg-border/30 transition-all text-[11px]"
+      {/* ── Cinematic Hero ──────────────────────────────── */}
+      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+        {/* Background Image with Ken Burns */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <Image
+            src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1920&h=1080&fit=crop&q=80"
+            alt="Premium vehicle"
+            fill
+            style={{ objectFit: 'cover' }}
+            className="kenburns"
+            priority
+            unoptimized
+          />
+          {/* Gradient overlays */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(12,12,14,0.92) 0%, rgba(12,12,14,0.6) 50%, rgba(12,12,14,0.4) 100%)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, var(--bg-primary) 0%, transparent 100%)' }} />
+        </div>
+
+        {/* Hero Content */}
+        <div className="container-wide" style={{ position: 'relative', zIndex: 10, paddingTop: 160, paddingBottom: 80 }}>
+          <motion.div variants={stagger} initial="hidden" animate="visible" style={{ maxWidth: 680 }}>
+            <motion.div variants={fadeUp} className="badge badge-accent" style={{ marginBottom: 24 }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
+              Now available in {hubs.length} cities
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} style={{
+              fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 900,
+              letterSpacing: '-0.04em', lineHeight: 0.95, marginBottom: 24,
+            }}>
+              Drive First Class.<br />
+              <span style={{ color: 'var(--accent)' }}>Pay Economy.</span>
+            </motion.h1>
+
+            <motion.p variants={fadeUp} style={{
+              fontSize: 18, color: 'var(--text-secondary)', lineHeight: 1.6,
+              maxWidth: 520, marginBottom: 40, fontWeight: 400,
+            }}>
+              Rent premium SUVs, luxury sedans, and logistics trucks across Nigeria.
+              From gig-economy compacts to armored executive vehicles — starting at ₦18,000/day.
+            </motion.p>
+
+            {/* ── Booking Widget ──────────────────────────── */}
+            <motion.div variants={fadeUp} className="glass" style={{
+              padding: 24, borderRadius: 20,
+              border: '1px solid var(--border-primary)',
+              boxShadow: 'var(--shadow-xl)',
+              maxWidth: 560,
+            }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                {/* Location */}
+                <div style={{ position: 'relative' }}>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, display: 'block' }}>
+                    Pick-up Location
+                  </label>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, padding: '10px 14px', cursor: 'pointer',
+                  }}>
+                    <MapPin size={16} weight="bold" style={{ color: 'var(--accent)' }} />
+                    <select
+                      value={selectedHub}
+                      onChange={e => { setSelectedHub(e.target.value as any); setHub(e.target.value as any); }}
+                      style={{
+                        background: 'transparent', border: 'none', color: 'var(--text-primary)',
+                        fontSize: 14, fontWeight: 500, outline: 'none', width: '100%',
+                        fontFamily: 'var(--font-body)', cursor: 'pointer',
+                      }}
                     >
-                      <span className="flex items-center gap-3">
-                        <Database size={20} weight="duotone" className="text-accent" />
-                        {tierContent[tier].label}
-                      </span>
-                      <CaretDown size={14} weight="bold" className={`transition-transform duration-500 ${isDropdownOpen ? "rotate-180" : ""}`} />
-                    </button>
-
-                    <AnimatePresence>
-                      {isDropdownOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="absolute top-full mt-3 left-0 w-full bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden z-50 p-2"
-                        >
-                          {tiers.map((t) => (
-                            <button
-                              key={t.id}
-                              onClick={() => {
-                                setTier(t.id);
-                                setIsDropdownOpen(false);
-                              }}
-                              className={`w-full text-left px-5 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
-                                tier === t.id ? "bg-primary text-primary-foreground shadow-lg" : "hover:bg-background text-muted hover:text-foreground"
-                              }`}
-                            >
-                              {t.label}
-                            </button>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  <Link 
-                    href="/fleet"
-                    className="btn-primary h-14 w-full sm:w-auto px-10 text-xs"
-                  >
-                    {currentContent.primaryAction}
-                    <CaretRight size={20} weight="bold" />
-                  </Link>
-                </div>
-
-                <div className="mt-16 flex flex-wrap items-center gap-10">
-                  {currentContent.features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-3 text-[10px] font-bold text-muted uppercase tracking-[0.3em]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                      {feature}
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          <div className="hidden lg:block relative aspect-square w-full max-w-xl ml-auto group">
-            <div className="absolute inset-0 bg-surface border border-border rounded-[60px] shadow-2xl overflow-hidden flex items-center justify-center transition-all duration-700 group-hover:scale-[1.02]">
-              <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(#000_1.5px,transparent_1.5px)] [background-size:32px_32px]" />
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={tier + "-icon"}
-                  initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, rotate: 10 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {currentContent.icon}
-                </motion.div>
-              </AnimatePresence>
-              
-              {/* Telemetry Indicator */}
-              <div className="absolute bottom-12 left-12 right-12 p-8 bg-background border border-border rounded-[32px] shadow-2xl">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-black uppercase text-foreground tracking-[0.3em]">Infrastructure Telemetry</span>
-                  <div className="flex gap-2">
-                    <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-                    <div className="w-2 h-2 rounded-full bg-success animate-pulse delay-150" />
+                      {hubs.map(h => <option key={h} value={h} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>{h}</option>)}
+                    </select>
                   </div>
                 </div>
-                <div className="h-2 w-full bg-surface rounded-full overflow-hidden">
-                  <motion.div 
-                    animate={{ width: ["20%", "85%", "40%", "95%"] }}
-                    transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-                    className="h-full bg-accent" 
-                  />
-                </div>
-                <div className="mt-4 flex justify-between text-[8px] font-black uppercase tracking-widest text-muted">
-                   <span>Buffer: 12.4GB</span>
-                   <span>Sync: 100%</span>
+
+                {/* Date */}
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, display: 'block' }}>
+                    Pick-up Date
+                  </label>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
+                    borderRadius: 10, padding: '10px 14px',
+                  }}>
+                    <CalendarBlank size={16} weight="bold" style={{ color: 'var(--accent)' }} />
+                    <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select date</span>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <Link href="/fleet" className="btn btn-accent" style={{ width: '100%', height: 48, fontSize: 14, fontWeight: 700 }}>
+                Find Available Vehicles
+                <CaretRight size={18} weight="bold" />
+              </Link>
+            </motion.div>
+
+            {/* Trust indicators */}
+            <motion.div variants={fadeUp} style={{ display: 'flex', gap: 32, marginTop: 32, flexWrap: 'wrap' }}>
+              {[
+                { icon: <ShieldCheck size={16} weight="bold" />, text: "Verified fleet" },
+                { icon: <Clock size={16} weight="bold" />, text: "30 min — 7 day rentals" },
+                { icon: <MapPin size={16} weight="bold" />, text: `${hubs.length} cities` },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
+                  <span style={{ color: 'var(--accent)' }}>{item.icon}</span>
+                  {item.text}
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Services Strip ──────────────────────────────── */}
+      <section style={{ background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-primary)', borderBottom: '1px solid var(--border-primary)', padding: '64px 0' }}>
+        <div className="container-wide">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
+            {[
+              { icon: <Lightning size={24} weight="duotone" />, title: "Gig & Daily Rentals", desc: "Fuel-efficient vehicles optimized for ride-hailing and daily commutes. From ₦18,000/day." },
+              { icon: <ShieldCheck size={24} weight="duotone" />, title: "Luxury & Executive", desc: "Range Rovers, G-Wagons, and Land Cruisers with white-glove delivery to your location." },
+              { icon: <Truck size={24} weight="duotone" />, title: "Logistics & Haulage", desc: "Heavy-duty trucks for inter-city freight. Payload tracking, route planning included." },
+            ].map((svc, i) => (
+              <div key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'var(--accent-soft)', color: 'var(--accent)', flexShrink: 0,
+                }}>
+                  {svc.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{svc.title}</h3>
+                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{svc.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Infrastructure Specs Section */}
-      <section className="py-32 bg-surface border-y border-border">
-        <div className="pwa-container">
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-              <div className="space-y-6">
-                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
-                    <LockKey size={28} weight="duotone" className="text-accent" />
-                 </div>
-                 <h3 className="text-2xl font-black uppercase tracking-tighter">Safe-Halt™ Protocol</h3>
-                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
-                    Proprietary hardware-level engine encryption ensures assets remain within authorized geofences at all times.
-                 </p>
-              </div>
-              <div className="space-y-6">
-                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
-                    <Globe size={28} weight="duotone" className="text-accent" />
-                 </div>
-                 <h3 className="text-2xl font-black uppercase tracking-tighter">Multi-Hub Sync</h3>
-                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
-                    Seamless regional asset rotation across 7 major Nigerian hubs with real-time availability updates.
-                 </p>
-              </div>
-              <div className="space-y-6">
-                 <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
-                    <Database size={28} weight="duotone" className="text-accent" />
-                 </div>
-                 <h3 className="text-2xl font-black uppercase tracking-tighter">Institutional Ledger</h3>
-                 <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
-                    Every transaction and telemetry packet is logged to a high-fidelity audit trail for corporate compliance.
-                 </p>
-              </div>
-           </div>
-        </div>
-      </section>
-
-      {/* Fleet Showcase - Professional Grid */}
-      <section className="py-32 bg-background">
-        <div className="pwa-container">
-          <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8">
+      {/* ── Featured Fleet ──────────────────────────────── */}
+      <section style={{ padding: '96px 0' }}>
+        <div className="container-wide">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48, flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <h2 className="text-4xl md:text-5xl font-black tracking-[-0.04em] mb-4 text-foreground uppercase">Managed Ecosystem</h2>
-              <p className="text-[11px] font-bold text-muted uppercase tracking-[0.4em] max-w-xl leading-loose">
-                High-precision vehicle assets optimized for high-utilization environments across Nigeria.
+              <div className="section-divider" style={{ marginBottom: 16 }} />
+              <h2 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
+                Featured Vehicles
+              </h2>
+              <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 400 }}>
+                {featured.length} vehicles available in {selectedHub}. Browse our full fleet for more options.
               </p>
             </div>
-            <Link href="/fleet" className="btn-secondary h-12 px-10">
-               View Full Ecosystem
+            <Link href="/fleet" className="btn btn-outline" style={{ height: 44, padding: '0 24px' }}>
+              View All Vehicles <CaretRight size={16} weight="bold" />
             </Link>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-             {MOCK_FLEET.slice(0, 3).map((vehicle) => (
-                <Link key={vehicle.id} href={`/fleet/${vehicle.id}`} className="enterprise-card p-6 flex flex-col group">
-                   <div className="w-full h-56 bg-background border border-border rounded-[32px] mb-8 overflow-hidden relative">
-                      <Image 
-                        src={vehicle.images[0]} 
-                        alt={vehicle.model} 
-                        fill 
-                        className="object-cover group-hover:scale-105 transition-transform duration-1000" 
-                        unoptimized
-                      />
-                      <div className="absolute top-5 right-5 px-4 py-1.5 bg-background/90 backdrop-blur rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-border shadow-sm">
-                        {vehicle.tier.replace('-', ' ')}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+            {featured.map((v, i) => (
+              <motion.div key={v.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5 }}>
+                <Link href={`/fleet/${v.id}`} style={{ display: 'block' }}>
+                  <div className="card" style={{ cursor: 'pointer' }}>
+                    {/* Image */}
+                    <div style={{ position: 'relative', aspectRatio: '16/10', background: 'var(--bg-surface)' }}>
+                      <Image src={v.images[0]} alt={`${v.brand} ${v.model}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                      <div style={{
+                        position: 'absolute', top: 12, left: 12,
+                        padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 600,
+                        background: v.tier === 'elite' ? 'var(--gold)' : v.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
+                        color: v.tier === 'elite' ? '#1a1a1a' : 'white',
+                        textTransform: 'capitalize',
+                      }}>
+                        {v.tier === 'eco-gig' ? 'Economy' : v.tier === 'heavy-haul' ? 'Logistics' : 'Premium'}
                       </div>
-                   </div>
-                   <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-2">{vehicle.brand}</p>
-                   <h3 className="text-3xl font-black text-foreground uppercase tracking-[-0.04em] mb-auto">{vehicle.model}</h3>
-                   <div className="pt-8 mt-8 border-t border-border flex justify-between items-center">
-                      <div>
-                        <p className="text-[9px] font-black text-muted uppercase tracking-[0.2em] mb-1">Base Rate</p>
-                        <p className="text-2xl font-black tracking-tighter uppercase">₦{vehicle.pricePerDay.toLocaleString()}<span className="text-[10px] text-muted ml-1 font-black">/DAY</span></p>
+                    </div>
+                    {/* Details */}
+                    <div style={{ padding: '20px 20px 24px' }}>
+                      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                        {v.brand} · {v.year}
+                      </p>
+                      <h3 style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 12 }}>{v.model}</h3>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+                        {v.features.slice(0, 3).map((f, j) => (
+                          <span key={j} style={{
+                            fontSize: 11, padding: '3px 8px', borderRadius: 6, fontWeight: 500,
+                            background: 'var(--bg-surface)', color: 'var(--text-secondary)',
+                            border: '1px solid var(--border-primary)',
+                          }}>{f}</span>
+                        ))}
                       </div>
-                      <div className="w-12 h-12 bg-background border border-border rounded-2xl flex items-center justify-center text-muted group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all shadow-sm">
-                        <CaretRight size={22} weight="bold" />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-primary)' }}>
+                        <div>
+                          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(v.pricePerDay)}</span>
+                          <span style={{ fontSize: 13, color: 'var(--text-tertiary)', marginLeft: 4 }}>/day</span>
+                        </div>
+                        <div style={{
+                          width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: 'var(--accent-soft)', color: 'var(--accent)', transition: 'all 0.2s',
+                        }}>
+                          <CaretRight size={18} weight="bold" />
+                        </div>
                       </div>
-                   </div>
+                    </div>
+                  </div>
                 </Link>
-             ))}
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Global Infrastructure Status Footer */}
-      <footer className="bg-surface border-t border-border pt-32 pb-16">
-        <div className="pwa-container grid grid-cols-1 md:grid-cols-12 gap-20 mb-32">
-          <div className="md:col-span-5">
-            <Logo className="mb-10" />
-            <p className="text-[13px] font-medium text-muted uppercase tracking-tight leading-relaxed mb-12 max-w-sm opacity-60">
-              CarKid0 is the first institutional-grade vehicle infrastructure platform in Nigeria. We provide high-fidelity asset management for gig economies, luxury rentals, and heavy haulage logistics.
-            </p>
-            <div className="flex gap-4">
-               <div className="px-6 py-3 bg-background border border-border rounded-2xl flex items-center gap-4 shadow-xl">
-                 <div className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
-                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground">Safe-Halt™ Engine: Online</span>
-               </div>
+      {/* ── Footer ──────────────────────────────────────── */}
+      <footer style={{ background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-primary)', padding: '80px 0 40px' }}>
+        <div className="container-wide">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 48, marginBottom: 64 }}>
+            <div>
+              <Logo className="mb-6" />
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: 280, marginTop: 16 }}>
+                Nigeria's premier vehicle rental platform. Gig economy, luxury, and logistics — all in one place.
+              </p>
             </div>
+            {[
+              { title: "Platform", links: ["Our Fleet", "Pricing", "Locations", "For Business"] },
+              { title: "Company", links: ["About Us", "Careers", "Press", "Contact"] },
+              { title: "Locations", links: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"] },
+            ].map((col, i) => (
+              <div key={i}>
+                <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>{col.title}</h4>
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {col.links.map(link => (
+                    <li key={link}>
+                      <Link href="#" style={{ fontSize: 14, color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">{link}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-          
-          <div className="md:col-span-2">
-            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Infrastructure</h4>
-            <ul className="space-y-6 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <li><Link href="/fleet" className="hover:text-accent transition-colors">The Fleet</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Pricing Ledger</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Safety Layer</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">IoT API</Link></li>
-            </ul>
-          </div>
-
-          <div className="md:col-span-2">
-            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Institutional</h4>
-            <ul className="space-y-6 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <li><Link href="#" className="hover:text-accent transition-colors">Governance</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Compliance</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Investors</Link></li>
-              <li><Link href="#" className="hover:text-accent transition-colors">Legal</Link></li>
-            </ul>
-          </div>
-
-          <div className="md:col-span-3">
-            <h4 className="text-[11px] font-black uppercase text-foreground tracking-[0.4em] mb-10">Regional Hubs</h4>
-            <div className="flex flex-wrap gap-2">
-               {["LAG", "ABJ", "PHC", "KAN", "KAD", "ENU", "WAR"].map((city) => (
-                 <span key={city} className="px-3 py-2 bg-background border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-muted hover:text-foreground hover:border-primary/30 transition-all cursor-default">
-                    {city}
-                 </span>
-               ))}
+          <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>© {new Date().getFullYear()} CarKid0. All rights reserved.</p>
+            <div style={{ display: 'flex', gap: 24 }}>
+              {["Privacy", "Terms", "Cookies"].map(l => (
+                <Link key={l} href="#" style={{ fontSize: 13, color: 'var(--text-tertiary)', transition: 'color 0.2s' }} className="hover:text-white">{l}</Link>
+              ))}
             </div>
-          </div>
-        </div>
-        
-        <div className="pwa-container pt-12 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-10 text-[9px] font-bold uppercase tracking-[0.5em] text-muted opacity-40">
-          <p>© {new Date().getFullYear()} CarKid0 Infrastructure Group. Built for Nigeria.</p>
-          <div className="flex gap-12">
-            <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
-            <Link href="#" className="hover:text-foreground transition-colors">Protocol</Link>
-            <Link href="#" className="hover:text-foreground transition-colors">Security</Link>
           </div>
         </div>
       </footer>
