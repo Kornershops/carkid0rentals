@@ -1,8 +1,14 @@
 "use client";
-
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { ShieldCheck, UploadCloud, Camera, CheckCircle2, ChevronRight, AlertCircle } from "lucide-react";
+import { 
+  ShieldCheck, 
+  CloudArrowUp, 
+  Camera, 
+  CheckCircle, 
+  CaretRight, 
+  WarningCircle 
+} from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 
 export default function KYCPage() {
@@ -17,7 +23,6 @@ export default function KYCPage() {
         setIsLoading(false);
         setStep((s) => (s + 1) as 1 | 2 | 3);
         if (step === 2) {
-          // Setting cookie upon reaching the final step completion
           document.cookie = "carkid0_kyc=true; path=/";
         }
       }, 1000);
@@ -30,31 +35,31 @@ export default function KYCPage() {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass rounded-3xl p-8 border border-white/10 shadow-2xl"
+      className="bg-surface border border-border rounded-3xl p-10 shadow-2xl max-w-md w-full font-inter antialiased"
     >
-      <div className="flex flex-col items-center mb-8 text-center">
-        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-          <ShieldCheck className="w-6 h-6 text-primary" />
+      <div className="flex flex-col items-center mb-10 text-center">
+        <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+          <ShieldCheck size={32} weight="duotone" className="text-primary" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Identity Verification</h1>
-        <p className="text-sm text-muted mt-2">
-          CarKid0 requires KYC verification to unlock vehicles.
+        <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Compliance Check</h1>
+        <p className="text-[10px] font-bold text-muted mt-3 uppercase tracking-widest">
+          CarKid0 requires identity verification to unlock fleet assets.
         </p>
       </div>
 
       {/* Stepper Indicator */}
-      <div className="flex items-center justify-center gap-2 mb-8">
+      <div className="flex items-center justify-center gap-2 mb-12">
         {[1, 2, 3].map((i) => (
           <div key={i} className="flex items-center gap-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                step >= i ? "bg-primary text-white" : "bg-surface border border-border text-muted"
+              className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
+                step >= i ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-background border border-border text-muted"
               }`}
             >
-              {step > i ? <CheckCircle2 className="w-4 h-4" /> : i}
+              {step > i ? <CheckCircle size={20} weight="bold" /> : i}
             </div>
             {i !== 3 && (
-              <div className={`w-8 h-px transition-colors ${step > i ? "bg-primary" : "bg-border"}`} />
+              <div className={`w-6 h-1 rounded-full transition-all ${step > i ? "bg-primary" : "bg-border"}`} />
             )}
           </div>
         ))}
@@ -67,19 +72,19 @@ export default function KYCPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            className="space-y-8"
           >
             <div className="text-center">
-              <h3 className="font-semibold text-lg mb-1">Upload National ID</h3>
-              <p className="text-xs text-muted">NIN Slip, Driver's License, or Int. Passport</p>
+              <h3 className="font-black text-xl uppercase tracking-tight mb-2">Government ID</h3>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest leading-relaxed">NIN SLIP, DRIVER'S LICENSE, OR INT. PASSPORT</p>
             </div>
-            <div className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:border-primary/50 transition-colors cursor-pointer bg-surface/30">
-              <UploadCloud className="w-10 h-10 text-muted" />
+            <div className="border-2 border-dashed border-border rounded-3xl p-10 flex flex-col items-center justify-center gap-5 hover:border-primary/50 transition-all cursor-pointer bg-background hover:shadow-inner group">
+              <CloudArrowUp size={48} weight="duotone" className="text-muted group-hover:text-primary transition-colors" />
               <div className="text-center">
-                <span className="text-sm font-medium text-primary">Click to upload</span>
-                <span className="text-sm text-muted"> or drag and drop</span>
+                <span className="text-xs font-black text-primary uppercase tracking-widest">Select Archive File</span>
+                <p className="text-[10px] font-bold text-muted mt-1 uppercase tracking-tighter">OR DRAG AND DROP HERE</p>
               </div>
-              <p className="text-xs text-muted">PNG, JPG up to 10MB</p>
+              <p className="text-[9px] font-bold text-muted/50 uppercase tracking-widest">PNG, JPG, PDF (MAX 10MB)</p>
             </div>
           </motion.div>
         )}
@@ -90,26 +95,25 @@ export default function KYCPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
+            className="space-y-8"
           >
             <div className="text-center">
-              <h3 className="font-semibold text-lg mb-1">3D Liveness Scan</h3>
-              <p className="text-xs text-muted">Position your face within the frame</p>
+              <h3 className="font-black text-xl uppercase tracking-tight mb-2">3D Biometric Scan</h3>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest leading-relaxed">CENTER YOUR FACE WITHIN THE SECURE FRAME</p>
             </div>
-            <div className="aspect-[3/4] rounded-2xl bg-black border border-white/10 relative overflow-hidden flex items-center justify-center">
-              {/* Camera placeholder */}
-              <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80')] bg-cover bg-center" />
-              <div className="w-48 h-64 border-2 border-primary/50 rounded-full absolute z-10" />
-              <Camera className="w-12 h-12 text-white/50 z-20" />
-              <div className="absolute bottom-4 left-0 w-full flex justify-center z-20">
-                <div className="px-4 py-2 bg-background/80 backdrop-blur rounded-full text-xs font-mono flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> REC
+            <div className="aspect-[3/4] rounded-3xl bg-black border border-border relative overflow-hidden flex items-center justify-center shadow-2xl">
+              <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80')] bg-cover bg-center grayscale" />
+              <div className="w-56 h-72 border-2 border-primary/40 rounded-[60px] absolute z-10 shadow-[0_0_50px_rgba(124,58,237,0.2)]" />
+              <Camera size={48} weight="bold" className="text-white/20 z-20" />
+              <div className="absolute bottom-6 left-0 w-full flex justify-center z-20">
+                <div className="px-5 py-2.5 bg-background/90 backdrop-blur rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-border">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> SCANNING...
                 </div>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-200">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              Powered by SmileID/Dojah. We do not store your biometric data.
+            <div className="flex items-start gap-3 p-4 bg-primary/5 border border-primary/10 rounded-2xl text-[10px] font-bold text-muted uppercase tracking-tight leading-relaxed">
+              <WarningCircle size={18} weight="duotone" className="text-primary shrink-0" />
+              BIOMETRIC AUTHENTICATION POWERED BY SMILEID ENCRYPTION. DATA PURGED AFTER SESSION.
             </div>
           </motion.div>
         )}
@@ -119,19 +123,19 @@ export default function KYCPage() {
             key="step3"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center space-y-4 py-8"
+            className="text-center space-y-6 py-10"
           >
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
-              className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6"
+              className="w-24 h-24 bg-green-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8"
             >
-              <CheckCircle2 className="w-10 h-10 text-green-500" />
+              <CheckCircle size={48} weight="duotone" className="text-green-500" />
             </motion.div>
-            <h3 className="font-bold text-2xl">Verification Complete</h3>
-            <p className="text-muted text-sm max-w-[250px] mx-auto">
-              Your identity has been verified. You can now book and unlock vehicles.
+            <h3 className="font-black text-3xl uppercase tracking-tighter">Clearance Granted</h3>
+            <p className="text-muted text-[11px] font-medium uppercase tracking-widest max-w-[280px] mx-auto leading-loose">
+              Your institutional identity has been confirmed. You are now authorized to operate fleet assets.
             </p>
           </motion.div>
         )}
@@ -140,16 +144,16 @@ export default function KYCPage() {
       <button
         onClick={handleNext}
         disabled={isLoading}
-        className="w-full py-4 mt-8 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+        className="btn-primary w-full h-14 text-xs mt-10"
       >
         {isLoading ? (
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-3">
             <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-            Processing...
+            VERIFYING...
           </span>
         ) : (
           <>
-            {step === 3 ? "Go to Dashboard" : "Continue"} <ChevronRight className="w-4 h-4" />
+            {step === 3 ? "Command Dashboard" : "Proceed"} <CaretRight size={18} weight="bold" />
           </>
         )}
       </button>

@@ -1,8 +1,7 @@
 "use client";
-
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Car, Mail, Phone, ChevronRight } from "lucide-react";
+import { Car, Envelope, Phone, CaretRight } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -14,11 +13,9 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call & set mock cookie
     setTimeout(() => {
       document.cookie = "carkid0_auth=true; path=/";
       setIsLoading(false);
-      // Route to KYC next step after successful login
       router.push("/auth/kyc");
     }, 1500);
   };
@@ -28,62 +25,62 @@ export default function LoginPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="glass rounded-3xl p-8 border border-white/10 shadow-2xl"
+      className="bg-surface border border-border rounded-3xl p-10 shadow-2xl max-w-md w-full font-inter antialiased"
     >
-      <div className="flex flex-col items-center mb-8">
-        <Link href="/" className="flex items-center gap-2 mb-6">
-          <div className="w-10 h-10 bg-premium-gradient rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-            <Car className="text-white w-6 h-6" />
+      <div className="flex flex-col items-center mb-10">
+        <Link href="/" className="flex items-center gap-2 mb-8">
+          <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20">
+            <Car size={28} weight="bold" className="text-white" />
           </div>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Welcome Back</h1>
-        <p className="text-sm text-muted mt-2 text-center">
-          Sign in to access your dashboard and manage rentals.
+        <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Identity Verification</h1>
+        <p className="text-xs font-bold text-muted mt-3 text-center uppercase tracking-widest">
+          Secure access to the CarKid0 Managed Fleet.
         </p>
       </div>
 
-      <div className="flex bg-surface/50 p-1 rounded-xl mb-6 border border-border">
+      <div className="flex bg-background p-1.5 rounded-2xl mb-8 border border-border shadow-inner">
         <button
           onClick={() => setAuthMode("phone")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${
-            authMode === "phone" ? "bg-background shadow text-foreground" : "text-muted hover:text-foreground"
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+            authMode === "phone" ? "bg-primary text-white shadow-lg" : "text-muted hover:text-foreground"
           }`}
         >
-          <Phone className="w-4 h-4" /> Phone
+          <Phone size={18} weight="bold" /> SMS
         </button>
         <button
           onClick={() => setAuthMode("email")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${
-            authMode === "email" ? "bg-background shadow text-foreground" : "text-muted hover:text-foreground"
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
+            authMode === "email" ? "bg-primary text-white shadow-lg" : "text-muted hover:text-foreground"
           }`}
         >
-          <Mail className="w-4 h-4" /> Email
+          <Envelope size={18} weight="bold" /> Email
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider mb-2 block">
-            {authMode === "phone" ? "Phone Number" : "Email Address"}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-1">
+            {authMode === "phone" ? "Mobile Network ID" : "Enterprise Email Address"}
           </label>
           <div className="relative">
             {authMode === "phone" ? (
-              <div className="flex">
-                <span className="flex items-center justify-center bg-surface border border-r-0 border-border rounded-l-xl px-4 text-sm text-muted">
+              <div className="flex group">
+                <span className="flex items-center justify-center bg-background border border-r-0 border-border rounded-l-2xl px-5 text-xs font-bold text-muted group-hover:border-primary/50 transition-all h-14">
                   +234
                 </span>
                 <input
                   type="tel"
                   placeholder="801 234 5678"
-                  className="w-full bg-background border border-border rounded-r-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-background border border-border rounded-r-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-primary transition-all placeholder:text-muted/50 h-14"
                   required
                 />
               </div>
             ) : (
               <input
                 type="email"
-                placeholder="you@example.com"
-                className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
+                placeholder="you@company.com"
+                className="w-full bg-background border border-border rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-primary transition-all placeholder:text-muted/50 h-14"
                 required
               />
             )}
@@ -93,24 +90,26 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 mt-6 bg-foreground text-background rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="btn-primary w-full h-14 text-xs"
         >
           {isLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="w-4 h-4 rounded-full border-2 border-background/30 border-t-background animate-spin" />
-              Sending Code...
+            <span className="flex items-center gap-3">
+              <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              AUTHENTICATING...
             </span>
           ) : (
             <>
-              Continue <ChevronRight className="w-4 h-4" />
+              Initialize Session <CaretRight size={18} weight="bold" />
             </>
           )}
         </button>
       </form>
 
-      <p className="text-xs text-muted text-center mt-8">
-        By continuing, you agree to our Terms of Service and Privacy Policy.
-      </p>
+      <div className="mt-10 pt-8 border-t border-border">
+        <p className="text-[9px] font-bold text-muted text-center uppercase tracking-widest leading-loose">
+          Authorized fleet personnel only. By proceeding, you agree to our <span className="text-primary cursor-pointer">Security Protocol</span> and <span className="text-primary cursor-pointer">Data Governance</span>.
+        </p>
+      </div>
     </motion.div>
   );
 }

@@ -28,26 +28,26 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
-  --surface: #f4f4f5;
-  --primary: #7c3aed;
-  --secondary: #06b6d4;
-  --accent: #f97316;
-  --muted: #71717a;
-  --border: #e4e4e7;
-  --radius: 0.75rem;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --primary: #2563eb; /* Enterprise Trust Blue */
+  --secondary: #64748b;
+  --accent: #f59e0b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --radius: 0.5rem; /* Tighter border radius for enterprise feel */
 }
 
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --surface: #18181b;
-  --primary: #8b5cf6;
-  --secondary: #22d3ee;
-  --accent: #fb923c;
-  --muted: #a1a1aa;
-  --border: #27272a;
+  --background: #0f172a; /* Slate 900 */
+  --foreground: #f8fafc; /* Slate 50 */
+  --surface: #1e293b; /* Slate 800 */
+  --primary: #3b82f6; /* Lighter Blue for Dark Mode */
+  --secondary: #64748b;
+  --accent: #f59e0b;
+  --muted: #94a3b8;
+  --border: #334155;
 }
 
 @layer base {
@@ -55,21 +55,36 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-/* Glassmorphism utility */
-@utility glass {
-  @apply bg-surface/60 backdrop-blur-md border border-white/10;
+/* Standardized Button System */
+@utility btn-primary {
+  @apply h-11 px-6 bg-primary text-white font-black uppercase tracking-widest rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[11px];
 }
 
-/* Premium Gradients */
-@utility bg-premium-gradient {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+@utility btn-secondary {
+  @apply h-11 px-6 bg-surface border border-border text-foreground font-black uppercase tracking-widest rounded-xl hover:bg-border/30 transition-all flex items-center justify-center gap-2 text-[11px];
 }
 
-@utility text-gradient {
-  @apply bg-clip-text text-transparent bg-premium-gradient;
+@utility btn-ghost {
+  @apply h-11 px-6 text-muted font-black uppercase tracking-widest rounded-xl hover:bg-surface hover:text-foreground transition-all flex items-center justify-center gap-2 text-[11px];
+}
+
+/* PWA Optimized Container */
+@utility pwa-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Custom Scrollbar for Enterprise Feel */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full hover:bg-muted/50 transition-colors;
 }
