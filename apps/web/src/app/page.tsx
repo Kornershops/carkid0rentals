@@ -253,7 +253,7 @@ export default function Home() {
                  <div className="w-14 h-14 bg-background border border-border rounded-2xl flex items-center justify-center">
                     <LockKey size={28} weight="duotone" className="text-accent" />
                  </div>
-                 <h3 className="text-2xl font-black uppercase tracking-tighter">Safe-Halt™ Protcol</h3>
+                 <h3 className="text-2xl font-black uppercase tracking-tighter">Safe-Halt™ Protocol</h3>
                  <p className="text-sm font-medium text-muted leading-relaxed uppercase tracking-tight opacity-70">
                     Proprietary hardware-level engine encryption ensures assets remain within authorized geofences at all times.
                  </p>
