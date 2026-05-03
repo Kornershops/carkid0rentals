@@ -1,100 +1,114 @@
 "use client";
-import Link from "next/link";
-import { CaretRight, Users, MapPin, Car, ShieldCheck, Clock, Handshake } from "@phosphor-icons/react";
-import { Logo } from "@/components/ui/logo";
+
 import { motion } from "framer-motion";
+import { Logo } from "@/components/ui/logo";
+import { 
+  Globe, 
+  Lightbulb, 
+  ShieldCheck, 
+  Truck, 
+  SteeringWheel, 
+  Handshake,
+  CaretRight
+} from "@phosphor-icons/react";
+import Link from "next/link";
+
+const stagger = { visible: { transition: { staggerChildren: 0.15 } } };
+const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any } } };
 
 export default function AboutPage() {
   return (
     <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
-      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
-        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav className="glass" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }}>
+        <div className="container-wide" style={{ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Logo />
-          <Link href="/" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 12 }}>← Home</Link>
+          <Link href="/" className="btn btn-ghost" style={{ fontSize: 13, fontWeight: 600 }}>Back to Home</Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section style={{ padding: '80px 0 48px' }}>
-        <div className="container-wide" style={{ maxWidth: 720 }}>
-          <div className="section-divider" style={{ marginBottom: 16 }} />
-          <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 20, lineHeight: 1.1 }}>
-            Building Nigeria's Vehicle<br /><span style={{ color: 'var(--accent)' }}>Rental Infrastructure</span>
-          </h1>
-          <p style={{ fontSize: 17, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-            CarKid0 was founded to solve a simple problem: accessing reliable, well-maintained vehicles in Nigeria shouldn't be difficult or expensive.
-            We connect drivers, businesses, and individuals with verified vehicles across 7 major cities — whether you need a compact sedan for gig work or a 35-ton truck for interstate freight.
-          </p>
+      {/* Hero Section */}
+      <section style={{ paddingTop: 160, paddingBottom: 100, textAlign: 'center' }}>
+        <div className="container-wide" style={{ maxWidth: 800 }}>
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.div variants={fadeUp} className="badge badge-accent" style={{ margin: '0 auto 24px' }}>
+              OUR NARRATIVE
+            </motion.div>
+            <motion.h1 variants={fadeUp} style={{ fontSize: 'clamp(40px, 8vw, 72px)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 0.95, marginBottom: 32 }}>
+              Powering Africa's <br />
+              <span style={{ color: 'var(--accent)' }}>Mobility Revolution.</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} style={{ fontSize: 20, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 48 }}>
+              CarKid0 is not just a rental platform. We are the vehicle infrastructure layer for the next generation of African gig workers, enterprises, and elite travelers.
+            </motion.p>
+          </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section style={{ padding: '48px 0', background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-primary)', borderBottom: '1px solid var(--border-primary)' }}>
+      {/* Vision & Mission Cards */}
+      <section style={{ paddingBottom: 120 }}>
         <div className="container-wide">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 32, textAlign: 'center' }}>
-            {[
-              { value: "50+", label: "Vehicles" },
-              { value: "7", label: "Cities" },
-              { value: "3", label: "Vehicle Tiers" },
-              { value: "24/7", label: "Support" },
-            ].map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <p style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--accent)' }}>{s.value}</p>
-                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginTop: 4 }}>{s.label}</p>
-              </motion.div>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 32 }}>
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="card" style={{ padding: 48, background: 'var(--bg-elevated)' }}>
+              <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+                <Lightbulb size={32} weight="duotone" />
+              </div>
+              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 16 }}>Our Vision</h2>
+              <p style={{ fontSize: 16, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                To be the singular pulse of African transit—where every major city from Lagos to Cairo is connected by a fleet of intelligent, sustainable, and accessible vehicle assets.
+              </p>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="card" style={{ padding: 48, border: '1px solid var(--accent)' }}>
+              <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+                <Globe size={32} weight="duotone" />
+              </div>
+              <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 16 }}>Our Mission</h2>
+              <p style={{ fontSize: 16, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                To democratize vehicle ownership by providing flexible, IoT-enabled access to assets that foster economic growth for drivers and operational excellence for businesses.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Mission & Values */}
-      <section style={{ padding: '80px 0' }}>
+      {/* Pillars */}
+      <section style={{ background: 'var(--bg-elevated)', padding: '100px 0' }}>
         <div className="container-wide">
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>What We Stand For</h2>
-            <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 480, margin: '0 auto' }}>
-              Our values guide every decision — from vehicle selection to customer service.
-            </p>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-0.02em' }}>The Three Pillars of CarKid0</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 40 }}>
             {[
-              { icon: <ShieldCheck size={24} weight="duotone" />, title: "Safety First", desc: "Every vehicle is inspected, insured, and GPS-tracked. We maintain strict safety standards for all tiers including routine maintenance schedules." },
-              { icon: <Users size={24} weight="duotone" />, title: "Accessibility", desc: "Vehicle rental shouldn't be a luxury. Our economy tier starts at ₦13,000/day — making reliable transport accessible to gig workers and small businesses." },
-              { icon: <Handshake size={24} weight="duotone" />, title: "Trust & Transparency", desc: "No hidden fees. The price you see is the price you pay. Clear rental terms, easy extensions, and straightforward insurance policies." },
-              { icon: <Clock size={24} weight="duotone" />, title: "Flexibility", desc: "Rent for 30 minutes or 7 days. Need more time? Our auto-renewal feature extends your rental seamlessly without paperwork." },
-              { icon: <MapPin size={24} weight="duotone" />, title: "Nationwide Reach", desc: "From Lagos to Kano, Port Harcourt to Kaduna. We're expanding across Nigeria's major economic corridors to serve more communities." },
-              { icon: <Car size={24} weight="duotone" />, title: "Quality Fleet", desc: "We partner with certified dealers and fleet owners to maintain vehicles from 2020 onwards. No aging fleet, no compromises." },
-            ].map((v, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}>
-                <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--accent-soft)', color: 'var(--accent)', marginBottom: 16 }}>
-                    {v.icon}
-                  </div>
-                  <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{v.title}</h3>
-                  <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{v.desc}</p>
+              { icon: <SteeringWheel />, title: "Economic Empowerment", desc: "Equipping gig drivers with the tools and vehicles they need to thrive in the digital economy." },
+              { icon: <Truck />, title: "Logistics Resilience", desc: "Building the backbone for cross-border African trade with heavy-duty, IoT-monitored assets." },
+              { icon: <ShieldCheck />, title: "Technological Trust", desc: "Our Safe-Halt™ technology ensures that both drivers and assets are protected across every mile." },
+            ].map((p, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} style={{ textAlign: 'center' }}>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--bg-primary)', border: '1px solid var(--border-primary)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                  {p.icon}
                 </div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 12 }}>{p.title}</h3>
+                <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{p.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding: '80px 0', textAlign: 'center', background: 'var(--bg-elevated)', borderTop: '1px solid var(--border-primary)' }}>
+      {/* Partners CTA */}
+      <section style={{ padding: '120px 0' }}>
         <div className="container-wide">
-          <h2 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 16 }}>
-            Start your journey with us
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 400, margin: '0 auto 32px' }}>
-            Browse our fleet and book your next vehicle in under 2 minutes.
-          </p>
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/fleet" className="btn btn-accent" style={{ height: 48, padding: '0 28px', fontSize: 14, fontWeight: 700 }}>
-              Browse Fleet <CaretRight size={16} weight="bold" />
-            </Link>
-            <Link href="/locations" className="btn btn-outline" style={{ height: 48, padding: '0 28px', fontSize: 14 }}>
-              View Locations
-            </Link>
+          <div className="card" style={{ padding: 64, textAlign: 'center', background: 'linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-primary) 100%)', border: '1px solid var(--border-primary)' }}>
+            <Handshake size={64} weight="duotone" color="var(--accent)" style={{ margin: '0 auto 24px' }} />
+            <h2 style={{ fontSize: 36, fontWeight: 900, marginBottom: 20 }}>Build the Future with Us.</h2>
+            <p style={{ fontSize: 18, color: 'var(--text-secondary)', maxWidth: 600, margin: '0 auto 40px' }}>
+              Whether you are a fleet owner, a professional driver, or a logistics enterprise, there is a place for you in the CarKid0 ecosystem.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 16 }}>
+              <Link href="/partners" className="btn btn-accent" style={{ height: 56, padding: '0 32px', fontSize: 15 }}>Become a Partner</Link>
+              <Link href="/fleet" className="btn btn-outline" style={{ height: 56, padding: '0 32px', fontSize: 15 }}>Browse the Fleet</Link>
+            </div>
           </div>
         </div>
       </section>

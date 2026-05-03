@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useStore } from "@/store/use-store";
 import { Logo } from "@/components/ui/logo";
 import { formatPrice } from "@/lib/pricing";
+import { RegionSelector } from "@/components/region-selector";
+import { RoleSelector } from "@/components/role-selector";
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } } };
@@ -23,30 +25,20 @@ export default function Home() {
     <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
 
       {/* ── Navigation ──────────────────────────────────── */}
-      <nav className="glass" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50 }}>
-        <div className="container-wide" style={{ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 48 }}>
+      <nav className="glass" style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, borderBottom: '1px solid var(--border-primary)' }}>
+        <div className="container-wide" style={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             <Logo />
-            <div style={{ display: 'flex', gap: 32 }} className="hidden lg:flex">
-              {[
-                { label: "Our Fleet", href: "/fleet" },
-                { label: "Services", href: "/services" },
-                { label: "Locations", href: "/locations" },
-                { label: "About", href: "/about" },
-              ].map(item => (
-                <Link key={item.label} href={item.href} style={{
-                  fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)',
-                  transition: 'color 0.2s',
-                }} className="hover:text-white">{item.label}</Link>
-              ))}
-            </div>
+            <div style={{ width: 1, height: 24, background: 'var(--border-primary)' }} className="hidden sm:block" />
+            <RegionSelector />
           </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link href="/auth/login" className="btn btn-ghost" style={{ height: 40, padding: '0 16px', fontSize: 13 }}>
+            <div className="hidden lg:flex" style={{ marginRight: 12 }}>
+              <RoleSelector />
+            </div>
+            <Link href="/auth/login" className="btn btn-ghost" style={{ height: 44, padding: '0 16px', fontSize: 13, fontWeight: 600 }}>
               Sign In
-            </Link>
-            <Link href="/auth/login" className="btn btn-accent" style={{ height: 40, padding: '0 20px' }}>
-              Get Started
             </Link>
           </div>
         </div>
@@ -75,7 +67,7 @@ export default function Home() {
           <motion.div variants={stagger} initial="hidden" animate="visible" style={{ maxWidth: 680 }}>
             <motion.div variants={fadeUp} className="badge badge-accent" style={{ marginBottom: 24 }}>
               <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
-              Now available in {hubs.length} cities
+              Live across 5 African Countries
             </motion.div>
 
             <motion.h1 variants={fadeUp} style={{
@@ -90,8 +82,8 @@ export default function Home() {
               fontSize: 18, color: 'var(--text-secondary)', lineHeight: 1.6,
               maxWidth: 520, marginBottom: 40, fontWeight: 400,
             }}>
-              Rent premium SUVs, luxury sedans, and logistics trucks across Nigeria.
-              From gig-economy compacts to armored executive vehicles — starting at ₦18,000/day.
+              Africa's premier vehicle infrastructure platform. 
+              Rent sustainable EVs, premium luxury, and heavy logistics assets across the continent.
             </motion.p>
 
             {/* ── Booking Widget ──────────────────────────── */}
@@ -171,9 +163,9 @@ export default function Home() {
         <div className="container-wide">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
             {[
-              { icon: <Lightning size={24} weight="duotone" />, title: "Gig & Daily Rentals", desc: "Fuel-efficient vehicles optimized for ride-hailing and daily commutes. From ₦18,000/day." },
-              { icon: <ShieldCheck size={24} weight="duotone" />, title: "Luxury & Executive", desc: "Range Rovers, G-Wagons, and Land Cruisers with white-glove delivery to your location." },
-              { icon: <Truck size={24} weight="duotone" />, title: "Logistics & Haulage", desc: "Heavy-duty trucks for inter-city freight. Payload tracking, route planning included." },
+              { icon: <Lightning size={24} weight="duotone" />, title: "Eco-Gig & City EVs", desc: "Sustainable, fuel-efficient vehicles optimized for city driving and ride-hailing. Featuring the new Wuling and Jetour EV fleets." },
+              { icon: <ShieldCheck size={24} weight="duotone" />, title: "Luxury & Executive", desc: "Elite EVs like Tesla and Taycan, alongside classic G-Wagons and Land Cruisers for professional transport." },
+              { icon: <Truck size={24} weight="duotone" />, title: "Logistics & Haulage", desc: "Electric and diesel trucks for inter-city freight. Payload tracking and route planning included as standard." },
             ].map((svc, i) => (
               <div key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <div style={{

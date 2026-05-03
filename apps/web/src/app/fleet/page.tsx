@@ -3,18 +3,30 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { OperatingHub, useStore } from "@/store/use-store";
 import { MOCK_FLEET, Vehicle } from "@/data/mock-fleet";
-import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database } from "@phosphor-icons/react";
+import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database, TrendUp } from "@phosphor-icons/react";
 import Link from "next/link";
 import Image from "next/image";
-import { RentalDuration, calculatePrice, formatPrice } from "@/lib/pricing";
+import { RentalDuration, calculatePrice } from "@/lib/pricing";
+import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
 import { Logo } from "@/components/ui/logo";
 
 export default function FleetPage() {
-  const { tier, setTier, hub, setHub, route, setRoute } = useStore();
+  const { tier, setTier, hub, setHub, country, route, setRoute } = useStore();
   const [filteredFleet, setFilteredFleet] = useState<Vehicle[]>([]);
   const [duration, setDuration] = useState<RentalDuration>("24 Hours");
+  const [showComparison, setShowComparison] = useState(false);
 
-  const hubs: OperatingHub[] = ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"];
+  const currency = getCurrencyForCountry(country);
+
+  const HUB_DATA: Record<string, string[]> = {
+    Nigeria: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"],
+    Kenya: ["Nairobi"],
+    "South Africa": ["Johannesburg"],
+    Egypt: ["Cairo"],
+    Ghana: ["Accra"],
+  };
+
+  const hubs = HUB_DATA[country] || HUB_DATA.Nigeria;
   const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
 
   const tierOptions = [
@@ -64,7 +76,7 @@ export default function FleetPage() {
           <aside style={{ width: 240, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 20, position: 'sticky', top: 96, alignSelf: 'flex-start' }} className="desktop-sidebar">
             <FilterSection title="Location" icon={<MapPin size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
               {hubs.map(h => (
-                <SidebarButton key={h} active={hub === h} onClick={() => setHub(h)} label={h} />
+                <SidebarButton key={h} active={hub === h} onClick={() => setHub(h as any)} label={h} />
               ))}
             </FilterSection>
 
@@ -101,13 +113,37 @@ export default function FleetPage() {
 
           {/* ── Fleet Grid ─────────────────────────────── */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ marginBottom: 28 }}>
-              <h1 style={{ fontSize: 'clamp(24px, 3.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 6 }}>
-                Available Vehicles
-              </h1>
-              <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
-                {filteredFleet.length} vehicles in {hub} · {tier === 'all' ? 'All categories' : tierOptions.find(t => t.id === tier)?.label}
-              </p>
+            {/* Mobility Segment Tabs */}
+            <div style={{ display: 'flex', gap: 12, marginBottom: 32, borderBottom: '1px solid var(--border-primary)', paddingBottom: 16 }}>
+              {tierOptions.map(t => (
+                <button 
+                  key={t.id} 
+                  onClick={() => setTier(t.id as any)}
+                  style={{
+                    padding: '8px 20px', borderRadius: 100, fontSize: 14, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.2s',
+                    background: tier === t.id ? 'var(--accent)' : 'var(--bg-elevated)',
+                    color: tier === t.id ? 'white' : 'var(--text-secondary)',
+                    border: `1px solid ${tier === t.id ? 'var(--accent)' : 'var(--border-primary)'}`,
+                  }}
+                >
+                  {t.icon} {t.label}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <div>
+                <h1 style={{ fontSize: 'clamp(24px, 3.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 6 }}>
+                  {tier === 'all' ? 'The Global Fleet' : tierOptions.find(t => t.id === tier)?.label}
+                </h1>
+                <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                  {filteredFleet.length} professional-grade assets available in {hub}, {country}
+                </p>
+              </div>
+              <button onClick={() => setShowComparison(true)} className="btn btn-ghost" style={{ fontSize: 13, gap: 8 }}>
+                <ArrowsLeftRight size={18} /> Compare Tiers
+              </button>
             </div>
 
             {filteredFleet.length === 0 ? (
@@ -118,7 +154,7 @@ export default function FleetPage() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
                 {filteredFleet.map((v, i) => (
-                  <VehicleCard key={v.id} vehicle={v} duration={duration} index={i} />
+                  <VehicleCard key={v.id} vehicle={v} duration={duration} currency={currency} index={i} hub={hub} />
                 ))}
               </div>
             )}
@@ -166,7 +202,7 @@ function FilterSection({ title, icon, children }: { title: string; icon: React.R
 }
 
 /* ── Vehicle Card with WORKING Image Slider ──────────── */
-function VehicleCard({ vehicle: v, duration, index }: { vehicle: Vehicle; duration: RentalDuration; index: number }) {
+function VehicleCard({ vehicle: v, duration, currency, index, hub }: { vehicle: Vehicle; duration: RentalDuration; currency: any; index: number; hub: string }) {
   const [imgIdx, setImgIdx] = useState(0);
   const price = calculatePrice(v.pricePerDay, duration);
 
@@ -217,8 +253,18 @@ function VehicleCard({ vehicle: v, duration, index }: { vehicle: Vehicle; durati
             background: v.tier === 'elite' ? 'var(--gold)' : v.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
             color: v.tier === 'elite' ? '#1a1a1a' : 'white',
           }}>
-            {v.tier === 'eco-gig' ? 'Economy' : v.tier === 'heavy-haul' ? 'Logistics' : 'Premium'}
+            {v.tier === 'eco-gig' ? 'Eco-Gig' : v.tier === 'heavy-haul' ? 'Haulage' : 'Exotic'}
           </div>
+
+          {v.hubs[0] === hub && (
+            <div style={{
+              position: 'absolute', top: 10, right: 10, padding: '4px 10px', borderRadius: 6, zIndex: 2,
+              fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.95)', color: '#000',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: 4
+            }}>
+              <TrendUp size={12} weight="bold" /> MOST USED IN {hub.toUpperCase()}
+            </div>
+          )}
 
           {/* Arrow buttons */}
           {v.images.length > 1 && (
@@ -269,7 +315,7 @@ function VehicleCard({ vehicle: v, duration, index }: { vehicle: Vehicle; durati
                 <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>
                   {duration}
                 </p>
-                <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(price)}</span>
+                <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(price, currency)}</span>
               </div>
               <div style={{
                 width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -4,11 +4,14 @@ import { IdentificationCard, Camera, CaretRight, Check } from "@phosphor-icons/r
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/logo";
+import { useStore } from "@/store/use-store";
 
 export default function KycPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  const { role } = useStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +19,13 @@ export default function KycPage() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      router.push("/dashboard/customer");
+      if (role === "driver") {
+        router.push("/auth/onboarding/driver");
+      } else if (role === "logistics") {
+        router.push("/dashboard/logistics");
+      } else {
+        router.push("/dashboard/customer");
+      }
     }, 2000);
   };
 
