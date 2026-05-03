@@ -4,6 +4,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
@@ -30,7 +42,8 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
     font-family: 'Inter', sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
@@ -59,12 +72,23 @@
 
   /* Enterprise Glassmorphism */
   .glass {
-    @apply bg-background/70 backdrop-blur-xl border border-border/50;
+    background-color: color-mix(in srgb, var(--background), transparent 30%);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
   }
 
   /* High-Density Card */
   .enterprise-card {
-    @apply bg-surface border border-border rounded-3xl overflow-hidden transition-all hover:border-primary/20 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)];
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .enterprise-card:hover {
+    border-color: color-mix(in srgb, var(--primary), transparent 80%);
+    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
   }
 
   /* Custom Scrollbar */
@@ -72,9 +96,10 @@
     width: 6px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-background;
+    background: var(--background);
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full hover:bg-muted/30 transition-colors;
+    background: var(--border);
+    border-radius: 100px;
   }
 }
