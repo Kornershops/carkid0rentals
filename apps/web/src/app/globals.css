@@ -70,16 +70,59 @@
     }
   }
 
+  /* Universal Button Styling (No @apply) */
+  .btn-primary, .btn-secondary, .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary:disabled, .btn-secondary:disabled, .btn-ghost:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary:active, .btn-secondary:active, .btn-ghost:active {
+    transform: scale(0.98);
+  }
+
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:opacity-90 active:scale-[0.98] shadow-lg shadow-primary/10 disabled:opacity-50;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-surface border border-border text-foreground font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-border/30 active:scale-[0.98] disabled:opacity-50;
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+
+  .btn-secondary:hover {
+    background-color: color-mix(in srgb, var(--border), transparent 70%);
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full text-muted font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:text-foreground hover:bg-surface disabled:opacity-50;
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover {
+    color: var(--foreground);
+    background-color: var(--surface);
   }
 
   /* Enterprise Glassmorphism */
