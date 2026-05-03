@@ -28,11 +28,16 @@ export default function Home() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 48 }}>
             <Logo />
             <div style={{ display: 'flex', gap: 32 }} className="hidden lg:flex">
-              {["Our Fleet", "Services", "Locations", "About"].map(item => (
-                <Link key={item} href={item === "Our Fleet" ? "/fleet" : "#"} style={{
+              {[
+                { label: "Our Fleet", href: "/fleet" },
+                { label: "Services", href: "/services" },
+                { label: "Locations", href: "/locations" },
+                { label: "About", href: "/about" },
+              ].map(item => (
+                <Link key={item.label} href={item.href} style={{
                   fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)',
                   transition: 'color 0.2s',
-                }} className="hover:text-white">{item}</Link>
+                }} className="hover:text-white">{item.label}</Link>
               ))}
             </div>
           </div>

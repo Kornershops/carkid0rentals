@@ -1,9 +1,10 @@
 "use client";
-import { motion } from "framer-motion";
 import { useState } from "react";
-import { Car, Envelope, Phone, CaretRight } from "@phosphor-icons/react";
+import { Envelope, Phone, CaretRight } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Logo } from "@/components/ui/logo";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [authMode, setAuthMode] = useState<"phone" | "email">("phone");
@@ -21,95 +22,127 @@ export default function LoginPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-surface border border-border rounded-3xl p-10 shadow-2xl max-w-md w-full font-inter antialiased"
-    >
-      <div className="flex flex-col items-center mb-10">
-        <Link href="/" className="flex items-center gap-2 mb-8">
-          <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/20">
-            <Car size={28} weight="bold" className="text-white" />
-          </div>
-        </Link>
-        <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Identity Verification</h1>
-        <p className="text-xs font-bold text-muted mt-3 text-center uppercase tracking-widest">
-          Secure access to the CarKid0 Managed Fleet.
-        </p>
+    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex' }}>
+      {/* Left: Branding Panel */}
+      <div style={{
+        flex: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+      }} className="auth-brand">
+        <Image
+          src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1200&h=900&fit=crop&q=80"
+          alt="Premium vehicle" fill style={{ objectFit: 'cover' }} unoptimized
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(12,12,14,0.85) 0%, rgba(12,12,14,0.5) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 2, padding: 48, maxWidth: 440 }}>
+          <Logo />
+          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, marginTop: 32, marginBottom: 16 }}>
+            Drive First Class.<br /><span style={{ color: 'var(--accent)' }}>Pay Economy.</span>
+          </h2>
+          <p style={{ fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            Rent premium vehicles across 7 cities in Nigeria. From gig-economy sedans to luxury SUVs.
+          </p>
+        </div>
       </div>
 
-      <div className="flex bg-background p-1.5 rounded-2xl mb-8 border border-border shadow-inner">
-        <button
-          onClick={() => setAuthMode("phone")}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
-            authMode === "phone" ? "bg-primary text-white shadow-lg" : "text-muted hover:text-foreground"
-          }`}
-        >
-          <Phone size={18} weight="bold" /> SMS
-        </button>
-        <button
-          onClick={() => setAuthMode("email")}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 text-[11px] font-black uppercase tracking-wider rounded-xl transition-all ${
-            authMode === "email" ? "bg-primary text-white shadow-lg" : "text-muted hover:text-foreground"
-          }`}
-        >
-          <Envelope size={18} weight="bold" /> Email
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-3">
-          <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] block ml-1">
-            {authMode === "phone" ? "Mobile Network ID" : "Enterprise Email Address"}
-          </label>
-          <div className="relative">
-            {authMode === "phone" ? (
-              <div className="flex group">
-                <span className="flex items-center justify-center bg-background border border-r-0 border-border rounded-l-2xl px-5 text-xs font-bold text-muted group-hover:border-primary/50 transition-all h-14">
-                  +234
-                </span>
-                <input
-                  type="tel"
-                  placeholder="801 234 5678"
-                  className="w-full bg-background border border-border rounded-r-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-primary transition-all placeholder:text-muted/50 h-14"
-                  required
-                />
-              </div>
-            ) : (
-              <input
-                type="email"
-                placeholder="you@company.com"
-                className="w-full bg-background border border-border rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:border-primary transition-all placeholder:text-muted/50 h-14"
-                required
-              />
-            )}
-          </div>
+      {/* Right: Auth Form */}
+      <div style={{
+        width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        padding: '48px 40px',
+      }}>
+        <div style={{ marginBottom: 32 }}>
+          <div className="auth-logo-mobile" style={{ marginBottom: 24 }}><Logo /></div>
+          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>Sign in</h1>
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+            Enter your phone number or email to continue.
+          </p>
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="btn-primary w-full h-14 text-xs"
-        >
-          {isLoading ? (
-            <span className="flex items-center gap-3">
-              <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-              AUTHENTICATING...
-            </span>
-          ) : (
-            <>
-              Initialize Session <CaretRight size={18} weight="bold" />
-            </>
-          )}
-        </button>
-      </form>
+        {/* Mode Toggle */}
+        <div style={{
+          display: 'flex', background: 'var(--bg-surface)', borderRadius: 10, padding: 3, marginBottom: 24,
+          border: '1px solid var(--border-primary)',
+        }}>
+          {[
+            { id: "phone" as const, icon: <Phone size={16} weight="bold" />, label: "Phone" },
+            { id: "email" as const, icon: <Envelope size={16} weight="bold" />, label: "Email" },
+          ].map(m => (
+            <button key={m.id} onClick={() => setAuthMode(m.id)} style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              padding: '10px 0', borderRadius: 8, fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer',
+              background: authMode === m.id ? 'var(--accent)' : 'transparent',
+              color: authMode === m.id ? 'white' : 'var(--text-tertiary)',
+              transition: 'all 0.2s',
+            }}>
+              {m.icon} {m.label}
+            </button>
+          ))}
+        </div>
 
-      <div className="mt-10 pt-8 border-t border-border">
-        <p className="text-[9px] font-bold text-muted text-center uppercase tracking-widest leading-loose">
-          Authorized fleet personnel only. By proceeding, you agree to our <span className="text-primary cursor-pointer">Security Protocol</span> and <span className="text-primary cursor-pointer">Data Governance</span>.
+        {/* Form */}
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 }}>
+              {authMode === "phone" ? "Phone Number" : "Email Address"}
+            </label>
+            {authMode === "phone" ? (
+              <div style={{ display: 'flex' }}>
+                <span style={{
+                  display: 'flex', alignItems: 'center', padding: '0 14px', fontSize: 14, fontWeight: 600,
+                  background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
+                  borderRight: 'none', borderRadius: '10px 0 0 10px', color: 'var(--text-tertiary)',
+                }}>+234</span>
+                <input type="tel" placeholder="801 234 5678" required style={{
+                  ...fieldStyle, borderRadius: '0 10px 10px 0',
+                }} />
+              </div>
+            ) : (
+              <input type="email" placeholder="you@example.com" required style={fieldStyle} />
+            )}
+          </div>
+
+          <button type="submit" disabled={isLoading} className="btn btn-accent" style={{
+            width: '100%', height: 48, fontSize: 14, fontWeight: 700, marginBottom: 16,
+            opacity: isLoading ? 0.7 : 1,
+          }}>
+            {isLoading ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', animation: 'spin 0.6s linear infinite' }} />
+                Sending code...
+              </span>
+            ) : (
+              <>Continue <CaretRight size={16} weight="bold" /></>
+            )}
+          </button>
+        </form>
+
+        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5, marginTop: 16 }}>
+          By continuing, you agree to our{' '}
+          <Link href="#" style={{ color: 'var(--accent)', fontWeight: 500 }}>Terms of Service</Link> and{' '}
+          <Link href="#" style={{ color: 'var(--accent)', fontWeight: 500 }}>Privacy Policy</Link>.
         </p>
+
+        <div style={{ marginTop: 'auto', paddingTop: 32 }}>
+          <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+            New to CarKid0? <Link href="/auth/login" style={{ color: 'var(--accent)', fontWeight: 600 }}>Create an account</Link>
+          </p>
+        </div>
       </div>
-    </motion.div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .auth-brand { display: flex; }
+        .auth-logo-mobile { display: none; }
+        @media (max-width: 860px) {
+          .auth-brand { display: none !important; }
+          .auth-logo-mobile { display: block !important; }
+        }
+      `}</style>
+    </main>
   );
 }
+
+const fieldStyle: React.CSSProperties = {
+  width: '100%', padding: '12px 14px', borderRadius: 10, fontSize: 14, fontWeight: 500,
+  background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
+  color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit',
+};
