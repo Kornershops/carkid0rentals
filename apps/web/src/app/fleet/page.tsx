@@ -3,21 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OperatingHub, useStore } from "@/store/use-store";
 import { MOCK_FLEET, Vehicle } from "@/data/mock-fleet";
-import { 
-  Faders, 
-  MapTrifold, 
-  Car, 
-  Lightning, 
-  ShieldCheck, 
-  Truck, 
-  CaretRight,
-  CaretLeft,
-  Clock,
-  WarningCircle,
-  MapPin,
-  ArrowsLeftRight,
-  Database
-} from "@phosphor-icons/react";
+import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database } from "@phosphor-icons/react";
 import Link from "next/link";
 import Image from "next/image";
 import { RentalDuration, calculatePrice, formatPrice } from "@/lib/pricing";
@@ -25,297 +11,271 @@ import { Logo } from "@/components/ui/logo";
 
 export default function FleetPage() {
   const { tier, setTier, hub, setHub, route, setRoute } = useStore();
-  const [isLoading, setIsLoading] = useState(true);
   const [filteredFleet, setFilteredFleet] = useState<Vehicle[]>([]);
   const [duration, setDuration] = useState<RentalDuration>("24 Hours");
 
   const hubs: OperatingHub[] = ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"];
-
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      let filtered = MOCK_FLEET;
-      
-      // Filter by Hub
-      filtered = filtered.filter(v => v.hubs.includes(hub));
-
-      // Filter by Tier
-      if (tier !== "all") {
-        filtered = filtered.filter((v) => v.tier === tier);
-      }
-
-      setFilteredFleet(filtered);
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [tier, hub]);
-
-  const tiers = [
-    { id: "all", label: "All Vehicles", icon: <Database size={18} weight="duotone" /> },
-    { id: "eco-gig", label: "Eco-Gig", icon: <Lightning size={18} weight="duotone" className="text-amber-500" /> },
-    { id: "elite", label: "Elite & Exotic", icon: <ShieldCheck size={18} weight="duotone" className="text-primary" /> },
-    { id: "heavy-haul", label: "Heavy Haul", icon: <Truck size={18} weight="duotone" className="text-blue-500" /> },
-  ] as const;
-
   const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
 
+  const tierOptions = [
+    { id: "all", label: "All Vehicles", icon: <Database size={16} weight="bold" /> },
+    { id: "eco-gig", label: "Economy", icon: <Lightning size={16} weight="bold" /> },
+    { id: "elite", label: "Premium & Luxury", icon: <ShieldCheck size={16} weight="bold" /> },
+    { id: "heavy-haul", label: "Logistics & Trucks", icon: <Truck size={16} weight="bold" /> },
+  ] as const;
+
+  useEffect(() => {
+    let filtered = MOCK_FLEET.filter(v => v.hubs.includes(hub));
+    if (tier !== "all") filtered = filtered.filter(v => v.tier === tier);
+    setFilteredFleet(filtered);
+  }, [tier, hub]);
+
   return (
-    <main className="min-h-screen bg-background font-inter antialiased">
-      {/* Enterprise Nav */}
-      <nav className="sticky top-0 z-50 glass border-b border-border shadow-sm">
-        <div className="pwa-container h-20 flex items-center justify-between">
+    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
+      {/* Nav */}
+      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Logo />
-          <div className="flex items-center gap-3">
-             <div className="hidden sm:flex items-center gap-4 px-4 py-2 bg-surface border border-border rounded-2xl shadow-sm">
-                <MapPin size={16} weight="bold" className="text-accent" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em]">{hub} HUB ONLINE</span>
-             </div>
-             <button className="btn-secondary h-12 px-6">
-               <MapTrifold size={20} weight="bold" /> Network Map
-             </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="badge badge-accent">
+              <MapPin size={14} weight="bold" /> {hub}
+            </div>
+            <Link href="/" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 12 }}>← Home</Link>
           </div>
         </div>
       </nav>
 
-      <div className="pwa-container py-12 flex flex-col md:flex-row gap-12 lg:gap-16">
-        
-        {/* Filters Sidebar */}
-        <aside className="w-full md:w-80 shrink-0 space-y-12">
+      <div className="container-wide" style={{ paddingTop: 32, paddingBottom: 64, display: 'flex', gap: 32 }}>
+        {/* ── Sidebar Filters ──────────────────────────── */}
+        <aside style={{ width: 260, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 24, position: 'sticky', top: 96, alignSelf: 'flex-start' }} className="hidden-mobile">
           {/* Hub Selector */}
-          <div className="bg-surface border border-border rounded-[32px] p-6">
-            <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-              <MapPin size={18} weight="bold" className="text-accent" /> Regional Hubs
-            </h3>
-            <div className="grid grid-cols-1 gap-2">
-              {hubs.map((h) => (
-                <button
-                  key={h}
-                  onClick={() => setHub(h)}
-                  className={`px-5 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all text-left border ${
-                    hub === h
-                      ? "bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20"
-                      : "bg-background border-border text-muted hover:border-accent/40"
-                  }`}
-                >
-                  {h} <span className="opacity-40 ml-1">Terminal</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <FilterSection title="Location" icon={<MapPin size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
+            {hubs.map(h => (
+              <button key={h} onClick={() => setHub(h)} style={{
+                width: '100%', textAlign: 'left', padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 500,
+                background: hub === h ? 'var(--accent)' : 'transparent',
+                color: hub === h ? 'white' : 'var(--text-secondary)',
+                border: hub === h ? 'none' : '1px solid var(--border-primary)',
+                cursor: 'pointer', transition: 'all 0.2s', marginBottom: 4,
+              }}>
+                {h}
+              </button>
+            ))}
+          </FilterSection>
 
-          <div className="bg-surface border border-border rounded-[32px] p-6">
-            <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-              <Faders size={18} weight="bold" className="text-accent" /> Infrastructure Tier
-            </h3>
-            <div className="space-y-2">
-              {tiers.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTier(t.id as any)}
-                  className={`w-full flex items-center justify-between px-5 py-4 rounded-2xl text-[11px] font-bold uppercase tracking-tight transition-all border ${
-                    tier === t.id
-                      ? "bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20"
-                      : "bg-background border-border text-muted hover:text-foreground hover:border-accent/40"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    {t.icon}
-                    {t.label}
-                  </div>
-                  {tier === t.id && <div className="w-2 h-2 rounded-full bg-success" />}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Conditional Haulage Route Module */}
-          {tier === "heavy-haul" && (
-            <div className="bg-surface border border-border rounded-[32px] p-6 animate-in fade-in slide-in-from-top-4 duration-500">
-               <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-                 <ArrowsLeftRight size={18} weight="bold" className="text-accent" /> Logistics Routing
-               </h3>
-               <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black text-muted uppercase tracking-widest ml-1">Hub Entry (Origin)</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. APAPA WHARF" 
-                      className="w-full bg-background border border-border rounded-2xl px-5 py-4 text-[11px] font-bold uppercase placeholder:text-muted/30 focus:outline-none focus:border-accent transition-all"
-                      value={route.origin}
-                      onChange={(e) => setRoute(e.target.value.toUpperCase(), route.destination)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-black text-muted uppercase tracking-widest ml-1">Hub Exit (Dest.)</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. KANO DISTRO CENTER" 
-                      className="w-full bg-background border border-border rounded-2xl px-5 py-4 text-[11px] font-bold uppercase placeholder:text-muted/30 focus:outline-none focus:border-accent transition-all"
-                      value={route.destination}
-                      onChange={(e) => setRoute(route.origin, e.target.value.toUpperCase())}
-                    />
-                  </div>
-               </div>
-            </div>
-          )}
+          {/* Tier Selector */}
+          <FilterSection title="Vehicle Type" icon={<Faders size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
+            {tierOptions.map(t => (
+              <button key={t.id} onClick={() => setTier(t.id as any)} style={{
+                width: '100%', textAlign: 'left', padding: '10px 14px', borderRadius: 10, fontSize: 13, fontWeight: 500,
+                display: 'flex', alignItems: 'center', gap: 8,
+                background: tier === t.id ? 'var(--accent)' : 'transparent',
+                color: tier === t.id ? 'white' : 'var(--text-secondary)',
+                border: tier === t.id ? 'none' : '1px solid var(--border-primary)',
+                cursor: 'pointer', transition: 'all 0.2s', marginBottom: 4,
+              }}>
+                {t.icon} {t.label}
+              </button>
+            ))}
+          </FilterSection>
 
           {/* Duration Selector */}
-          <div className="bg-surface border border-border rounded-[32px] p-6">
-            <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-              <Clock size={18} weight="bold" className="text-accent" /> Mission Duration
-            </h3>
-            <div className="grid grid-cols-2 gap-2">
-              {durations.map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDuration(d)}
-                  className={`px-3 py-4 rounded-2xl text-[9px] font-black uppercase tracking-tighter transition-all border ${
-                    duration === d
-                      ? "bg-accent/10 border-accent/40 text-accent"
-                      : "bg-background border-border text-muted hover:border-accent/40"
-                  }`}
-                >
+          <FilterSection title="Rental Duration" icon={<Clock size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              {durations.map(d => (
+                <button key={d} onClick={() => setDuration(d)} style={{
+                  padding: '8px 4px', borderRadius: 8, fontSize: 12, fontWeight: 600, textAlign: 'center',
+                  background: duration === d ? 'var(--accent-soft)' : 'transparent',
+                  color: duration === d ? 'var(--accent)' : 'var(--text-tertiary)',
+                  border: `1px solid ${duration === d ? 'rgba(255,107,44,0.3)' : 'var(--border-primary)'}`,
+                  cursor: 'pointer', transition: 'all 0.2s',
+                }}>
                   {d}
                 </button>
               ))}
             </div>
-          </div>
+          </FilterSection>
+
+          {/* Haulage Route (conditional) */}
+          {tier === "heavy-haul" && (
+            <FilterSection title="Haulage Route" icon={<ArrowsLeftRight size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
+              <input placeholder="Origin city" value={route.origin} onChange={e => setRoute(e.target.value, route.destination)} style={inputStyle} />
+              <input placeholder="Destination city" value={route.destination} onChange={e => setRoute(route.origin, e.target.value)} style={{ ...inputStyle, marginTop: 8 }} />
+            </FilterSection>
+          )}
         </aside>
 
-        {/* Fleet Grid */}
-        <div className="flex-1">
-          <div className="mb-12">
-            <h1 className="text-5xl md:text-6xl font-black tracking-[-0.05em] uppercase text-foreground leading-[0.9]">Institutional<br/><span className="text-muted opacity-30 tracking-tight font-black">Assets</span></h1>
-            <p className="text-[11px] font-bold text-muted uppercase tracking-[0.4em] mt-6 leading-loose border-l-2 border-accent pl-6">
-              Authenticated fleet data from {hub} Terminal. {filteredFleet.length} verified units operational.
+        {/* ── Fleet Grid ───────────────────────────────── */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Header */}
+          <div style={{ marginBottom: 32 }}>
+            <h1 style={{ fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
+              Available Vehicles
+            </h1>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+              {filteredFleet.length} vehicles in {hub} · {tier === 'all' ? 'All categories' : tierOptions.find(t => t.id === tier)?.label}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <AnimatePresence mode="popLayout">
-              {isLoading ? (
-                [1, 2, 3, 4].map((i) => (
-                  <div key={`skel-${i}`} className="enterprise-card p-6 h-[500px] animate-pulse">
-                    <div className="w-full h-64 bg-border/20 rounded-[32px] mb-8" />
-                    <div className="h-8 w-2/3 bg-border/20 rounded-xl mb-4" />
-                    <div className="h-4 w-1/3 bg-border/20 rounded-xl" />
-                  </div>
-                ))
-              ) : filteredFleet.length === 0 ? (
-                <div className="col-span-full py-32 text-center border-2 border-dashed border-border rounded-[40px] bg-surface/30">
-                  <WarningCircle size={48} weight="duotone" className="mx-auto text-muted mb-6" />
-                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-muted">No assets deployed to {hub} Terminal.</p>
-                </div>
-              ) : (
-                filteredFleet.map((vehicle) => (
-                  <FleetCard key={vehicle.id} vehicle={vehicle} duration={duration} />
-                ))
-              )}
-            </AnimatePresence>
+          {/* Mobile Filters */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }} className="mobile-only">
+            <select value={hub} onChange={e => setHub(e.target.value as any)} style={selectStyle}>
+              {hubs.map(h => <option key={h} value={h}>{h}</option>)}
+            </select>
+            <select value={tier} onChange={e => setTier(e.target.value as any)} style={selectStyle}>
+              {tierOptions.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+            </select>
+            <select value={duration} onChange={e => setDuration(e.target.value as RentalDuration)} style={selectStyle}>
+              {durations.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
           </div>
+
+          {/* Grid */}
+          {filteredFleet.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '80px 20px', border: '2px dashed var(--border-primary)', borderRadius: 20, background: 'var(--bg-elevated)' }}>
+              <p style={{ fontSize: 15, color: 'var(--text-tertiary)', fontWeight: 500 }}>No vehicles available in {hub} for this category.</p>
+              <button onClick={() => setTier("all")} className="btn btn-accent" style={{ marginTop: 16, height: 40, padding: '0 20px' }}>
+                Show all vehicles
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 20 }}>
+              {filteredFleet.map((v, i) => (
+                <VehicleCard key={v.id} vehicle={v} duration={duration} index={i} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      <style>{`
+        .hidden-mobile { display: flex; }
+        .mobile-only { display: none !important; }
+        @media (max-width: 768px) {
+          .hidden-mobile { display: none !important; }
+          .mobile-only { display: flex !important; }
+        }
+      `}</style>
     </main>
   );
 }
 
-function FleetCard({ vehicle, duration }: { vehicle: Vehicle, duration: RentalDuration }) {
-  const [currentImg, setCurrentImg] = useState(0);
+/* ── Filter Section Component ────────────────────────── */
+function FilterSection({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 16 }}>
+      <h3 style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        {icon} {title}
+      </h3>
+      {children}
+    </div>
+  );
+}
+
+/* ── Vehicle Card Component ──────────────────────────── */
+function VehicleCard({ vehicle: v, duration, index }: { vehicle: Vehicle; duration: RentalDuration; index: number }) {
+  const [imgIdx, setImgIdx] = useState(0);
+  const price = calculatePrice(v.pricePerDay, duration);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      className="enterprise-card p-6 flex flex-col group h-full"
-    >
-      <div className="relative w-full h-72 bg-background border border-border rounded-[32px] mb-8 overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentImg}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={vehicle.images[currentImg]}
-              alt={`${vehicle.brand} ${vehicle.model}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-1000"
-              unoptimized
-            />
-          </motion.div>
-        </AnimatePresence>
-        
-        {/* Carousel Indicators */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {vehicle.images.map((_, idx) => (
-            <button 
-              key={idx}
-              onClick={(e) => { e.preventDefault(); setCurrentImg(idx); }}
-              className={`h-1 rounded-full transition-all duration-500 ${idx === currentImg ? "w-6 bg-primary" : "w-2 bg-white/40 hover:bg-white/60"}`}
-            />
-          ))}
-        </div>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05, duration: 0.4 }}>
+      <Link href={`/fleet/${v.id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+        <div className="card">
+          {/* Image with carousel */}
+          <div style={{ position: 'relative', aspectRatio: '16/10', background: 'var(--bg-surface)', overflow: 'hidden' }}>
+            <Image src={v.images[imgIdx]} alt={`${v.brand} ${v.model}`} fill style={{ objectFit: 'cover', transition: 'opacity 0.4s' }} unoptimized />
 
-        {/* Carousel Controls */}
-        <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-          <button 
-            onClick={(e) => { 
-              e.preventDefault(); 
-              setCurrentImg(prev => prev === 0 ? vehicle.images.length - 1 : prev - 1); 
-            }}
-            className="w-10 h-10 bg-background/80 backdrop-blur rounded-xl flex items-center justify-center border border-border hover:bg-primary hover:text-white transition-all"
-          >
-            <CaretLeft size={18} weight="bold" />
-          </button>
-          <button 
-            onClick={(e) => { 
-              e.preventDefault(); 
-              setCurrentImg(prev => (prev + 1) % vehicle.images.length); 
-            }}
-            className="w-10 h-10 bg-background/80 backdrop-blur rounded-xl flex items-center justify-center border border-border hover:bg-primary hover:text-white transition-all"
-          >
-            <CaretRight size={18} weight="bold" />
-          </button>
-        </div>
+            {/* Tier badge */}
+            <div style={{
+              position: 'absolute', top: 10, left: 10, padding: '4px 10px', borderRadius: 6,
+              fontSize: 11, fontWeight: 600, textTransform: 'capitalize',
+              background: v.tier === 'elite' ? 'var(--gold)' : v.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
+              color: v.tier === 'elite' ? '#1a1a1a' : 'white',
+            }}>
+              {v.tier === 'eco-gig' ? 'Economy' : v.tier === 'heavy-haul' ? 'Logistics' : 'Premium'}
+            </div>
 
-        <div className="absolute top-5 left-5 px-4 py-1.5 bg-background/90 backdrop-blur rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-border">
-          {vehicle.tier.replace("-", " ")}
-        </div>
-      </div>
-      
-      <div className="flex-1 px-2">
-        <p className="text-[10px] font-black text-muted uppercase tracking-[0.4em] mb-2">{vehicle.brand}</p>
-        <h3 className="text-4xl font-black tracking-[-0.05em] uppercase text-foreground leading-[0.9] mb-4">{vehicle.model}</h3>
-        
-        <div className="flex flex-wrap gap-2 mt-6">
-          {vehicle.features.slice(0, 3).map((f, i) => (
-            <span key={i} className="px-3 py-1.5 bg-surface border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-muted">
-              {f}
-            </span>
-          ))}
-        </div>
-      </div>
+            {/* Image dots */}
+            {v.images.length > 1 && (
+              <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4 }}>
+                {v.images.map((_, i) => (
+                  <button key={i} onClick={e => { e.preventDefault(); setImgIdx(i); }} style={{
+                    width: i === imgIdx ? 16 : 6, height: 6, borderRadius: 100, border: 'none', cursor: 'pointer', transition: 'all 0.3s',
+                    background: i === imgIdx ? 'white' : 'rgba(255,255,255,0.4)',
+                  }} />
+                ))}
+              </div>
+            )}
 
-      <div className="flex justify-between items-end mt-12 pt-8 border-t border-border">
-        <div>
-          <p className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-2">Calculated Infrastructure Cost</p>
-          <p className="text-3xl font-black tracking-tighter uppercase">
-            {formatPrice(calculatePrice(vehicle.pricePerDay, duration))}
-            <span className="text-[11px] text-muted ml-1 font-black opacity-40">/TOTAL</span>
-          </p>
+            {/* Carousel arrows */}
+            {v.images.length > 1 && (
+              <>
+                <button onClick={e => { e.preventDefault(); setImgIdx(p => p === 0 ? v.images.length - 1 : p - 1); }} style={{ ...arrowStyle, left: 8 }}>
+                  <CaretLeft size={14} weight="bold" />
+                </button>
+                <button onClick={e => { e.preventDefault(); setImgIdx(p => (p + 1) % v.images.length); }} style={{ ...arrowStyle, right: 8 }}>
+                  <CaretRight size={14} weight="bold" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Content */}
+          <div style={{ padding: '16px 18px 20px' }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>
+              {v.brand} · {v.year}
+            </p>
+            <h3 style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 10 }}>{v.model}</h3>
+
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+              {v.features.slice(0, 3).map((f, j) => (
+                <span key={j} style={{
+                  fontSize: 10, padding: '3px 8px', borderRadius: 5, fontWeight: 500,
+                  background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
+                }}>
+                  {f}
+                </span>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 14, borderTop: '1px solid var(--border-primary)' }}>
+              <div>
+                <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
+                  {duration} rate
+                </p>
+                <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(price)}</span>
+              </div>
+              <div style={{
+                width: 34, height: 34, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'var(--accent-soft)', color: 'var(--accent)', transition: 'all 0.2s',
+              }}>
+                <CaretRight size={16} weight="bold" />
+              </div>
+            </div>
+          </div>
         </div>
-        <Link 
-          href={`/fleet/${vehicle.id}`}
-          className="w-14 h-14 bg-surface border border-border rounded-[20px] flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all shadow-xl shadow-black/5"
-        >
-          <CaretRight size={24} weight="bold" />
-        </Link>
-      </div>
+      </Link>
     </motion.div>
   );
 }
+
+/* ── Shared Styles ───────────────────────────────────── */
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '10px 12px', borderRadius: 10, fontSize: 13, fontWeight: 500,
+  background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
+  color: 'var(--text-primary)', outline: 'none', fontFamily: 'var(--font-body)',
+};
+
+const selectStyle: React.CSSProperties = {
+  padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+  background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)',
+  color: 'var(--text-primary)', outline: 'none', fontFamily: 'var(--font-body)',
+  cursor: 'pointer', flex: 1, minWidth: 0,
+};
+
+const arrowStyle: React.CSSProperties = {
+  position: 'absolute', top: '50%', transform: 'translateY(-50%)',
+  width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', cursor: 'pointer',
+  backdropFilter: 'blur(8px)', transition: 'all 0.2s',
+};
