@@ -287,4 +287,102 @@ export const MOCK_FLEET: Vehicle[] = [
     hubs: ["Lagos", "Abuja", "Port Harcourt", "Kaduna", "Warri", "Enugu"],
     payloadKg: 1050, clearanceHeight: 1.8,
   },
+
+  // ═══ ADDITIONAL ECO-GIG ═════════════════════════════
+  {
+    id: "eg-013", brand: "Kia", model: "Cerato", year: 2023, tier: "eco-gig", pricePerDay: 17000,
+    images: [img("1629897048514-3dd7414fe72a"), img("1621993202323-eb4e81ebb0d8")],
+    status: "available", features: ["Android Auto", "6-Speed Auto", "Rear Sensors"],
+    hubs: ["Lagos", "Abuja", "Kano", "Kaduna", "Enugu"],
+    fuelEfficiency: "19 km/L", estDailyRevenue: 38000,
+  },
+  {
+    id: "eg-014", brand: "Nissan", model: "Almera", year: 2022, tier: "eco-gig", pricePerDay: 15000,
+    images: [img("1606152421802-db97b9c7a11b"), img("1550355291-bbee04a92027")],
+    status: "available", features: ["Spacious Cabin", "ABS", "Dual Airbags"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Warri", "Kano"],
+    fuelEfficiency: "21 km/L", estDailyRevenue: 35000,
+  },
+  {
+    id: "eg-015", brand: "Suzuki", model: "Swift", year: 2023, tier: "eco-gig", pricePerDay: 13000,
+    images: [img("1583121274602-3e2820c69888"), img("1549317661-bd32c8ce0afe")],
+    status: "available", features: ["Compact", "City Drive Mode", "USB Port"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Enugu", "Warri"],
+    fuelEfficiency: "26 km/L", estDailyRevenue: 33000,
+  },
+  {
+    id: "eg-016", brand: "Toyota", model: "Avalon", year: 2022, tier: "eco-gig", pricePerDay: 28000,
+    images: [img("1621007947382-bb3c3994e3fb"), img("1623869675781-80aa31012a5a")],
+    status: "available", features: ["Premium Audio", "Leather Interior", "Sunroof"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt"],
+    fuelEfficiency: "15 km/L", estDailyRevenue: 48000,
+  },
+
+  // ═══ ADDITIONAL ELITE ═══════════════════════════════
+  {
+    id: "el-014", brand: "Bentley", model: "Bentayga V8", year: 2024, tier: "elite", pricePerDay: 750000,
+    images: [img("1544636331-e26879cd4d9b"), img("1606611013016-969c19ba27bb")],
+    status: "available", features: ["Naim Audio", "Mulliner Spec", "Air Ionizer"],
+    hubs: ["Lagos", "Abuja"],
+    hp: 542, zeroToSixty: 4.4,
+  },
+  {
+    id: "el-015", brand: "Mercedes-Benz", model: "Maybach GLS 600", year: 2024, tier: "elite", pricePerDay: 900000,
+    images: [img("1618843479313-40f8afb4b4d8"), img("1520031441872-265e4ff70366")],
+    status: "available", features: ["Executive Rear Seats", "Champagne Flutes", "Burmester 3D"],
+    hubs: ["Lagos", "Abuja"],
+    hp: 550, zeroToSixty: 4.8,
+  },
+  {
+    id: "el-016", brand: "BMW", model: "X5 xDrive40i", year: 2023, tier: "elite", pricePerDay: 300000,
+    images: [img("1555215695-3004980ad54e"), img("1549399542-7e3f8b79c341")],
+    status: "available", features: ["xDrive AWD", "Live Cockpit Pro", "Parking Assist"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Kaduna"],
+    hp: 335, zeroToSixty: 5.3,
+  },
+  {
+    id: "el-017", brand: "Mercedes-Benz", model: "E-Class E350", year: 2024, tier: "elite", pricePerDay: 280000,
+    images: [img("1618843479313-40f8afb4b4d8"), img("1556189250-72ba954cfc2b")],
+    status: "available", features: ["MBUX Superscreen", "Air Body Control", "Ambient Lighting"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Enugu"],
+    hp: 255, zeroToSixty: 5.9,
+  },
+  {
+    id: "el-018", brand: "Genesis", model: "GV80", year: 2024, tier: "elite", pricePerDay: 260000,
+    images: [img("1519641471654-76ce0107ad1b"), img("1555215695-3004980ad54e")],
+    status: "available", features: ["Lexicon Audio", "Smart Posture Care", "Road Preview"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt"],
+    hp: 300, zeroToSixty: 6.5,
+  },
+
+  // ═══ ADDITIONAL HEAVY-HAUL ══════════════════════════
+  {
+    id: "hh-012", brand: "Scania", model: "R450", year: 2021, tier: "heavy-haul", pricePerDay: 320000,
+    images: [img("1601584115197-04ecc0da31d7"), img("1586191582151-f73872dfd183")],
+    status: "available", features: ["Opticruise", "Retarder", "EAS Suspension"],
+    hubs: ["Lagos", "Port Harcourt", "Kano", "Kaduna"],
+    payloadKg: 35000, clearanceHeight: 4.5,
+  },
+  {
+    id: "hh-013", brand: "Nissan", model: "NP300 Navara", year: 2022, tier: "heavy-haul", pricePerDay: 40000,
+    images: [img("1559416523-140ddc3a238c"), img("1533473359331-2f64fd5b36a8")],
+    status: "available", features: ["4x4", "Diff Lock", "Steel Bumper"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Enugu", "Warri", "Kaduna", "Kano"],
+    payloadKg: 950, clearanceHeight: 1.7,
+  },
+  {
+    id: "hh-014", brand: "Hino", model: "500 Series", year: 2021, tier: "heavy-haul", pricePerDay: 85000,
+    images: [img("1601584115197-04ecc0da31d7"), img("1586191582151-f73872dfd183")],
+    status: "available", features: ["Pro Shift", "Exhaust Brake", "Wide Cab"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Warri"],
+    payloadKg: 8000, clearanceHeight: 3.5,
+  },
+  {
+    id: "hh-015", brand: "Tata", model: "LPT 1518", year: 2020, tier: "heavy-haul", pricePerDay: 70000,
+    images: [img("1586191582151-f73872dfd183"), img("1601584115197-04ecc0da31d7")],
+    status: "available", features: ["Power Steering", "Air Brakes", "Full Chassis"],
+    hubs: ["Lagos", "Kano", "Kaduna", "Port Harcourt"],
+    payloadKg: 10000, clearanceHeight: 3.8,
+  },
 ];
+
