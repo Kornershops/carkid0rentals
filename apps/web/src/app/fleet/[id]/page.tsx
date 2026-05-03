@@ -3,26 +3,8 @@ import { MOCK_FLEET } from "@/data/mock-fleet";
 import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { 
-  Car, 
-  ArrowLeft, 
-  CalendarBlank, 
-  ShieldCheck, 
-  Lightning, 
-  Truck, 
-  LockKey,
-  Gauge,
-  Stack,
-  Clock,
-  ArrowsClockwise,
-  CheckCircle,
-  CaretRight,
-  CaretLeft,
-  MapPin,
-  Buildings,
-  Database
-} from "@phosphor-icons/react";
+import { useState, useCallback } from "react";
+import { ArrowLeft, Clock, ArrowsClockwise, CaretRight, CaretLeft, MapPin, Check, Gauge, Shield, Star } from "@phosphor-icons/react";
 import { RentalDuration, calculatePrice, formatPrice } from "@/lib/pricing";
 import { Logo } from "@/components/ui/logo";
 
@@ -34,187 +16,234 @@ export default function VehicleDetailsPage() {
   const [autoRenew, setAutoRenew] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
 
-  if (!vehicle) {
-    notFound();
-  }
+  if (!vehicle) { notFound(); }
 
   const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
+  const totalPrice = calculatePrice(vehicle.pricePerDay, selectedDuration);
+  const tierLabel = vehicle.tier === 'eco-gig' ? 'Economy' : vehicle.tier === 'heavy-haul' ? 'Logistics' : 'Premium';
+
+  const prevImg = useCallback(() => setCurrentImg(p => p === 0 ? vehicle.images.length - 1 : p - 1), [vehicle.images.length]);
+  const nextImg = useCallback(() => setCurrentImg(p => (p + 1) % vehicle.images.length), [vehicle.images.length]);
 
   return (
-    <main className="min-h-screen bg-background font-inter antialiased">
-      <nav className="fixed top-0 w-full z-50 glass border-b border-border">
-        <div className="pwa-container h-20 flex items-center justify-between">
+    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
+      {/* Nav */}
+      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Logo />
-          <Link href="/fleet" className="btn-secondary h-12 px-6">
-            <ArrowLeft size={18} weight="bold" /> Back to Fleet
+          <Link href="/fleet" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ArrowLeft size={16} weight="bold" /> Back to Fleet
           </Link>
         </div>
       </nav>
 
-      <div className="pwa-container pt-32 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Asset Visualization */}
-          <div className="lg:col-span-7 space-y-8">
-            <div className="relative aspect-video bg-surface border border-border rounded-[48px] overflow-hidden group shadow-2xl">
-              <Image 
-                src={vehicle.images[currentImg]} 
-                alt={vehicle.model} 
-                fill 
-                className="object-cover transition-transform duration-1000"
-                unoptimized
-              />
-              
-              <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
-                  onClick={() => setCurrentImg(prev => prev === 0 ? vehicle.images.length - 1 : prev - 1)}
-                  className="w-14 h-14 bg-background/90 backdrop-blur-xl rounded-[20px] flex items-center justify-center border border-border shadow-2xl hover:bg-primary hover:text-white transition-all"
-                >
-                  <CaretLeft size={24} weight="bold" />
+      <div className="container-wide" style={{ paddingTop: 32, paddingBottom: 64 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }} className="detail-layout">
+
+          {/* ── Image Gallery ─────────────────────────── */}
+          <div>
+            {/* Main Image */}
+            <div style={{
+              position: 'relative', aspectRatio: '16/9', borderRadius: 16, overflow: 'hidden',
+              background: 'var(--bg-surface)', marginBottom: 12,
+            }}>
+              {vehicle.images.map((src, i) => (
+                <Image key={i} src={src} alt={`${vehicle.brand} ${vehicle.model} view ${i + 1}`} fill
+                  style={{ objectFit: 'cover', opacity: i === currentImg ? 1 : 0, transition: 'opacity 0.35s ease', position: 'absolute', inset: 0 }}
+                  unoptimized priority={i === 0}
+                />
+              ))}
+
+              {/* Arrows */}
+              {vehicle.images.length > 1 && (
+                <>
+                  <button onClick={prevImg} aria-label="Previous" style={{ ...arrowStyle, left: 12 }}><CaretLeft size={18} weight="bold" /></button>
+                  <button onClick={nextImg} aria-label="Next" style={{ ...arrowStyle, right: 12 }}><CaretRight size={18} weight="bold" /></button>
+                </>
+              )}
+
+              {/* Dots */}
+              {vehicle.images.length > 1 && (
+                <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
+                  {vehicle.images.map((_, i) => (
+                    <button key={i} onClick={() => setCurrentImg(i)} style={{
+                      width: i === currentImg ? 20 : 8, height: 8, borderRadius: 100, border: 'none', cursor: 'pointer',
+                      background: i === currentImg ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.25s', padding: 0,
+                    }} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnails */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              {vehicle.images.map((src, i) => (
+                <button key={i} onClick={() => setCurrentImg(i)} style={{
+                  position: 'relative', width: 80, height: 56, borderRadius: 10, overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0,
+                  outline: i === currentImg ? '2px solid var(--accent)' : '2px solid transparent',
+                  outlineOffset: 2, transition: 'outline 0.2s',
+                }}>
+                  <Image src={src} alt={`View ${i + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
                 </button>
-                <button 
-                  onClick={() => setCurrentImg(prev => (prev + 1) % vehicle.images.length)}
-                  className="w-14 h-14 bg-background/90 backdrop-blur-xl rounded-[20px] flex items-center justify-center border border-border shadow-2xl hover:bg-primary hover:text-white transition-all"
-                >
-                  <CaretRight size={24} weight="bold" />
-                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Vehicle Info + Booking ─────────────────── */}
+          <div>
+            {/* Header */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                <span className="badge" style={{
+                  background: vehicle.tier === 'elite' ? 'var(--gold)' : vehicle.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
+                  color: vehicle.tier === 'elite' ? '#1a1a1a' : 'white', borderColor: 'transparent',
+                }}>
+                  {tierLabel}
+                </span>
+                <span className="badge" style={{ background: 'rgba(48, 209, 88, 0.1)', color: 'var(--success)', borderColor: 'rgba(48,209,88,0.2)' }}>
+                  <Check size={12} weight="bold" /> {vehicle.status === 'available' ? 'Available Now' : vehicle.status}
+                </span>
               </div>
 
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-                {vehicle.images.map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setCurrentImg(idx)}
-                    className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentImg ? "w-10 bg-primary" : "w-2 bg-white/40"}`}
-                  />
+              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                {vehicle.brand} · {vehicle.year}
+              </p>
+              <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>
+                {vehicle.model}
+              </h1>
+              <p style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <MapPin size={14} weight="bold" style={{ color: 'var(--accent)' }} />
+                Available in {vehicle.hubs.join(', ')}
+              </p>
+            </div>
+
+            {/* Specs Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 28 }}>
+              {vehicle.hp && (
+                <SpecCard icon={<Gauge size={18} weight="bold" />} label="Horsepower" value={`${vehicle.hp} HP`} />
+              )}
+              {vehicle.zeroToSixty && (
+                <SpecCard icon={<Clock size={18} weight="bold" />} label="0-60 mph" value={`${vehicle.zeroToSixty}s`} />
+              )}
+              {vehicle.fuelEfficiency && (
+                <SpecCard icon={<Gauge size={18} weight="bold" />} label="Fuel Economy" value={vehicle.fuelEfficiency} />
+              )}
+              {vehicle.payloadKg && (
+                <SpecCard icon={<Shield size={18} weight="bold" />} label="Payload" value={`${(vehicle.payloadKg / 1000).toFixed(1)}T`} />
+              )}
+              <SpecCard icon={<Star size={18} weight="bold" />} label="Category" value={tierLabel} />
+            </div>
+
+            {/* Features */}
+            <div style={{ marginBottom: 28 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>Features</h3>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {vehicle.features.map((f, i) => (
+                  <span key={i} style={{
+                    fontSize: 12, padding: '5px 12px', borderRadius: 8, fontWeight: 500,
+                    background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
+                  }}>{f}</span>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
-               {vehicle.images.map((img, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setCurrentImg(idx)}
-                    className={`relative aspect-square rounded-[20px] overflow-hidden border-2 transition-all ${idx === currentImg ? "border-primary shadow-xl" : "border-border hover:border-accent"}`}
-                  >
-                    <Image src={img} alt="thumb" fill className="object-cover" unoptimized />
+            {/* ── Booking Card ────────────────────────── */}
+            <div style={{
+              background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)',
+              borderRadius: 16, padding: 24,
+            }}>
+              {/* Duration Selector */}
+              <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Clock size={16} weight="bold" style={{ color: 'var(--accent)' }} /> Rental Duration
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 20 }}>
+                {durations.map(d => (
+                  <button key={d} onClick={() => setSelectedDuration(d)} style={{
+                    height: 44, borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: selectedDuration === d ? 'var(--accent)' : 'var(--bg-surface)',
+                    color: selectedDuration === d ? 'white' : 'var(--text-secondary)',
+                    border: `1px solid ${selectedDuration === d ? 'var(--accent)' : 'var(--border-primary)'}`,
+                  }}>
+                    {d}
                   </button>
-               ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8">
-              <div className="bg-surface border border-border p-6 rounded-[32px]">
-                <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center mb-4">
-                   <Gauge size={20} weight="duotone" className="text-accent" />
-                </div>
-                <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Max Power</p>
-                <p className="text-sm font-black uppercase tracking-tight">{vehicle.hp || "Industrial"}</p>
-              </div>
-              <div className="bg-surface border border-border p-6 rounded-[32px]">
-                <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center mb-4">
-                   <Stack size={20} weight="duotone" className="text-accent" />
-                </div>
-                <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Infrastructure</p>
-                <p className="text-sm font-black uppercase tracking-tight">{vehicle.tier.replace('-', ' ')}</p>
-              </div>
-              <div className="bg-surface border border-border p-6 rounded-[32px]">
-                <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center mb-4">
-                   <LockKey size={20} weight="duotone" className="text-accent" />
-                </div>
-                <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Security</p>
-                <p className="text-sm font-black uppercase tracking-tight">Safe-Halt™</p>
-              </div>
-              <div className="bg-surface border border-border p-6 rounded-[32px]">
-                <div className="w-10 h-10 bg-background border border-border rounded-xl flex items-center justify-center mb-4">
-                   <CheckCircle size={20} weight="duotone" className="text-accent" />
-                </div>
-                <p className="text-[9px] font-black text-muted uppercase tracking-widest mb-1">Status</p>
-                <p className="text-sm font-black uppercase tracking-tight text-success">{vehicle.status}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Booking & Configuration */}
-          <div className="lg:col-span-5">
-            <div className="bg-surface border border-border rounded-[48px] p-10 sticky top-32 shadow-2xl">
-              <div className="flex items-center gap-3 mb-6">
-                 <div className="px-3 py-1 bg-background border border-border rounded-full text-[9px] font-black uppercase tracking-widest text-muted">
-                    {vehicle.brand}
-                 </div>
-                 <div className="px-3 py-1 bg-background border border-border rounded-full text-[9px] font-black uppercase tracking-widest text-success">
-                    Verified Asset
-                 </div>
-              </div>
-              
-              <h1 className="text-5xl font-black tracking-[-0.05em] uppercase text-foreground leading-[0.9] mb-4">
-                {vehicle.model}
-              </h1>
-              <p className="text-[11px] font-bold text-muted uppercase tracking-[0.4em] mb-12 border-l-2 border-accent pl-6">
-                Institutional ID: {vehicle.id} • Terminal: {vehicle.hubs[0]}
-              </p>
-
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-                    <Clock size={18} weight="bold" className="text-accent" /> Configure Mission Duration
-                  </h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    {durations.map((d) => (
-                      <button
-                        key={d}
-                        onClick={() => setSelectedDuration(d)}
-                        className={`h-14 rounded-2xl text-[10px] font-black uppercase tracking-tighter transition-all border ${
-                          selectedDuration === d
-                            ? "bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20"
-                            : "bg-background border-border text-muted hover:border-accent/40"
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
+              {/* Auto-Renew Toggle */}
+              <button onClick={() => setAutoRenew(!autoRenew)} style={{
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border-primary)',
+                background: autoRenew ? 'rgba(48, 209, 88, 0.08)' : 'var(--bg-surface)',
+                cursor: 'pointer', marginBottom: 20, transition: 'all 0.2s',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left' }}>
+                  <ArrowsClockwise size={18} weight="bold" style={{ color: autoRenew ? 'var(--success)' : 'var(--text-tertiary)' }} />
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Auto-Renewal</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Automatically extend when rental expires</p>
                   </div>
                 </div>
-
-                <div className="pt-8 border-t border-border">
-                  <button 
-                    onClick={() => setAutoRenew(!autoRenew)}
-                    className="w-full flex items-center justify-between p-6 bg-background border border-border rounded-[32px] group hover:border-accent/40 transition-all"
-                  >
-                    <div className="flex items-center gap-5">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${autoRenew ? "bg-success text-white shadow-lg shadow-success/20" : "bg-surface text-muted"}`}>
-                        <ArrowsClockwise size={24} weight="bold" className={autoRenew ? "animate-spin-slow" : ""} />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-[11px] font-black uppercase tracking-widest text-foreground">Safe-Extend™ Auto-Renewal</p>
-                        <p className="text-[9px] font-bold text-muted uppercase mt-1">Automatic mission extension on expiry</p>
-                      </div>
-                    </div>
-                    <div className={`w-12 h-6 rounded-full relative transition-all ${autoRenew ? "bg-success" : "bg-border"}`}>
-                      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${autoRenew ? "left-7" : "left-1"}`} />
-                    </div>
-                  </button>
+                <div style={{
+                  width: 44, height: 24, borderRadius: 12, position: 'relative',
+                  background: autoRenew ? 'var(--success)' : 'var(--border-primary)', transition: 'background 0.2s',
+                }}>
+                  <div style={{
+                    width: 18, height: 18, borderRadius: '50%', background: 'white', position: 'absolute', top: 3,
+                    left: autoRenew ? 23 : 3, transition: 'left 0.2s',
+                  }} />
                 </div>
+              </button>
 
-                <div className="pt-8 mt-8 border-t border-border">
-                  <div className="flex items-end justify-between mb-10">
-                    <div>
-                      <p className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-2">Total Infrastructure Commitment</p>
-                      <p className="text-5xl font-black tracking-[-0.06em] text-foreground uppercase">
-                        {formatPrice(calculatePrice(vehicle.pricePerDay, selectedDuration))}
-                      </p>
-                    </div>
-                    <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1 opacity-40">Inc. Fees</p>
+              {/* Price + CTA */}
+              <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
+                  <div>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 2 }}>Total for {selectedDuration}</p>
+                    <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em' }}>{formatPrice(totalPrice)}</span>
                   </div>
-
-                  <Link href="/auth/login" className="btn-primary h-20 w-full text-sm">
-                    Initialize Deployment <CaretRight size={24} weight="bold" />
-                  </Link>
+                  {autoRenew && (
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--success)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <ArrowsClockwise size={12} weight="bold" /> Auto-renews
+                    </span>
+                  )}
                 </div>
+                <Link href="/auth/login" className="btn btn-accent" style={{ width: '100%', height: 48, fontSize: 14, fontWeight: 700 }}>
+                  Book Now <CaretRight size={18} weight="bold" />
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .detail-layout { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 860px) {
+          .detail-layout { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </main>
   );
 }
+
+/* ── Spec Card ───────────────────────────────────────── */
+function SpecCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div style={{
+      background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 12, padding: '12px 14px',
+    }}>
+      <div style={{ color: 'var(--accent)', marginBottom: 6 }}>{icon}</div>
+      <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{label}</p>
+      <p style={{ fontSize: 15, fontWeight: 700 }}>{value}</p>
+    </div>
+  );
+}
+
+/* ── Arrow Style ─────────────────────────────────────── */
+const arrowStyle: React.CSSProperties = {
+  position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 3,
+  width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', cursor: 'pointer',
+  backdropFilter: 'blur(4px)', transition: 'background 0.2s', padding: 0,
+};
