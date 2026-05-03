@@ -1,104 +1,90 @@
 "use client";
+import Link from "next/link";
+import { Clock, Car, MapPin, CurrencyNgn, TrendUp, Gauge } from "@phosphor-icons/react";
+import { Logo } from "@/components/ui/logo";
 
-import { motion } from "framer-motion";
-import { Zap, DollarSign, Target, TrendingUp, Car, BatteryCharging } from "lucide-react";
-
-export default function DriverDashboardPage() {
+export default function DriverDashboard() {
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Driver Workspace</h1>
-        <p className="text-muted">Track your daily shift revenue and rent-to-own progress.</p>
-      </div>
+    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
+      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Logo />
+          <Link href="/" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 12 }}>← Home</Link>
+        </div>
+      </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Active Vehicle Info */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-surface border border-border flex flex-col sm:flex-row items-center gap-8">
-          <div className="w-full sm:w-1/2 aspect-video bg-background rounded-2xl relative overflow-hidden border border-border">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1590362891991-f766f28d8212?w=800&q=80')] bg-cover bg-center" />
-            <div className="absolute top-3 left-3 px-2.5 py-1 bg-yellow-500 text-white rounded text-[10px] font-bold uppercase tracking-wider shadow-lg">
-              Active Shift
+      <div className="container-wide" style={{ paddingTop: 32, paddingBottom: 64, maxWidth: 900 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>Driver Dashboard</h1>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 32 }}>Track your shift, earnings, and vehicle status.</p>
+
+        {/* Active Vehicle */}
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24, marginBottom: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}>
+            <div>
+              <span className="badge badge-accent" style={{ marginBottom: 8 }}>Active Shift</span>
+              <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>Toyota Corolla</h2>
+              <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>License: EKY-123-AB · Eco-Gig Tier</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 2 }}>Time Remaining</p>
+              <p style={{ fontSize: 28, fontWeight: 800, fontFamily: 'monospace', letterSpacing: '-0.02em' }}>06:45:30</p>
             </div>
           </div>
-          <div className="w-full sm:w-1/2 space-y-4">
-            <div>
-              <h2 className="text-2xl font-bold">Toyota Corolla Hybrid</h2>
-              <p className="text-muted">License: EKY-123-AB</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm">
-                <BatteryCharging className="w-4 h-4 text-yellow-500" />
-                <span className="font-mono">22 km/L</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10 }}>
+            {[
+              { icon: <Gauge size={16} weight="bold" />, label: "Fuel Economy", value: "22 km/L" },
+              { icon: <MapPin size={16} weight="bold" />, label: "Current Zone", value: "Lekki, Lagos" },
+              { icon: <Car size={16} weight="bold" />, label: "Odometer", value: "142 km today" },
+            ].map((s, i) => (
+              <div key={i} style={{ background: 'var(--bg-surface)', borderRadius: 10, padding: '10px 12px', border: '1px solid var(--border-primary)' }}>
+                <div style={{ color: 'var(--accent)', marginBottom: 4 }}>{s.icon}</div>
+                <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{s.label}</p>
+                <p style={{ fontSize: 14, fontWeight: 700 }}>{s.value}</p>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Car className="w-4 h-4 text-muted" />
-                <span className="font-mono">Sedan</span>
-              </div>
-            </div>
-            <div className="pt-4 border-t border-border">
-               <p className="text-xs text-muted uppercase tracking-wider mb-1">Time Remaining in Shift</p>
-               <p className="text-xl font-mono font-bold">06:45:30</p>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Financial Quick View */}
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 flex flex-col justify-between">
-          <div>
-            <div className="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4">
-              <DollarSign className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-            </div>
-            <p className="text-sm font-semibold text-muted mb-1">Today's Net Revenue</p>
-            <h3 className="text-4xl font-bold text-foreground">₦12,500</h3>
-            <p className="text-xs text-green-500 mt-2 flex items-center gap-1">
-              <TrendingUp className="w-3 h-3" /> Rental cost covered
+        {/* Earnings */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 14, padding: 20 }}>
+            <div style={{ color: 'var(--accent)', marginBottom: 8 }}><CurrencyNgn size={20} weight="bold" /></div>
+            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 2 }}>Today's Net Revenue</p>
+            <p style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>₦12,500</p>
+            <p style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+              <TrendUp size={12} weight="bold" /> Rental cost covered
             </p>
           </div>
-          
-          <button className="w-full py-3 mt-6 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-yellow-500/20">
-            Log Bolt/Uber Earnings
-          </button>
-        </div>
-      </div>
-
-      {/* Rent-to-Own Tracker */}
-      <div className="p-8 rounded-3xl bg-surface border border-border">
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h2 className="text-xl font-bold mb-1 flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" /> Rent-to-Own Pathway
-            </h2>
-            <p className="text-muted text-sm">You are on track to own this vehicle in 4 months.</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold text-muted">Total Paid</p>
-            <p className="text-2xl font-bold">₦1,250,000</p>
+          <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 14, padding: 20 }}>
+            <div style={{ color: 'var(--accent)', marginBottom: 8 }}><Clock size={20} weight="bold" /></div>
+            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 2 }}>This Week</p>
+            <p style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>₦78,400</p>
+            <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>5 shifts completed</p>
           </div>
         </div>
 
-        <div className="relative pt-6 pb-2">
-          {/* Milestone markers */}
-          <div className="absolute top-0 left-0 w-full flex justify-between px-2">
-            <span className="text-[10px] text-muted font-mono">0%</span>
-            <span className="text-[10px] text-muted font-mono">25%</span>
-            <span className="text-[10px] text-muted font-mono">50%</span>
-            <span className="text-[10px] text-muted font-mono">75%</span>
-            <span className="text-[10px] text-primary font-bold font-mono">100% (Own)</span>
+        {/* Rent-to-Own Progress */}
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Rent-to-Own Progress</h3>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>On track to own this vehicle in 4 months.</p>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)' }}>Total Paid</p>
+              <p style={{ fontSize: 20, fontWeight: 800 }}>₦1,250,000</p>
+            </div>
           </div>
-          
-          <div className="w-full h-4 bg-background rounded-full overflow-hidden border border-border relative">
-             <motion.div 
-               initial={{ width: 0 }}
-               animate={{ width: "65%" }}
-               transition={{ duration: 1.5, ease: "easeOut" }}
-               className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 relative"
-             >
-               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4yKSIvPjwvc3ZnPg==')] opacity-50" />
-             </motion.div>
+          <div style={{ position: 'relative', marginBottom: 8 }}>
+            <div style={{ width: '100%', height: 12, borderRadius: 100, background: 'var(--bg-surface)', overflow: 'hidden' }}>
+              <div style={{ width: '65%', height: '100%', borderRadius: 100, background: 'linear-gradient(90deg, var(--accent), #ff9f43)', transition: 'width 1s ease' }} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)' }}>
+            <span>0%</span><span>25%</span><span>50%</span><span>65% ✓</span><span>100%</span>
           </div>
         </div>
       </div>
-
-    </div>
+    </main>
   );
 }
