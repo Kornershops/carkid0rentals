@@ -55,7 +55,19 @@
 
 @layer components {
   .pwa-container {
-    @apply max-w-7xl mx-auto px-5 sm:px-8 w-full;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .pwa-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
 
   .btn-primary {
