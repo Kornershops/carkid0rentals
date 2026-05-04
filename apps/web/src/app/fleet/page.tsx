@@ -9,6 +9,7 @@ import Image from "next/image";
 import { RentalDuration, calculatePrice } from "@/lib/pricing";
 import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
 import { Logo } from "@/components/ui/logo";
+import { HUB_DATA } from "@/lib/constants";
 
 export default function FleetPage() {
   const { tier, setTier, hub, setHub, country, route, setRoute } = useStore();
@@ -18,15 +19,8 @@ export default function FleetPage() {
 
   const currency = getCurrencyForCountry(country);
 
-  const HUB_DATA: Record<string, string[]> = {
-    Nigeria: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"],
-    Kenya: ["Nairobi"],
-    "South Africa": ["Johannesburg"],
-    Egypt: ["Cairo"],
-    Ghana: ["Accra"],
-  };
 
-  const hubs = HUB_DATA[country] || HUB_DATA.Nigeria;
+  const hubs = HUB_DATA[country] || [];
   const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
 
   const tierOptions = [
