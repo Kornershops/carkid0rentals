@@ -7,19 +7,32 @@ import { CaretRight, MapPin, CalendarBlank, Clock, ShieldCheck, Truck, Lightning
 import { useState } from "react";
 import { useStore } from "@/store/use-store";
 import { Logo } from "@/components/ui/logo";
-import { formatPrice } from "@/lib/pricing";
+import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
 import { RegionSelector } from "@/components/region-selector";
 import { RoleSelector } from "@/components/role-selector";
+import { HUB_DATA, ALL_HUBS } from "@/lib/constants";
+import { VehicleTier } from "@/data/mock-fleet";
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } } };
 
 export default function Home() {
-  const { hub, setHub } = useStore();
-  const [selectedHub, setSelectedHub] = useState(hub);
+  const { hub, setHub, country, role } = useStore();
+  const [pickupDate, setPickupDate] = useState("");
 
-  const hubs = ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"] as const;
-  const featured = MOCK_FLEET.filter(v => v.hubs.includes(selectedHub)).slice(0, 6);
+  const hubsInCountry = HUB_DATA[country] || [];
+  
+  // Smart Content: Filter featured fleet based on Role
+  const featured = MOCK_FLEET.filter(v => {
+    const isLocal = v.hubs.includes(hub);
+    if (!isLocal) return false;
+    
+    if (role === 'driver') return v.tier === 'eco-gig';
+    if (role === 'logistics') return v.tier === 'heavy-haul';
+    return v.tier === 'elite' || v.tier === 'eco-gig'; // Standard customer
+  }).slice(0, 6);
+
+  const currency = getCurrencyForCountry(country);
 
   return (
     <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
@@ -106,15 +119,15 @@ export default function Home() {
                   }}>
                     <MapPin size={16} weight="bold" style={{ color: 'var(--accent)' }} />
                     <select
-                      value={selectedHub}
-                      onChange={e => { setSelectedHub(e.target.value as any); setHub(e.target.value as any); }}
+                      value={hub}
+                      onChange={e => setHub(e.target.value as any)}
                       style={{
                         background: 'transparent', border: 'none', color: 'var(--text-primary)',
                         fontSize: 14, fontWeight: 500, outline: 'none', width: '100%',
                         fontFamily: 'var(--font-body)', cursor: 'pointer',
                       }}
                     >
-                      {hubs.map(h => <option key={h} value={h} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>{h}</option>)}
+                      {hubsInCountry.map(h => <option key={h} value={h} style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)' }}>{h}</option>)}
                     </select>
                   </div>
                 </div>
@@ -130,7 +143,16 @@ export default function Home() {
                     borderRadius: 10, padding: '10px 14px',
                   }}>
                     <CalendarBlank size={16} weight="bold" style={{ color: 'var(--accent)' }} />
-                    <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select date</span>
+                    <input 
+                      type="date" 
+                      value={pickupDate}
+                      onChange={e => setPickupDate(e.target.value)}
+                      style={{
+                        background: 'transparent', border: 'none', color: 'var(--text-primary)',
+                        fontSize: 14, fontWeight: 500, outline: 'none', width: '100%',
+                        fontFamily: 'var(--font-body)', cursor: 'pointer',
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -146,7 +168,7 @@ export default function Home() {
               {[
                 { icon: <ShieldCheck size={16} weight="bold" />, text: "Verified fleet" },
                 { icon: <Clock size={16} weight="bold" />, text: "30 min — 7 day rentals" },
-                { icon: <MapPin size={16} weight="bold" />, text: `${hubs.length} cities` },
+                { icon: <MapPin size={16} weight="bold" />, text: `${ALL_HUBS.length} hubs across 5 countries` },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500 }}>
                   <span style={{ color: 'var(--accent)' }}>{item.icon}</span>
@@ -194,7 +216,7 @@ export default function Home() {
                 Featured Vehicles
               </h2>
               <p style={{ fontSize: 15, color: 'var(--text-secondary)', maxWidth: 400 }}>
-                {featured.length} vehicles available in {selectedHub}. Browse our full fleet for more options.
+                {featured.length} {role === 'driver' ? 'gig-ready' : role === 'logistics' ? 'logistics' : 'premium'} vehicles available in {hub}.
               </p>
             </div>
             <Link href="/fleet" className="btn btn-outline" style={{ height: 44, padding: '0 24px' }}>
@@ -237,7 +259,7 @@ export default function Home() {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-primary)' }}>
                         <div>
-                          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(v.pricePerDay)}</span>
+                          <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(v.pricePerDay, currency)}</span>
                           <span style={{ fontSize: 13, color: 'var(--text-tertiary)', marginLeft: 4 }}>/day</span>
                         </div>
                         <div style={{
@@ -268,8 +290,8 @@ export default function Home() {
             </div>
             {[
               { title: "Platform", links: ["Our Fleet", "Pricing", "Locations", "For Business"] },
-              { title: "Company", links: ["About Us", "Careers", "Press", "Contact"] },
-              { title: "Locations", links: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"] },
+              { title: "Company", links: ["About Us", "Legal Hub", "Technical Specs", "Partner Portal"] },
+              { title: "Hubs", links: ["Lagos", "Nairobi", "Johannesburg", "Cairo", "Accra"] },
             ].map((col, i) => (
               <div key={i}>
                 <h4 style={{ fontSize: 13, fontWeight: 700, marginBottom: 20, color: 'var(--text-primary)' }}>{col.title}</h4>

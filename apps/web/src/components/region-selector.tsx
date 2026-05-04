@@ -4,14 +4,7 @@ import { useStore, OperatingCountry, OperatingHub } from "@/store/use-store";
 import { MapPin, Globe, CaretDown, Check } from "@phosphor-icons/react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const COUNTRIES: Record<OperatingCountry, OperatingHub[]> = {
-  Nigeria: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri"],
-  Kenya: ["Nairobi"],
-  "South Africa": ["Johannesburg"],
-  Egypt: ["Cairo"],
-  Ghana: ["Accra"],
-};
+import { HUB_DATA } from "@/lib/constants";
 
 export function RegionSelector() {
   const { country, hub, setCountry, setHub } = useStore();
@@ -95,12 +88,12 @@ export function RegionSelector() {
 
               <div style={{ padding: 8, maxHeight: 300, overflowY: 'auto' }}>
                 {activeTab === "country" ? (
-                  Object.keys(COUNTRIES).map((c) => (
+                  Object.keys(HUB_DATA).map((c) => (
                     <button
                       key={c}
                       onClick={() => {
                         setCountry(c as OperatingCountry);
-                        setHub(COUNTRIES[c as OperatingCountry][0]);
+                        setHub(HUB_DATA[c as OperatingCountry][0]);
                         setActiveTab("city");
                       }}
                       style={{ 
@@ -117,7 +110,7 @@ export function RegionSelector() {
                     </button>
                   ))
                 ) : (
-                  COUNTRIES[country].map((h) => (
+                  HUB_DATA[country].map((h) => (
                     <button
                       key={h}
                       onClick={() => {

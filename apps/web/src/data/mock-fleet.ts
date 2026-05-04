@@ -20,7 +20,7 @@ export interface Vehicle {
 }
 
 export const MOCK_FLEET: Vehicle[] = [
-  // --- NIGERIA (Lagos, Abuja) - REAL ASSETS ---
+  // --- ECO-GIG SEGMENT (Ride-Hailing & Daily) ---
   {
     id: "ng-eg-in-01",
     brand: "Innoson",
@@ -28,31 +28,11 @@ export const MOCK_FLEET: Vehicle[] = [
     year: 2023,
     tier: "eco-gig",
     pricePerDay: 40,
-    images: [
-      "/fleet/innoson/white Innoson IVM EX02.png",
-      "/fleet/innoson/yellow Innoson IVM EX02.png",
-      "/fleet/innoson/back view yellow Innoson IVM EX02.png"
-    ],
-    features: ["Locally Manufactured", "Rugged Chassis", "Low Fuel Consumption", "Perfect for Ride-Hailing"],
-    hubs: ["Lagos", "Abuja", "Enugu"],
-    countries: ["Nigeria"],
+    images: ["/fleet/innoson/white-innoson-ivm-ex02.png", "/fleet/innoson/yellow-innoson-ivm-ex02.png"],
+    features: ["Locally Manufactured", "Rugged Chassis", "Low Fuel Consumption"],
+    hubs: ["Lagos", "Abuja", "Enugu", "Accra"],
+    countries: ["Nigeria", "Ghana"],
     status: "available",
-    fuelEfficiency: "15km/L"
-  },
-  {
-    id: "ng-eg-sg-01",
-    brand: "Saglev",
-    model: "S5 Sedan EV",
-    year: 2024,
-    tier: "eco-gig",
-    pricePerDay: 45,
-    images: ["/fleet/saglev/images.jpg", "/fleet/saglev/2images.jpg"],
-    features: ["100% Electric", "Fast Charging", "Silent Drive", "Modern Interior"],
-    hubs: ["Lagos"],
-    countries: ["Nigeria"],
-    isEV: true,
-    status: "available",
-    hp: 150
   },
   {
     id: "ng-eg-wb-01",
@@ -61,37 +41,12 @@ export const MOCK_FLEET: Vehicle[] = [
     year: 2024,
     tier: "eco-gig",
     pricePerDay: 35,
-    images: [
-      "/fleet/wuling/Blue Wuling Bingo EV.png",
-      "/fleet/wuling/Green Wuling Bingo EV.png",
-      "/fleet/wuling/White Wuling Bingo EVfrontview.png",
-      "/fleet/wuling/Interior Wuling Bingo EV.png"
-    ],
-    features: ["Ultra Compact", "Smart Connect", "Zero Emissions", "City Specialist"],
-    hubs: ["Lagos", "Abuja"],
-    countries: ["Nigeria"],
+    images: ["/fleet/wuling/blue-wuling-bingo-ev.png", "/fleet/wuling/green-wuling-bingo-ev.png"],
+    features: ["Ultra Compact", "Smart Connect", "Zero Emissions"],
+    hubs: ["Lagos", "Abuja", "Nairobi", "Cairo"],
+    countries: ["Nigeria", "Kenya", "Egypt"],
     isEV: true,
     status: "available"
-  },
-  {
-    id: "ng-hh-jm-01",
-    brand: "Jet Motor",
-    model: "Mover EV",
-    year: 2023,
-    tier: "heavy-haul",
-    pricePerDay: 180,
-    images: [
-      "/fleet/jet-motor/sideview White Jet Mover EV Logistics Van.png",
-      "/fleet/jet-motor/Backview White Jet Mover EV Logistics Van.png",
-      "/fleet/jet-motor/Interior White Jet Mover EV Logistics Van.png",
-      "/fleet/jet-motor/sideview open door Jet Mover EV Logistics Van.png"
-    ],
-    features: ["Electric Cargo Van", "High Payload", "Fleet Telemetry", "Cross-Border Ready"],
-    hubs: ["Lagos", "Abuja"],
-    countries: ["Nigeria", "Ghana"],
-    isEV: true,
-    status: "available",
-    payloadKg: 1500
   },
   {
     id: "ng-eg-tc-01",
@@ -100,107 +55,96 @@ export const MOCK_FLEET: Vehicle[] = [
     year: 2010,
     tier: "eco-gig",
     pricePerDay: 30,
-    images: ["/fleet/toyota/corolla/2010 Corolla White.png", "/fleet/toyota/corolla/Grey Corolla.png"],
-    features: ["Gold Standard Reliability", "Parts Everywhere", "Budget Friendly", "Lagos Favorite"],
-    hubs: ["Lagos", "Abuja", "PH", "Kano"],
-    countries: ["Nigeria"],
+    images: ["/fleet/toyota/corolla/2010-corolla-white.png", "/fleet/toyota/corolla/grey-corolla.png"],
+    features: ["Gold Standard Reliability", "Budget Friendly"],
+    hubs: ["Lagos", "Abuja", "Port Harcourt", "Kano", "Kaduna", "Enugu", "Warri", "Accra"],
+    countries: ["Nigeria", "Ghana"],
     status: "available"
   },
   {
-    id: "ng-eg-tm-01",
-    brand: "Toyota",
-    model: "Corolla (Modern)",
-    year: 2015,
-    tier: "eco-gig",
-    pricePerDay: 42,
-    images: ["/fleet/toyota/corolla/2015 Corolla Red.png", "/fleet/toyota/corolla/2014 Red Corolla.png"],
-    features: ["Modern Design", "Bluetooth", "Spacious Interior", "Premium Ride-Hailing"],
-    hubs: ["Lagos", "Abuja"],
-    countries: ["Nigeria"],
-    status: "available"
-  },
-
-  // --- KENYA (Nairobi) ---
-  {
-    id: "ke-eg-001",
-    brand: "Toyota",
-    model: "Vitz",
-    year: 2020,
-    tier: "eco-gig",
-    pricePerDay: 40,
-    images: ["/fleet/vitz-1.jpg"],
-    features: ["Ultra Fuel Efficient", "Easy Parking", "Hybrid Option"],
-    hubs: ["Nairobi"],
-    countries: ["Kenya"],
-    status: "available"
-  },
-  {
-    id: "ke-el-001",
-    brand: "Toyota",
-    model: "Land Cruiser V8",
-    year: 2023,
-    tier: "elite",
-    pricePerDay: 280,
-    images: ["/fleet/v8-1.jpg"],
-    features: ["4WD", "Safari Ready", "VIP Protection", "Leather Seats"],
-    hubs: ["Nairobi"],
-    countries: ["Kenya"],
-    status: "available"
-  },
-
-  // --- SOUTH AFRICA (Johannesburg) ---
-  {
-    id: "sa-eg-001",
+    id: "sa-eg-01",
     brand: "VW",
     model: "Polo Vivo",
     year: 2023,
     tier: "eco-gig",
     pricePerDay: 45,
-    images: ["/fleet/polo-1.jpg"],
-    features: ["Popular Choice", "Fuel Efficient", "Modern Infotainment"],
-    hubs: ["Johannesburg"],
-    countries: ["South Africa"],
-    status: "available"
-  },
-  {
-    id: "sa-el-001",
-    brand: "Porsche",
-    model: "911 Carrera",
-    year: 2023,
-    tier: "elite",
-    pricePerDay: 650,
-    images: ["/fleet/porsche-911.jpg"],
-    features: ["Sport Mode", "Convertible", "High Performance"],
+    images: ["/fleet/toyota/corolla/2010-corolla-white.png"], 
+    features: ["SA Favorite", "Fuel Efficient", "Modern Infotainment"],
     hubs: ["Johannesburg"],
     countries: ["South Africa"],
     status: "available"
   },
 
-  // --- GHANA (Accra) ---
+  // --- ELITE SEGMENT (Exotic & Executive) ---
   {
-    id: "gh-eg-001",
-    brand: "Kia",
-    model: "Picanto",
-    year: 2021,
-    tier: "eco-gig",
-    pricePerDay: 30,
-    images: ["/fleet/picanto-1.jpg"],
-    features: ["Economy King", "City Friendly", "Low Rent"],
-    hubs: ["Accra"],
-    countries: ["Ghana"],
+    id: "ng-el-sg-01",
+    brand: "Saglev",
+    model: "S5 Sedan EV",
+    year: 2024,
+    tier: "elite",
+    pricePerDay: 150,
+    images: ["/fleet/saglev/images.jpg", "/fleet/saglev/2images.jpg"],
+    features: ["100% Electric", "Fast Charging", "Silent Drive", "Executive Comfort"],
+    hubs: ["Lagos", "Abuja", "Nairobi", "Johannesburg", "Cairo", "Accra"],
+    countries: ["Nigeria", "Kenya", "South Africa", "Egypt", "Ghana"],
+    isEV: true,
     status: "available"
   },
   {
-    id: "gh-hh-001",
+    id: "ke-el-01",
+    brand: "Toyota",
+    model: "Land Cruiser V8",
+    year: 2023,
+    tier: "elite",
+    pricePerDay: 280,
+    images: ["/fleet/toyota/corolla/2014-red-corolla.png"], 
+    features: ["4WD", "Safari Ready", "VIP Protection"],
+    hubs: ["Nairobi", "Lagos", "Abuja", "Johannesburg"],
+    countries: ["Kenya", "Nigeria", "South Africa"],
+    status: "available"
+  },
+  {
+    id: "sa-el-01",
+    brand: "Porsche",
+    model: "911 Carrera",
+    year: 2023,
+    tier: "elite",
+    pricePerDay: 650,
+    images: ["/fleet/toyota/corolla/2015-corolla-red.png"],
+    features: ["Sport Mode", "High Performance", "Iconic Status"],
+    hubs: ["Johannesburg", "Cairo"],
+    countries: ["South Africa", "Egypt"],
+    status: "available"
+  },
+
+  // --- HEAVY-HAUL SEGMENT (Logistics & Haulage) ---
+  {
+    id: "ng-hh-jm-01",
+    brand: "Jet Motor",
+    model: "Mover EV",
+    year: 2023,
+    tier: "heavy-haul",
+    pricePerDay: 180,
+    images: ["/fleet/jet-motor/sideview-white-jet-mover-ev-logistics-van.png", "/fleet/jet-motor/interior-white-jet-mover-ev-logistics-van.png"],
+    features: ["Electric Cargo Van", "High Payload", "Fleet Telemetry"],
+    hubs: ["Lagos", "Abuja", "Nairobi", "Johannesburg", "Cairo", "Accra"],
+    countries: ["Nigeria", "Kenya", "South Africa", "Egypt", "Ghana"],
+    isEV: true,
+    status: "available",
+    payloadKg: 1500
+  },
+  {
+    id: "gh-hh-01",
     brand: "Sinotruk",
     model: "Howo Tipper",
     year: 2021,
     tier: "heavy-haul",
     pricePerDay: 220,
-    images: ["/fleet/howo-1.jpg"],
+    images: ["/fleet/jet-motor/backview-white-jet-mover-ev-logistics-van.png"], 
     features: ["Mining Ready", "6x4 Drive", "Heavy Payload"],
-    hubs: ["Accra"],
-    countries: ["Ghana"],
-    status: "available"
-  },
+    hubs: ["Accra", "Lagos", "Port Harcourt", "Johannesburg"],
+    countries: ["Ghana", "Nigeria", "South Africa"],
+    status: "available",
+    payloadKg: 35000
+  }
 ];
