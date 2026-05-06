@@ -31,28 +31,34 @@ export function EnhancedDatePicker({ value, onChange, label, placeholder = "Sele
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const renderHeader = () => {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid var(--border-primary)' }}>
-        <button onClick={() => setCurrentMonth(subMonths(currentMonth, 1))} className="btn-icon">
-          <CaretLeft size={16} weight="bold" />
-        </button>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-          {format(currentMonth, "MMMM yyyy")}
-        </span>
-        <button onClick={() => setCurrentMonth(addMonths(currentMonth, 1))} className="btn-icon">
-          <CaretRight size={16} weight="bold" />
-        </button>
-      </div>
-    );
-  };
+  const renderHeader = () => (
+    <div className="flex justify-between items-center px-4 py-3 border-b border-white/5 bg-white/5">
+      <button 
+        type="button"
+        onClick={(e) => { e.stopPropagation(); setCurrentMonth(subMonths(currentMonth, 1)); }} 
+        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 text-slate-400 transition-colors"
+      >
+        <CaretLeft size={16} weight="bold" />
+      </button>
+      <span className="text-xs font-black uppercase tracking-widest text-white">
+        {format(currentMonth, "MMMM yyyy")}
+      </span>
+      <button 
+        type="button"
+        onClick={(e) => { e.stopPropagation(); setCurrentMonth(addMonths(currentMonth, 1)); }} 
+        className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 text-slate-400 transition-colors"
+      >
+        <CaretRight size={16} weight="bold" />
+      </button>
+    </div>
+  );
 
   const renderDays = () => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', padding: '8px 12px' }}>
+      <div className="grid grid-cols-7 px-3 py-2 border-b border-white/5">
         {days.map(day => (
-          <div key={day} style={{ textAlign: 'center', fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>
+          <div key={day} className="text-[9px] font-black text-slate-500 text-center uppercase tracking-tighter">
             {day}
           </div>
         ))}
@@ -69,86 +75,69 @@ export function EnhancedDatePicker({ value, onChange, label, placeholder = "Sele
     const rows = [];
     let days = [];
     let day = startDate;
-    let formattedDate = "";
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
-        formattedDate = format(day, "d");
         const cloneDay = day;
         const isDisabled = isBefore(day, today);
         const isSelected = selectedDate && isSameDay(day, selectedDate);
         const isCurrentMonth = isSameMonth(day, monthStart);
+        const isToday = isSameDay(day, today);
 
         days.push(
-          <div
+          <button
             key={day.toString()}
-            onClick={() => {
+            type="button"
+            disabled={isDisabled}
+            onClick={(e) => {
+              e.stopPropagation();
               if (!isDisabled) {
                 onChange(format(cloneDay, "yyyy-MM-dd"));
                 setIsOpen(false);
               }
             }}
-            style={{
-              height: 36,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: isDisabled ? 'default' : 'pointer',
-              fontSize: 13,
-              fontWeight: isSelected ? 700 : 500,
-              borderRadius: 8,
-              transition: 'all 0.2s',
-              color: isDisabled 
-                ? 'var(--text-tertiary)' 
-                : !isCurrentMonth 
-                  ? 'var(--text-tertiary)' 
-                  : isSelected 
-                    ? 'white' 
-                    : 'var(--text-primary)',
-              background: isSelected ? 'var(--accent)' : 'transparent',
-              opacity: isDisabled ? 0.3 : 1,
-              position: 'relative'
-            }}
-            className={!isDisabled ? "hover-bg" : ""}
+            className={`
+              relative h-10 flex items-center justify-center text-xs font-bold rounded-lg transition-all
+              ${isDisabled ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/10 cursor-pointer'}
+              ${isSelected ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : ''}
+              ${!isCurrentMonth && !isSelected ? 'text-slate-600' : 'text-slate-200'}
+            `}
           >
-            <span>{formattedDate}</span>
-            {isSameDay(day, today) && !isSelected && (
-              <div style={{ position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: '50%', background: 'var(--accent)' }} />
+            <span className="relative z-10">{format(day, "d")}</span>
+            {isToday && !isSelected && (
+              <div className="absolute bottom-1.5 w-1 h-1 rounded-full bg-indigo-500" />
             )}
-          </div>
+          </button>
         );
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day.toString()} style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        <div key={day.toString()} className="grid grid-cols-7 gap-1">
           {days}
         </div>
       );
       days = [];
     }
-    return <div style={{ padding: '0 12px 12px' }}>{rows}</div>;
+    return <div className="p-3 space-y-1">{rows}</div>;
   };
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
+    <div ref={containerRef} className="relative w-full">
       {label && (
-        <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6, display: 'block' }}>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 block">
           {label}
         </label>
       )}
       
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
-          borderRadius: 12, padding: '12px 14px', cursor: 'pointer',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-        className={isOpen ? "border-accent shadow-sm" : ""}
+        className={`
+          flex items-center gap-4 bg-white/5 border rounded-2xl px-5 py-4 cursor-pointer transition-all
+          ${isOpen ? 'border-indigo-500/50 bg-white/10 shadow-lg shadow-indigo-500/10' : 'border-white/10 hover:border-white/20'}
+        `}
       >
-        <CalendarBlank size={18} weight="bold" style={{ color: isOpen ? 'var(--accent)' : 'var(--text-tertiary)' }} />
-        <span style={{ fontSize: 14, fontWeight: 500, color: selectedDate ? 'var(--text-primary)' : 'var(--text-tertiary)', flex: 1 }}>
+        <CalendarBlank size={20} className={isOpen ? 'text-indigo-400' : 'text-slate-400'} />
+        <span className={`text-sm font-bold flex-1 ${selectedDate ? 'text-white' : 'text-slate-500'}`}>
           {selectedDate ? format(selectedDate, "MMM d, yyyy") : placeholder}
         </span>
       </div>
@@ -156,22 +145,11 @@ export function EnhancedDatePicker({ value, onChange, label, placeholder = "Sele
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            initial={{ opacity: 0, y: 12, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              position: 'absolute',
-              top: 'calc(100% + 8px)',
-              left: 0,
-              zIndex: 100,
-              width: 300,
-              background: 'var(--bg-primary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 16,
-              boxShadow: 'var(--shadow-xl)',
-              overflow: 'hidden'
-            }}
+            exit={{ opacity: 0, y: 12, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-[calc(100%+12px)] left-0 z-[100] w-[320px] glass bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden"
           >
             {renderHeader()}
             {renderDays()}
@@ -179,16 +157,6 @@ export function EnhancedDatePicker({ value, onChange, label, placeholder = "Sele
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style>{`
-        .btn-icon {
-          width: 32, height: 32, borderRadius: 8, display: flex, alignItems: center, justifyContent: center,
-          background: transparent, border: none, color: var(--text-secondary), cursor: pointer, transition: all 0.2s;
-        }
-        .btn-icon:hover { background: var(--bg-surface); color: var(--accent); }
-        .hover-bg:hover { background: var(--bg-surface); }
-        .border-accent { border-color: var(--accent) !important; }
-      `}</style>
     </div>
   );
 }

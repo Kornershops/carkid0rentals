@@ -1,208 +1,267 @@
 "use client";
+
 import { MOCK_FLEET } from "@/data/mock-fleet";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { useState, useCallback } from "react";
-import { ArrowLeft, Clock, ArrowsClockwise, CaretRight, CaretLeft, MapPin, Check, Gauge, Shield, Star } from "@phosphor-icons/react";
-import { RentalDuration, calculatePrice, formatPrice } from "@/lib/pricing";
+import { useState, useCallback, useEffect } from "react";
+import { 
+  ArrowLeft, Clock, ArrowsClockwise, CaretRight, 
+  CaretLeft, MapPin, Check, Gauge, ShieldCheck, 
+  Star, Lightning, Package, Trophy, Globe
+} from "@phosphor-icons/react";
+import { RentalDuration, calculatePrice } from "@/lib/pricing";
+import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
+import { useStore } from "@/store/use-store";
 import { Logo } from "@/components/ui/logo";
 import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
+import { BlurImage } from "@/components/ui/blur-image";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function VehicleDetailClient() {
   const params = useParams();
   const id = params.id as string;
+  const { country } = useStore();
   const vehicle = MOCK_FLEET.find((v) => v.id === id);
+  
   const [selectedDuration, setSelectedDuration] = useState<RentalDuration>("24 Hours");
   const [startDate, setStartDate] = useState("");
-  const [autoRenew, setAutoRenew] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
+
+  // Scroll to top on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.scrollTo(0, 0);
+  }, []);
 
   if (!vehicle) {
     return (
-      <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Vehicle Not Found</h1>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>This vehicle doesn't exist or has been removed.</p>
-          <Link href="/fleet" className="btn btn-accent" style={{ height: 40, padding: '0 24px', fontSize: 13 }}>Back to Fleet</Link>
+      <main className="min-h-screen bg-[#050505] flex items-center justify-center p-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-black mb-4 tracking-tighter">Vehicle Not Found</h1>
+          <p className="text-slate-500 mb-8">The requested asset is not available in our registry.</p>
+          <Link href="/fleet" className="btn btn-accent px-8 h-12">Return to Fleet</Link>
         </div>
       </main>
     );
   }
 
-  const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
+  const currency = getCurrencyForCountry(country);
   const totalPrice = calculatePrice(vehicle.pricePerDay, selectedDuration);
-  const tierLabel = vehicle.tier === 'eco-gig' ? 'Economy' : vehicle.tier === 'heavy-haul' ? 'Logistics' : 'Premium';
+  const durations: RentalDuration[] = ["1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
 
-  const prevImg = useCallback(() => setCurrentImg(p => p === 0 ? vehicle.images.length - 1 : p - 1), [vehicle.images.length]);
-  const nextImg = useCallback(() => setCurrentImg(p => (p + 1) % vehicle.images.length), [vehicle.images.length]);
+  const prevImg = () => setCurrentImg(p => p === 0 ? vehicle.images.length - 1 : p - 1);
+  const nextImg = () => setCurrentImg(p => (p + 1) % vehicle.images.length);
 
   return (
-    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
-      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
-        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <main className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30">
+      {/* --- Navigation --- */}
+      <nav className="glass fixed top-0 w-full z-50 border-b border-white/5 h-20">
+        <div className="container-wide h-full flex items-center justify-between">
           <Logo />
-          <Link href="/fleet" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ArrowLeft size={16} weight="bold" /> Back to Fleet
+          <Link href="/fleet" className="btn btn-outline h-11 px-6 flex items-center gap-2">
+            <ArrowLeft size={18} weight="bold" />
+            <span className="hidden sm:inline">Fleet Registry</span>
           </Link>
         </div>
       </nav>
 
-      <div className="container-wide" style={{ paddingTop: 32, paddingBottom: 64 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }} className="detail-layout">
-          <div>
-            <div style={{ position: 'relative', aspectRatio: '16/9', borderRadius: 16, overflow: 'hidden', background: 'var(--bg-surface)', marginBottom: 12 }}>
-              {vehicle.images.map((img, i) => (
-                <Image key={i} src={img.path} alt={img.altText} fill
-                  style={{ objectFit: 'cover', opacity: i === currentImg ? 1 : 0, transition: 'opacity 0.35s ease', position: 'absolute', inset: 0 }}
-                  placeholder={img.blurHash ? "blur" : "empty"}
-                  blurDataURL={img.blurHash}
-                />
-              ))}
+      <div className="container-wide pt-32 pb-24">
+        <div className="grid lg:grid-cols-[1.4fr_1fr] gap-12 lg:gap-20 items-start">
+          
+          {/* Left: Cinematic Visuals */}
+          <div className="space-y-8">
+            <div className="relative aspect-[16/10] md:aspect-[16/9] rounded-[2.5rem] overflow-hidden border border-white/5 bg-white/5 shadow-2xl">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentImg}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0"
+                >
+                  <BlurImage
+                    src={vehicle.images[currentImg].path}
+                    alt={vehicle.images[currentImg].altText}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Navigation Arrows */}
               {vehicle.images.length > 1 && (
-                <>
-                  <button onClick={prevImg} aria-label="Previous" style={{ ...arrowStyle, left: 12 }}><CaretLeft size={18} weight="bold" /></button>
-                  <button onClick={nextImg} aria-label="Next" style={{ ...arrowStyle, right: 12 }}><CaretRight size={18} weight="bold" /></button>
-                </>
-              )}
-              {vehicle.images.length > 1 && (
-                <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
-                  {vehicle.images.map((_, i) => (
-                    <button key={i} onClick={() => setCurrentImg(i)} style={{
-                      width: i === currentImg ? 20 : 8, height: 8, borderRadius: 100, border: 'none', cursor: 'pointer',
-                      background: i === currentImg ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.25s', padding: 0,
-                    }} />
-                  ))}
+                <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between z-10">
+                  <button onClick={prevImg} className="w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                    <CaretLeft size={20} weight="bold" />
+                  </button>
+                  <button onClick={nextImg} className="w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                    <CaretRight size={20} weight="bold" />
+                  </button>
                 </div>
               )}
+
+              {/* Progress Indicators */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {vehicle.images.map((_, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setCurrentImg(i)}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${i === currentImg ? 'w-8 bg-white' : 'w-2 bg-white/30'}`}
+                  />
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+
+            {/* Thumbnail Strip */}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
               {vehicle.images.map((img, i) => (
-                <button key={i} onClick={() => setCurrentImg(i)} style={{
-                  position: 'relative', width: 80, height: 56, borderRadius: 10, overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0,
-                  outline: i === currentImg ? '2px solid var(--accent)' : '2px solid transparent', outlineOffset: 2, transition: 'outline 0.2s',
-                }}>
-                  <Image src={img.path} alt={`View ${i + 1}`} fill style={{ objectFit: 'cover' }} />
+                <button
+                  key={i}
+                  onClick={() => setCurrentImg(i)}
+                  className={`
+                    relative flex-shrink-0 w-24 h-16 rounded-xl overflow-hidden border-2 transition-all duration-300
+                    ${i === currentImg ? 'border-indigo-500 scale-105 shadow-lg shadow-indigo-500/20' : 'border-transparent opacity-50 hover:opacity-100'}
+                  `}
+                >
+                  <div className="relative w-full h-full">
+                    <BlurImage src={img.path} alt="" fill className="object-cover" shimmer={false} />
+                  </div>
                 </button>
               ))}
             </div>
-          </div>
 
-          <div>
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                <span className="badge" style={{ background: vehicle.tier === 'elite' ? 'var(--gold)' : vehicle.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)', color: vehicle.tier === 'elite' ? '#1a1a1a' : 'white', borderColor: 'transparent' }}>{tierLabel}</span>
-                <span className="badge" style={{ background: 'rgba(48, 209, 88, 0.1)', color: 'var(--success)', borderColor: 'rgba(48,209,88,0.2)' }}>
-                  <Check size={12} weight="bold" /> {vehicle.status === 'available' ? 'Available Now' : vehicle.status}
-                </span>
-              </div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{vehicle.brand} · {vehicle.year}</p>
-              <h1 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 8 }}>{vehicle.model}</h1>
-              <p style={{ fontSize: 14, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <MapPin size={14} weight="bold" style={{ color: 'var(--accent)' }} /> Available in {vehicle.hubs.join(', ')}
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 28 }}>
-              {vehicle.hp && <SpecCard icon={<Gauge size={18} weight="bold" />} label="Horsepower" value={`${vehicle.hp} HP`} />}
-              {vehicle.zeroToSixty && <SpecCard icon={<Clock size={18} weight="bold" />} label="0-60 mph" value={`${vehicle.zeroToSixty}s`} />}
-              {vehicle.fuelEfficiency && <SpecCard icon={<Gauge size={18} weight="bold" />} label="Fuel Economy" value={vehicle.fuelEfficiency} />}
-              {vehicle.payloadKg && <SpecCard icon={<Shield size={18} weight="bold" />} label="Payload" value={`${(vehicle.payloadKg / 1000).toFixed(1)}T`} />}
-              <SpecCard icon={<Star size={18} weight="bold" />} label="Category" value={tierLabel} />
-            </div>
-
-            <div style={{ marginBottom: 28 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>Features</h3>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {/* Features & Narrative */}
+            <div className="pt-8 border-t border-white/5">
+              <h2 className="text-sm font-black uppercase tracking-widest text-slate-500 mb-6">Standard Configuration</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
                 {vehicle.features.map((f, i) => (
-                  <span key={i} style={{ fontSize: 12, padding: '5px 12px', borderRadius: 8, fontWeight: 500, background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)' }}>{f}</span>
+                  <div key={i} className="flex items-center gap-3 p-4 glass rounded-2xl border-white/5">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                      <Check size={16} weight="bold" />
+                    </div>
+                    <span className="text-sm font-bold text-slate-300">{f}</span>
+                  </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24 }}>
-              <div style={{ marginBottom: 20 }}>
+          {/* Right: Institutional Intelligence */}
+          <div className="space-y-8 lg:sticky lg:top-28">
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-3">
+                <span className={`
+                  px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md
+                  ${vehicle.tier === 'elite' ? 'bg-amber-500/90 text-black' : 
+                    vehicle.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
+                    'bg-indigo-600/90 text-white'}
+                `}>
+                  {vehicle.tier.replace('-', ' ')}
+                </span>
+                <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/5 border border-white/10 text-emerald-400 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Inventory
+                </span>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none">{vehicle.brand} {vehicle.model}</h1>
+              
+              <div className="flex items-center gap-6 text-slate-400">
+                <div className="flex items-center gap-2 text-sm font-bold">
+                  <MapPin size={18} className="text-indigo-500" />
+                  {vehicle.hubs.join(', ')} Hubs
+                </div>
+                <div className="flex items-center gap-2 text-sm font-bold text-indigo-400">
+                  <Globe size={18} />
+                  Pan-African Standardized
+                </div>
+              </div>
+            </div>
+
+            {/* Technical Spec Matrix */}
+            <div className="grid grid-cols-2 gap-4">
+              <SpecBox icon={<Gauge size={20} weight="duotone" />} label="Zero to Sixty" value={vehicle.zeroToSixty ? `${vehicle.zeroToSixty}s` : "Optimal"} />
+              <SpecBox icon={<Lightning size={20} weight="duotone" />} label="Propulsion" value={vehicle.isEV ? "EV Hub-Motor" : "Standard Fuel"} />
+              <SpecBox icon={<ShieldCheck size={20} weight="duotone" />} label="Chassis" value={vehicle.tier === 'elite' ? 'B6 Armored Ready' : 'High-Tensile'} />
+              <SpecBox icon={<Package size={20} weight="duotone" />} label="Payload" value={vehicle.payloadKg ? `${vehicle.payloadKg.toLocaleString()}kg` : "Standard"} />
+            </div>
+
+            {/* Booking Engine */}
+            <div className="glass rounded-[2.5rem] p-8 lg:p-10 border-white/10 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[80px] -mr-16 -mt-16" />
+              
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-3">
+                <Trophy size={24} weight="duotone" className="text-indigo-500" />
+                Reserve Configuration
+              </h2>
+
+              <div className="space-y-8">
                 <EnhancedDatePicker 
                   value={startDate} 
                   onChange={setStartDate} 
-                  label="Pick-up Date"
-                  placeholder="Select start date"
+                  label="Mission Start Date"
+                  placeholder="Select deployment date"
                 />
-              </div>
 
-              <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Clock size={16} weight="bold" style={{ color: 'var(--accent)' }} /> Rental Duration
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 20 }}>
-                {durations.map(d => (
-                  <button key={d} onClick={() => setSelectedDuration(d)} style={{
-                    height: 44, borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
-                    background: selectedDuration === d ? 'var(--accent)' : 'var(--bg-surface)',
-                    color: selectedDuration === d ? 'white' : 'var(--text-secondary)',
-                    border: `1px solid ${selectedDuration === d ? 'var(--accent)' : 'var(--border-primary)'}`,
-                  }}>{d}</button>
-                ))}
-              </div>
-
-              <button onClick={() => setAutoRenew(!autoRenew)} style={{
-                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '12px 16px', borderRadius: 10, border: '1px solid var(--border-primary)',
-                background: autoRenew ? 'rgba(48, 209, 88, 0.08)' : 'var(--bg-surface)', cursor: 'pointer', marginBottom: 20, transition: 'all 0.2s',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left' }}>
-                  <ArrowsClockwise size={18} weight="bold" style={{ color: autoRenew ? 'var(--success)' : 'var(--text-tertiary)' }} />
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Auto-Renewal</p>
-                    <p style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Automatically extend when rental expires</p>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 block">Operation Duration</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {durations.map(d => (
+                      <button 
+                        key={d} 
+                        onClick={() => setSelectedDuration(d)} 
+                        className={`
+                          h-12 rounded-xl text-xs font-bold transition-all
+                          ${selectedDuration === d ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'bg-white/5 hover:bg-white/10 text-slate-400'}
+                        `}
+                      >
+                        {d}
+                      </button>
+                    ))}
                   </div>
                 </div>
-                <div style={{ width: 44, height: 24, borderRadius: 12, position: 'relative', background: autoRenew ? 'var(--success)' : 'var(--border-primary)', transition: 'background 0.2s' }}>
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'white', position: 'absolute', top: 3, left: autoRenew ? 23 : 3, transition: 'left 0.2s' }} />
-                </div>
-              </button>
 
-              <div style={{ borderTop: '1px solid var(--border-primary)', paddingTop: 20 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 }}>
-                  <div>
-                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 2 }}>Total for {selectedDuration}</p>
-                    <span style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em' }}>{formatPrice(totalPrice)}</span>
+                <div className="pt-8 border-t border-white/5">
+                  <div className="flex justify-between items-end mb-8">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Institutional Rate</p>
+                      <div className="text-4xl font-black text-indigo-400 leading-none">
+                        {formatPrice(totalPrice, currency)}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Includes</div>
+                      <div className="text-xs font-bold">Standard Insurance</div>
+                    </div>
                   </div>
-                  {autoRenew && (
-                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--success)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <ArrowsClockwise size={12} weight="bold" /> Auto-renews
-                    </span>
-                  )}
+
+                  <Link 
+                    href="/auth/login" 
+                    className="btn btn-accent w-full h-16 text-lg tracking-tight group"
+                  >
+                    Confirm Deployment
+                    <CaretRight size={20} weight="bold" className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </div>
-                <Link href="/auth/login" className="btn btn-accent" style={{ width: '100%', height: 48, fontSize: 14, fontWeight: 700 }}>
-                  Book Now <CaretRight size={18} weight="bold" />
-                </Link>
               </div>
             </div>
           </div>
+
         </div>
       </div>
-
-      <style>{`
-        .detail-layout { grid-template-columns: 1fr 1fr; }
-        @media (max-width: 860px) { .detail-layout { grid-template-columns: 1fr !important; } }
-      `}</style>
     </main>
   );
 }
 
-function SpecCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function SpecBox({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 12, padding: '12px 14px' }}>
-      <div style={{ color: 'var(--accent)', marginBottom: 6 }}>{icon}</div>
-      <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{label}</p>
-      <p style={{ fontSize: 15, fontWeight: 700 }}>{value}</p>
+    <div className="p-5 glass rounded-3xl border-white/5 space-y-3">
+      <div className="text-indigo-400">{icon}</div>
+      <div>
+        <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">{label}</p>
+        <p className="text-base font-bold text-white truncate">{value}</p>
+      </div>
     </div>
   );
 }
-
-const arrowStyle: React.CSSProperties = {
-  position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 3,
-  width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', cursor: 'pointer',
-  backdropFilter: 'blur(4px)', transition: 'background 0.2s', padding: 0,
-};

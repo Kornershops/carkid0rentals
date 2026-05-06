@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { CaretLeft, CaretRight, TrendUp } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, TrendUp, Lightning, ShieldCheck, Gauge, Package } from "@phosphor-icons/react";
 import { Vehicle } from "@/data/mock-fleet";
 import { RentalDuration, calculatePrice } from "@/lib/pricing";
 import { formatPrice } from "@/lib/currency";
+import { BlurImage } from "@/components/ui/blur-image";
+
+import { useStore } from "@/store/use-store";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -27,7 +29,21 @@ export function VehicleCard({
   compact = false 
 }: VehicleCardProps) {
   const [imgIdx, setImgIdx] = useState(0);
+  const { comparisonIds, addToCompare, removeFromCompare } = useStore();
+  const isComparing = comparisonIds.includes(v.id);
+  const canCompare = comparisonIds.length < 3 || isComparing;
+  
   const price = calculatePrice(v.pricePerDay, duration);
+
+  const toggleCompare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isComparing) {
+      removeFromCompare(v.id);
+    } else if (canCompare) {
+      addToCompare(v.id);
+    }
+  };
 
   const prevImg = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -41,119 +57,148 @@ export function VehicleCard({
     setImgIdx(p => (p + 1) % v.images.length);
   }, [v.images.length]);
 
-  const selectImg = useCallback((e: React.MouseEvent, i: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(i);
-  }, []);
-
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 16 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ delay: Math.min(index * 0.04, 0.5), duration: 0.35 }}
-      style={{ height: '100%' }}
+      initial={{ opacity: 0, scale: 0.98 }} 
+      whileInView={{ opacity: 1, scale: 1 }} 
+      viewport={{ once: true }}
+      transition={{ delay: Math.min(index * 0.05, 0.4), duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }}
+      className="h-full"
     >
-      <div className="card" style={{ cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease' }}>
-        {/* Image Slider */}
-        <div style={{ position: 'relative', aspectRatio: '16/10', background: 'var(--bg-surface)', overflow: 'hidden', flexShrink: 0 }}>
-          {v.images.map((img, i) => (
-            <Image
-              key={i}
-              src={img.path}
-              alt={img.altText}
-              fill
-              style={{
-                objectFit: 'cover',
-                opacity: i === imgIdx ? 1 : 0,
-                transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                position: 'absolute',
-                inset: 0,
-              }}
-              blurDataURL={img.blurHash}
-              placeholder={img.blurHash ? "blur" : "empty"}
-            />
-          ))}
+      <div className="card group h-full flex flex-col bg-[#0a0a0a] border border-white/5 hover:border-indigo-500/30 transition-all duration-500 overflow-hidden rounded-[2rem]">
+        {/* Visual Layer */}
+        <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={imgIdx}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute inset-0"
+            >
+              <BlurImage
+                src={v.images[imgIdx].path}
+                alt={v.images[imgIdx].altText}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Tier badge */}
-          <div style={{
-            position: 'absolute', top: 10, left: 10, padding: '4px 10px', borderRadius: 6, zIndex: 2,
-            fontSize: 11, fontWeight: 600,
-            background: v.tier === 'elite' ? 'var(--gold)' : v.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
-            color: v.tier === 'elite' ? '#1a1a1a' : 'white',
-          }}>
-            {v.tier === 'eco-gig' ? 'Eco-Gig' : v.tier === 'heavy-haul' ? 'Haulage' : 'Exotic'}
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors pointer-events-none" />
+          
+          {/* Tier Label */}
+          <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+            <span className={`
+              px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md
+              ${v.tier === 'elite' ? 'bg-amber-500/90 text-black' : 
+                v.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
+                'bg-indigo-600/90 text-white'}
+            `}>
+              {v.tier.replace('-', ' ')}
+            </span>
+            
+            <button 
+              onClick={toggleCompare}
+              aria-pressed={isComparing}
+              aria-label={isComparing ? `Remove ${v.model} from comparison` : `Add ${v.model} to comparison`}
+              className={`
+                px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest backdrop-blur-md transition-all
+                ${isComparing 
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' 
+                  : 'bg-white/10 text-white/70 hover:bg-white/20'}
+                ${!canCompare && !isComparing ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
+              `}
+            >
+              {isComparing ? '✓ Comparing' : '+ Contrast'}
+            </button>
           </div>
 
-          {activeHub && v.hubs[0] === activeHub && (
-            <div style={{
-              position: 'absolute', top: 10, right: 10, padding: '4px 10px', borderRadius: 6, zIndex: 2,
-              fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.95)', color: '#000',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: 4
-            }}>
-              <TrendUp size={12} weight="bold" /> MOST USED IN {activeHub.toUpperCase()}
+          {/* Institutional Badge */}
+          {activeHub && v.hubs.includes(activeHub) && (
+            <div className="absolute top-4 right-4 z-20 px-3 py-1 rounded-lg bg-white/95 text-black text-[9px] font-black tracking-tighter flex items-center gap-1.5 shadow-xl">
+              <TrendUp size={12} weight="bold" /> HUB ACTIVE
             </div>
           )}
 
-          {/* Arrow buttons */}
+          {/* Navigation Overlay */}
           {v.images.length > 1 && (
-            <>
-              <button onClick={prevImg} aria-label="Previous image" style={{ ...arrowBtnStyle, left: 8 }}>
-                <CaretLeft size={14} weight="bold" />
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-3 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+              <button 
+                onClick={prevImg} 
+                aria-label="Previous image"
+                className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white hover:text-black transition-all"
+              >
+                <CaretLeft size={16} weight="bold" />
               </button>
-              <button onClick={nextImg} aria-label="Next image" style={{ ...arrowBtnStyle, right: 8 }}>
-                <CaretRight size={14} weight="bold" />
+              <button 
+                onClick={nextImg} 
+                aria-label="Next image"
+                className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white hover:text-black transition-all"
+              >
+                <CaretRight size={16} weight="bold" />
               </button>
-            </>
+            </div>
           )}
 
-          {/* Dot indicators */}
+          {/* Slider Progress */}
           {v.images.length > 1 && (
-            <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 2 }}>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
               {v.images.map((_, i) => (
-                <button key={i} onClick={e => selectImg(e, i)} aria-label={`View image ${i + 1}`} style={{
-                  width: i === imgIdx ? 18 : 7, height: 7, borderRadius: 100, border: 'none', cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  background: i === imgIdx ? 'white' : 'rgba(255,255,255,0.45)',
-                  padding: 0,
-                }} />
+                <div key={i} className={`h-1 rounded-full transition-all duration-300 ${i === imgIdx ? 'w-4 bg-white' : 'w-1 bg-white/30'}`} />
               ))}
             </div>
           )}
         </div>
 
-        {/* Card content */}
-        <Link href={`/fleet/${v.id}`} style={{ display: 'flex', flexDirection: 'column', flex: 1, textDecoration: 'none', color: 'inherit' }}>
-          <div style={{ padding: compact ? '12px' : '14px 16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
-              {v.brand} · {v.year}
-            </p>
-            <h3 style={{ fontSize: compact ? 16 : 17, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>{v.model}</h3>
+        {/* Content Layer */}
+        <Link href={`/fleet/${v.id}`} aria-label={`View details for ${v.model}`} className="flex-grow flex flex-col p-6 lg:p-8">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-1">
+                {v.brand} • {v.year}
+              </div>
+              <h3 className="text-xl lg:text-2xl font-bold group-hover:text-indigo-400 transition-colors">{v.model}</h3>
+            </div>
+            <div className="text-right">
+              <div className="text-xl lg:text-2xl font-black text-indigo-400 leading-none">{formatPrice(price, currency)}</div>
+              <div className="text-[10px] text-slate-500 font-black tracking-tighter">TOTAL {duration.toUpperCase()}</div>
+            </div>
+          </div>
 
-            {!compact && (
-              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 12 }}>
-                {v.features.slice(0, 3).map((f, j) => (
-                  <span key={j} style={{
-                    fontSize: 10, padding: '2px 7px', borderRadius: 4, fontWeight: 500,
-                    background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
-                  }}>{f}</span>
-                ))}
+          {/* Dynamic Specs Engine (Phase 2.3) */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {v.isEV && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
+                <Lightning size={14} weight="fill" /> 100% ELECTRIC
+              </div>
+            )}
+            
+            {v.tier === 'elite' && v.zeroToSixty && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold">
+                <Gauge size={14} weight="fill" /> {v.zeroToSixty} (0-60)
               </div>
             )}
 
-            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid var(--border-primary)' }}>
-              <div>
-                <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>
-                  {duration}
-                </p>
-                <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(price, currency)}</span>
+            {v.tier === 'heavy-haul' && v.payloadKg && (
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold">
+                <Package size={14} weight="fill" /> {v.payloadKg.toLocaleString()}KG PAYLOAD
               </div>
-              <div style={{
-                width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'var(--accent-soft)', color: 'var(--accent)',
-              }}>
-                <CaretRight size={14} weight="bold" />
-              </div>
+            )}
+
+            {v.features.slice(0, 2).map((f, j) => (
+              <span key={j} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-400 text-[10px] font-bold uppercase">
+                {f}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between group/btn">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">View Configuration</span>
+            <div className="flex items-center gap-2 text-indigo-400 text-sm font-bold group-hover/btn:gap-3 transition-all">
+              Detail Access <CaretRight size={18} weight="bold" />
             </div>
           </div>
         </Link>
@@ -161,10 +206,3 @@ export function VehicleCard({
     </motion.div>
   );
 }
-
-const arrowBtnStyle: React.CSSProperties = {
-  position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 3,
-  width: 30, height: 30, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(0,0,0,0.55)', color: 'white', border: 'none', cursor: 'pointer',
-  backdropFilter: 'blur(4px)', transition: 'background 0.2s', padding: 0,
-};

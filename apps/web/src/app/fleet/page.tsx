@@ -1,13 +1,18 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { OperatingHub, useStore } from "@/store/use-store";
 import { MOCK_FLEET, Vehicle } from "@/data/mock-fleet";
-import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database, TrendUp, CalendarBlank } from "@phosphor-icons/react";
+import { 
+  MapPin, Faders, Lightning, ShieldCheck, 
+  Truck, CaretRight, CaretLeft, Clock, 
+  ArrowsLeftRight, Database, TrendUp, CalendarBlank,
+  CaretDown, MagnifyingGlass
+} from "@phosphor-icons/react";
 import Link from "next/link";
-import Image from "next/image";
-import { RentalDuration, calculatePrice } from "@/lib/pricing";
-import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
+import { RentalDuration } from "@/lib/pricing";
+import { getCurrencyForCountry } from "@/lib/currency";
 import { Logo } from "@/components/ui/logo";
 import { HUB_DATA } from "@/lib/constants";
 import { VehicleCard } from "@/components/vehicle-card";
@@ -19,14 +24,12 @@ export default function FleetPage() {
   const [filteredFleet, setFilteredFleet] = useState<Vehicle[]>([]);
   const [duration, setDuration] = useState<RentalDuration>("24 Hours");
   const [pickupDate, setPickupDate] = useState("");
-  const [showComparison, setShowComparison] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const currency = getCurrencyForCountry(country);
-
-
   const hubs = HUB_DATA[country] || [];
-  const durations: RentalDuration[] = ["30 Min", "1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
+  const durations: RentalDuration[] = ["1 Hour", "12 Hours", "24 Hours", "3 Days", "7 Days"];
 
   const tierOptions = [
     { id: "all", label: "All Vehicles", icon: <Database size={16} weight="bold" /> },
@@ -40,200 +43,210 @@ export default function FleetPage() {
     const timer = setTimeout(() => {
       let filtered = MOCK_FLEET.filter(v => v.hubs.includes(hub));
       if (tier !== "all") filtered = filtered.filter(v => v.tier === tier);
+      if (searchQuery) {
+        filtered = filtered.filter(v => 
+          v.model.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          v.brand.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
       setFilteredFleet(filtered);
       setIsLoading(false);
-    }, 400); // Fast simulation for premium feel
+    }, 400);
     return () => clearTimeout(timer);
-  }, [tier, hub]);
+  }, [tier, hub, searchQuery]);
 
   return (
-    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
-      {/* Nav */}
-      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
-        <div className="container-wide" style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <main className="min-h-screen bg-[#050505] text-white selection:bg-indigo-500/30">
+      {/* --- Navigation --- */}
+      <nav className="glass fixed top-0 w-full z-[80] border-b border-white/5 h-20">
+        <div className="container-wide h-full flex items-center justify-between">
           <Logo />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="badge badge-accent">
-              <MapPin size={14} weight="bold" /> {hub}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest">
+              <MapPin size={14} className="text-indigo-400" />
+              {hub} Hub
             </div>
-            <Link href="/" className="btn btn-ghost" style={{ height: 36, padding: '0 14px', fontSize: 12 }}>← Home</Link>
+            <Link href="/" className="btn btn-outline h-11 px-6 text-xs uppercase tracking-widest font-black">
+              ← Home
+            </Link>
           </div>
         </div>
       </nav>
 
-      <div className="container-wide" style={{ paddingTop: 32, paddingBottom: 64 }}>
-        {/* Mobile Filters Row */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }} className="mobile-filters">
-          <select value={hub} onChange={e => setHub(e.target.value as OperatingHub)} style={selectStyle}>
-            {hubs.map(h => <option key={h} value={h}>{h}</option>)}
-          </select>
-          <select value={tier} onChange={e => setTier(e.target.value as any)} style={selectStyle}>
-            {tierOptions.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-          </select>
-          <select value={duration} onChange={e => setDuration(e.target.value as RentalDuration)} style={selectStyle}>
-            {durations.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
-          <div style={{ width: '100%', marginTop: 8 }}>
-            <EnhancedDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Pick-up Date" />
-          </div>
-        </div>
+      <div className="container-wide pt-32 pb-24">
+        <div className="flex flex-col lg:grid lg:grid-cols-[280px_1fr] gap-12 lg:gap-16">
+          
+          {/* --- Sidebar Filters --- */}
+          <aside className="space-y-8 lg:sticky lg:top-28 self-start">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black tracking-tighter mb-2">Fleet Registry</h1>
+              <p className="text-slate-500 text-sm">Configure your institutional asset requirements.</p>
+            </div>
 
-        <div style={{ display: 'flex', gap: 32 }}>
-          {/* ── Sidebar ──────────────────────────────────── */}
-          <aside style={{ width: 240, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 20, position: 'sticky', top: 96, alignSelf: 'flex-start' }} className="desktop-sidebar">
-            <FilterSection title="Location" icon={<MapPin size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
-              {hubs.map(h => (
-                <SidebarButton key={h} active={hub === h} onClick={() => setHub(h as any)} label={h} />
-              ))}
-            </FilterSection>
-
-            <FilterSection title="Vehicle Type" icon={<Faders size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
-              {tierOptions.map(t => (
-                <SidebarButton key={t.id} active={tier === t.id} onClick={() => setTier(t.id as any)} label={t.label} icon={t.icon} />
-              ))}
-            </FilterSection>
-
-            <FilterSection title="Booking Date" icon={<CalendarBlank size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
-              <EnhancedDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Select date" />
-            </FilterSection>
-
-            <FilterSection title="Rental Duration" icon={<Clock size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                {durations.map(d => (
-                  <button key={d} onClick={() => setDuration(d)} style={{
-                    padding: '8px 4px', borderRadius: 8, fontSize: 12, fontWeight: 600, textAlign: 'center',
-                    background: duration === d ? 'var(--accent)' : 'transparent',
-                    color: duration === d ? 'white' : 'var(--text-tertiary)',
-                    border: `1px solid ${duration === d ? 'var(--accent)' : 'var(--border-primary)'}`,
-                    cursor: 'pointer', transition: 'all 0.2s',
-                  }}>
-                    {d}
-                  </button>
-                ))}
+            <div className="space-y-6">
+              {/* Search */}
+              <div className="relative group">
+                <MagnifyingGlass size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder="Search model..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-12 bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 text-sm font-bold focus:outline-none focus:border-indigo-500/50 transition-all"
+                />
               </div>
-            </FilterSection>
 
-            {tier === "heavy-haul" && (
-              <FilterSection title="Haulage Route" icon={<ArrowsLeftRight size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
-                <input placeholder="Origin" value={route.origin} onChange={e => setRoute(e.target.value, route.destination)} style={inputStyle} />
-                <div style={{ height: 8 }} />
-                <input placeholder="Destination" value={route.destination} onChange={e => setRoute(route.origin, e.target.value)} style={inputStyle} />
-              </FilterSection>
-            )}
+              <FilterGroup title="Location" icon={<MapPin />}>
+                <div className="relative">
+                  <select 
+                    value={hub} 
+                    onChange={e => setHub(e.target.value as OperatingHub)}
+                    className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-xs font-bold appearance-none focus:outline-none cursor-pointer"
+                  >
+                    {hubs.map(h => <option key={h} value={h} className="bg-slate-900">{h}</option>)}
+                  </select>
+                  <CaretDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="Vehicle Tier" icon={<Database />}>
+                <div className="flex flex-col gap-1">
+                  {tierOptions.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setTier(t.id as any)}
+                      className={`
+                        w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all
+                        ${tier === t.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'hover:bg-white/5 text-slate-400'}
+                      `}
+                    >
+                      {t.icon}
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </FilterGroup>
+
+              <FilterGroup title="Duration" icon={<Clock />}>
+                <div className="grid grid-cols-2 gap-2">
+                  {durations.map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setDuration(d)}
+                      className={`
+                        h-10 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all
+                        ${duration === d ? 'bg-white text-black' : 'bg-white/5 text-slate-500 hover:bg-white/10'}
+                      `}
+                    >
+                      {d}
+                    </button>
+                  ))}
+                </div>
+              </FilterGroup>
+
+              {tier === "heavy-haul" && (
+                <FilterGroup title="Logistics Routing" icon={<ArrowsLeftRight />}>
+                  <div className="space-y-3">
+                    <input placeholder="Origin Hub" value={route.origin} onChange={e => setRoute(e.target.value, route.destination)} className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-4 text-xs font-bold focus:outline-none" />
+                    <input placeholder="Destination" value={route.destination} onChange={e => setRoute(route.origin, e.target.value)} className="w-full h-10 bg-white/5 border border-white/10 rounded-lg px-4 text-xs font-bold focus:outline-none" />
+                  </div>
+                </FilterGroup>
+              )}
+            </div>
           </aside>
 
-          {/* ── Fleet Grid ─────────────────────────────── */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Mobility Segment Tabs */}
-            <div style={{ display: 'flex', gap: 12, marginBottom: 32, borderBottom: '1px solid var(--border-primary)', paddingBottom: 16 }}>
-              {tierOptions.map(t => (
-                <button 
-                  key={t.id} 
-                  onClick={() => setTier(t.id as any)}
-                  style={{
-                    padding: '8px 20px', borderRadius: 100, fontSize: 14, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.2s',
-                    background: tier === t.id ? 'var(--accent)' : 'var(--bg-elevated)',
-                    color: tier === t.id ? 'white' : 'var(--text-secondary)',
-                    border: `1px solid ${tier === t.id ? 'var(--accent)' : 'var(--border-primary)'}`,
-                  }}
-                >
-                  {t.icon} {t.label}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ marginBottom: 28, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          {/* --- Main Content --- */}
+          <div className="min-w-0">
+            {/* Active Hub Stats */}
+            <div className="mb-12 p-8 glass rounded-[2.5rem] border-indigo-500/10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] -mr-32 -mt-32" />
               <div>
-                <h1 style={{ fontSize: 'clamp(24px, 3.5vw, 32px)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 6 }}>
-                  {tier === 'all' ? 'The Global Fleet' : tierOptions.find(t => t.id === tier)?.label}
-                </h1>
-                <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
-                  {filteredFleet.length} professional-grade assets available in {hub}, {country}
+                <div className="flex items-center gap-2 text-indigo-400 text-[10px] font-black uppercase tracking-widest mb-2">
+                  <TrendUp size={16} weight="bold" /> Operational High-Load
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black tracking-tighter">Current Assets in {hub}</h2>
+                <p className="text-slate-500 text-sm mt-1">
+                  {filteredFleet.length} units cleared for immediate institutional deployment.
                 </p>
               </div>
-              <button onClick={() => setShowComparison(true)} className="btn btn-ghost" style={{ fontSize: 13, gap: 8 }}>
-                <ArrowsLeftRight size={18} /> Compare Tiers
-              </button>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <div className="text-2xl font-black text-white">{filteredFleet.length}</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Available</div>
+                </div>
+                <div className="w-px h-10 bg-white/10" />
+                <div className="text-right">
+                  <div className="text-2xl font-black text-indigo-400">98%</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Uptime</div>
+                </div>
+              </div>
             </div>
 
-            {isLoading ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
-                {[...Array(6)].map((_, i) => <SkeletonVehicleCard key={i} />)}
-              </div>
-            ) : filteredFleet.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', border: '2px dashed var(--border-primary)', borderRadius: 16, background: 'var(--bg-elevated)' }}>
-                <p style={{ fontSize: 15, color: 'var(--text-tertiary)', fontWeight: 500, marginBottom: 12 }}>No vehicles available in {hub} for this category.</p>
-                <button onClick={() => setTier("all")} className="btn btn-accent" style={{ height: 40, padding: '0 20px' }}>Show all vehicles</button>
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
-                {filteredFleet.map((v, i) => (
-                  <VehicleCard key={v.id} vehicle={v} duration={duration} currency={currency} index={i} activeHub={hub} />
-                ))}
-              </div>
-            )}
+            {/* Grid */}
+            <AnimatePresence mode="wait">
+              {isLoading ? (
+                <motion.div 
+                  key="skeleton"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                >
+                  {[...Array(4)].map((_, i) => <SkeletonVehicleCard key={i} />)}
+                </motion.div>
+              ) : filteredFleet.length === 0 ? (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-32 text-center glass rounded-[3rem] border-dashed border-white/5"
+                >
+                  <p className="text-slate-500 font-bold mb-6">No assets match the selected configuration in {hub}.</p>
+                  <button onClick={() => { setTier("all"); setSearchQuery(""); }} className="btn btn-accent px-8 h-12">Reset Registry Filter</button>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="grid"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                  variants={{
+                    hidden: {},
+                    visible: { transition: { staggerChildren: 0.1 } }
+                  }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                >
+                  {filteredFleet.map((v, i) => (
+                    <motion.div
+                      key={v.id}
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as any } }
+                      }}
+                    >
+                      <VehicleCard vehicle={v} duration={duration} currency={currency} index={i} activeHub={hub} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
+
         </div>
       </div>
-
-      <style>{`
-        .desktop-sidebar { display: flex; }
-        .mobile-filters { display: none !important; }
-        @media (max-width: 860px) {
-          .desktop-sidebar { display: none !important; }
-          .mobile-filters { display: flex !important; }
-        }
-      `}</style>
     </main>
   );
 }
 
-/* ── Sidebar Button ──────────────────────────────────── */
-function SidebarButton({ active, onClick, label, icon }: { active: boolean; onClick: () => void; label: string; icon?: React.ReactNode }) {
+function FilterGroup({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <button onClick={onClick} style={{
-      width: '100%', textAlign: 'left', padding: '9px 12px', borderRadius: 8, fontSize: 13, fontWeight: active ? 600 : 400,
-      display: 'flex', alignItems: 'center', gap: 8,
-      background: active ? 'var(--accent)' : 'transparent',
-      color: active ? 'white' : 'var(--text-secondary)',
-      border: 'none', cursor: 'pointer', transition: 'all 0.15s', marginBottom: 2,
-    }}>
-      {icon}{label}
-    </button>
-  );
-}
-
-/* ── Filter Section ──────────────────────────────────── */
-function FilterSection({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 14, padding: 14 }}>
-      <h3 style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-        {icon} {title}
-      </h3>
+    <div className="space-y-4 p-6 glass rounded-3xl border-white/5">
+      <div className="flex items-center gap-2 text-indigo-400">
+        {icon}
+        <h3 className="text-[10px] font-black uppercase tracking-widest">{title}</h3>
+      </div>
       {children}
     </div>
   );
 }
 
-
-/* ── Styles ──────────────────────────────────────────── */
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500,
-  background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
-  color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit',
-};
-
-const selectStyle: React.CSSProperties = {
-  padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500,
-  background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)',
-  color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit',
-  cursor: 'pointer', flex: 1, minWidth: 0,
-};
-
-const arrowBtnStyle: React.CSSProperties = {
-  position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 3,
-  width: 30, height: 30, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: 'rgba(0,0,0,0.55)', color: 'white', border: 'none', cursor: 'pointer',
-  backdropFilter: 'blur(4px)', transition: 'background 0.2s', padding: 0,
-};

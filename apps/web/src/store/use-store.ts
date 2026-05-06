@@ -27,7 +27,18 @@ interface AppState {
   setRoute: (origin: string, destination: string) => void;
 }
 
-export const useStore = create<AppState>((set) => ({
+
+interface ComparisonState {
+  comparisonIds: string[];
+  addToCompare: (id: string) => void;
+  removeFromCompare: (id: string) => void;
+  clearComparison: () => void;
+}
+
+// Merge types for the final hook
+type StoreState = AppState & ComparisonState;
+
+export const useStore = create<StoreState>((set) => ({
   role: "customer",
   country: "Nigeria",
   hub: "Lagos",
@@ -36,9 +47,21 @@ export const useStore = create<AppState>((set) => ({
     origin: "",
     destination: "",
   },
+  comparisonIds: [],
+  
   setRole: (role) => set({ role }),
   setCountry: (country) => set({ country }),
   setHub: (hub) => set({ hub }),
   setTier: (tier) => set({ tier }),
   setRoute: (origin, destination) => set({ route: { origin, destination } }),
+  
+  addToCompare: (id) => set((state) => ({
+    comparisonIds: state.comparisonIds.length < 3 && !state.comparisonIds.includes(id)
+      ? [...state.comparisonIds, id]
+      : state.comparisonIds
+  })),
+  removeFromCompare: (id) => set((state) => ({
+    comparisonIds: state.comparisonIds.filter(cid => cid !== id)
+  })),
+  clearComparison: () => set({ comparisonIds: [] }),
 }));

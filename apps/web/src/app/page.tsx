@@ -12,9 +12,10 @@ import { RegionSelector } from "@/components/region-selector";
 import { RoleSelector } from "@/components/role-selector";
 import { HUB_DATA } from "@/lib/constants";
 import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
+import { VehicleCard } from "@/components/vehicle-card";
 
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
-const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } };
+const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any } } };
 
 export default function Home() {
   const { hub, setHub, country, role } = useStore();
@@ -118,6 +119,8 @@ export default function Home() {
             fill
             className="object-cover kenburns brightness-[0.3] md:brightness-[0.4]"
             priority
+            fetchPriority="high"
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#050505]" />
         </div>
@@ -278,68 +281,16 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {featured.map((v, i) => (
-              <motion.div 
+              <VehicleCard 
                 key={v.id} 
-                initial={{ opacity: 0, scale: 0.98 }} 
-                whileInView={{ opacity: 1, scale: 1 }} 
-                viewport={{ once: true, margin: "-10%" }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Link href={`/fleet/${v.id}`} className="group block h-full">
-                  <div className="card h-full flex flex-col">
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <Image 
-                        src={v.images[0].path} 
-                        alt={v.images[0].altText} 
-                        fill 
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                      <div className="absolute top-4 left-4 z-10">
-                        <span className={`
-                          px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest
-                          ${v.tier === 'elite' ? 'bg-amber-500/90 text-black' : 
-                            v.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
-                            'bg-indigo-600/90 text-white'}
-                        `}>
-                          {v.tier.replace('-', ' ')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="p-6 md:p-8 flex-grow">
-                      <div className="flex justify-between items-start mb-6">
-                        <div>
-                          <div className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-1">
-                            {v.brand} • {v.year}
-                          </div>
-                          <h3 className="text-xl md:text-2xl font-bold group-hover:text-indigo-400 transition-colors">{v.model}</h3>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-xl md:text-2xl font-black text-indigo-400 leading-none">{formatPrice(v.pricePerDay, currency)}</div>
-                          <div className="text-[10px] text-slate-500 font-black tracking-tighter">PER DAY</div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-8">
-                        {v.features.slice(0, 3).map((f, j) => (
-                          <span key={j} className="text-[10px] font-bold px-3 py-1.5 bg-white/5 border border-white/5 rounded-lg text-slate-400">
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="btn btn-outline w-full h-12 md:h-14 group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:text-white transition-all duration-300">
-                        Confirm Availability
-                        <CaretRight size={18} weight="bold" />
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+                vehicle={v} 
+                duration="24 Hours" 
+                currency={currency} 
+                index={i} 
+                activeHub={hub} 
+              />
             ))}
           </div>
         </div>
