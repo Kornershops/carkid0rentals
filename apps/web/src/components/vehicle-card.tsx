@@ -59,57 +59,57 @@ export function VehicleCard({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }} 
-      whileInView={{ opacity: 1, scale: 1 }} 
+      initial={{ opacity: 0, y: 20 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
       viewport={{ once: true }}
-      transition={{ delay: Math.min(index * 0.05, 0.4), duration: 0.5, ease: [0.22, 1, 0.36, 1] as any }}
-      className="h-full"
+      transition={{ delay: index * 0.05, duration: 0.6, ease: [0.22, 1, 0.36, 1] as any }}
+      className="group relative h-full"
     >
-      <div className="card group h-full flex flex-col bg-[#0a0a0a] border border-white/5 hover:border-indigo-500/30 transition-all duration-500 overflow-hidden rounded-[2rem]">
+      {/* Dynamic Glow Effect */}
+      <div className="absolute -inset-px bg-gradient-to-br from-indigo-500/20 to-orange-500/20 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />
+      
+      <div className="relative h-full flex flex-col bg-[#0a0a0c] border border-white/5 group-hover:border-white/10 transition-all duration-500 overflow-hidden rounded-[2.5rem] backdrop-blur-3xl">
         {/* Visual Layer */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
+        <div className="relative aspect-[16/10] overflow-hidden bg-neutral-900">
           <AnimatePresence mode="wait">
             <motion.div
               key={imgIdx}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.6, ease: "circOut" }}
               className="absolute inset-0"
             >
               <BlurImage
                 src={v.images[imgIdx].path}
                 alt={v.images[imgIdx].altText}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover transition-transform duration-1000 group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </motion.div>
           </AnimatePresence>
 
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
           
-          {/* Tier Label */}
-          <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
-            <span className={`
-              px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md
-              ${v.tier === 'elite' ? 'bg-amber-500/90 text-black' : 
-                v.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
-                'bg-indigo-600/90 text-white'}
+          {/* Tier Badge */}
+          <div className="absolute top-6 left-6 z-20 flex flex-col gap-3">
+            <div className={`
+              px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-2xl border shadow-2xl
+              ${v.tier === 'elite' ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 
+                v.tier === 'eco-gig' ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : 
+                'bg-indigo-500/20 border-indigo-500/30 text-indigo-400'}
             `}>
               {v.tier.replace('-', ' ')}
-            </span>
+            </div>
             
             <button 
               onClick={toggleCompare}
-              aria-pressed={isComparing}
-              aria-label={isComparing ? `Remove ${v.model} from comparison` : `Add ${v.model} to comparison`}
               className={`
-                px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest backdrop-blur-md transition-all
+                px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] backdrop-blur-2xl transition-all border
                 ${isComparing 
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' 
-                  : 'bg-white/10 text-white/70 hover:bg-white/20'}
-                ${!canCompare && !isComparing ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
+                  ? 'bg-indigo-500 border-indigo-400 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' 
+                  : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}
               `}
             >
               {isComparing ? '✓ Comparing' : '+ Contrast'}
@@ -154,51 +154,47 @@ export function VehicleCard({
         </div>
 
         {/* Content Layer */}
-        <Link href={`/fleet/${v.id}`} aria-label={`View details for ${v.model}`} className="flex-grow flex flex-col p-6 lg:p-8">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-black mb-1">
-                {v.brand} • {v.year}
+        <Link href={`/fleet/${v.id}`} className="flex-grow flex flex-col p-8 lg:p-10">
+          <div className="flex justify-between items-start mb-8">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold">
+                <span>{v.brand}</span>
+                <span className="w-1 h-1 rounded-full bg-slate-700" />
+                <span>{v.year}</span>
               </div>
-              <h3 className="text-xl lg:text-2xl font-bold group-hover:text-indigo-400 transition-colors">{v.model}</h3>
+              <h3 className="text-2xl lg:text-3xl font-black group-hover:text-indigo-400 transition-colors leading-tight">{v.model}</h3>
             </div>
             <div className="text-right">
-              <div className="text-xl lg:text-2xl font-black text-indigo-400 leading-none">{formatPrice(price, currency)}</div>
-              <div className="text-[10px] text-slate-500 font-black tracking-tighter">TOTAL {duration.toUpperCase()}</div>
+              <div className="text-2xl lg:text-3xl font-black text-indigo-400 leading-none mb-1">
+                {formatPrice(price, currency)}
+              </div>
+              <div className="text-[10px] text-slate-500 font-black tracking-widest opacity-60 uppercase">TOTAL {duration}</div>
             </div>
           </div>
 
-          {/* Dynamic Specs Engine (Phase 2.3) */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          {/* Specs Engine */}
+          <div className="flex flex-wrap gap-2.5 mb-10">
             {v.isEV && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold">
-                <Lightning size={14} weight="fill" /> 100% ELECTRIC
+                <Lightning size={14} weight="fill" /> ELECTRIC
               </div>
             )}
-            
             {v.tier === 'elite' && v.zeroToSixty && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold">
-                <Gauge size={14} weight="fill" /> {v.zeroToSixty} (0-60)
+                <Gauge size={14} weight="fill" /> {v.zeroToSixty}
               </div>
             )}
-
-            {v.tier === 'heavy-haul' && v.payloadKg && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold">
-                <Package size={14} weight="fill" /> {v.payloadKg.toLocaleString()}KG PAYLOAD
-              </div>
-            )}
-
             {v.features.slice(0, 2).map((f, j) => (
-              <span key={j} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-400 text-[10px] font-bold uppercase">
+              <div key={j} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-400 text-[10px] font-bold uppercase">
                 {f}
-              </span>
+              </div>
             ))}
           </div>
 
-          <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between group/btn">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">View Configuration</span>
-            <div className="flex items-center gap-2 text-indigo-400 text-sm font-bold group-hover/btn:gap-3 transition-all">
-              Detail Access <CaretRight size={18} weight="bold" />
+          <div className="mt-auto pt-8 border-t border-white/5 flex items-center justify-between group/cta">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover/cta:text-white transition-colors">Configuration Access</span>
+            <div className="flex items-center gap-3 text-indigo-400 text-sm font-bold group-hover/cta:gap-5 transition-all">
+              Detail <CaretRight size={20} weight="bold" />
             </div>
           </div>
         </Link>

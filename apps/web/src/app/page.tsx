@@ -134,7 +134,10 @@ export default function Home() {
           >
             {/* Left Content */}
             <div className="text-center lg:text-left">
-              <motion.div variants={fadeUp} className="badge badge-accent mb-6 md:mb-8">
+              <motion.div 
+                variants={fadeUp} 
+                className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-black text-[10px] uppercase tracking-[0.3em] mb-10"
+              >
                 <Globe size={14} className="animate-pulse" />
                 <span>Pan-African Fleet Network</span>
               </motion.div>
@@ -142,35 +145,26 @@ export default function Home() {
               <motion.h1 
                 id="hero-heading"
                 variants={fadeUp} 
-                className="text-[clamp(42px,10vw,88px)] leading-[0.9] font-black tracking-tighter mb-8 text-gradient"
+                className="text-[clamp(48px,11vw,100px)] leading-[0.85] font-black tracking-tighter mb-10 text-gradient"
               >
                 Institutional<br className="hidden md:block" /> 
                 <span className="text-indigo-500">Fleet Access.</span>
               </motion.h1>
 
-              <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-400 leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
-                High-performance EV rentals, executive luxury, and specialized logistics for the modern African enterprise.
+              <motion.p 
+                variants={fadeUp} 
+                className="text-slate-400 text-lg md:text-2xl leading-relaxed mb-12 max-w-xl mx-auto lg:mx-0 font-medium"
+              >
+                Africa's infrastructure layer for standardized mobility. Delivering <span className="text-white">mission-grade</span> fleet excellence.
               </motion.p>
 
-              <motion.div variants={fadeUp} className="flex flex-wrap justify-center lg:justify-start gap-6 md:gap-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full glass flex items-center justify-center text-indigo-400">
-                    <Trophy size={20} weight="duotone" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-bold">#1 Rated</div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Fleet Ops</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full glass flex items-center justify-center text-emerald-400">
-                    <ShieldCheck size={20} weight="duotone" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-bold">Standardized</div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Security</div>
-                  </div>
-                </div>
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
+                <Link href="/fleet" className="btn btn-accent h-16 px-12 text-sm uppercase tracking-widest font-black shadow-[0_0_40px_rgba(255,107,44,0.3)]">
+                  Reserve Unit Now
+                </Link>
+                <Link href="/tech" className="btn btn-outline h-16 px-12 text-sm uppercase tracking-widest font-black">
+                  Platform Tech
+                </Link>
               </motion.div>
             </div>
 
@@ -234,35 +228,75 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- Purpose Grid --- */}
-      <section className="py-32 md:py-48 bg-white/[0.01]" aria-labelledby="purpose-heading">
+      {/* --- Purpose Grid (Bento) --- */}
+      <section className="py-32 md:py-48" aria-labelledby="purpose-heading">
         <div className="container-wide">
-          <div className="mb-24 md:mb-32 text-center max-w-2xl mx-auto">
-            <h2 id="purpose-heading" className="text-4xl md:text-6xl font-black mb-8 tracking-tight">Mission Critical Fleet</h2>
-            <p className="text-slate-400 text-lg md:text-xl">Specialized vehicle infrastructure for the modern African terrain and economy.</p>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-24 md:mb-32">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 text-orange-500 font-black text-[10px] uppercase tracking-[0.3em] mb-6">
+                <span className="w-8 h-px bg-orange-500/50" />
+                Strategic Verticals
+              </div>
+              <h2 id="purpose-heading" className="text-5xl md:text-8xl font-black mb-8 tracking-tighter text-gradient leading-[0.85]">
+                Mission<br />Critical <span className="text-orange-500">Fleet.</span>
+              </h2>
+            </div>
+            <p className="text-slate-400 text-lg md:text-xl max-w-md leading-relaxed border-l-2 border-white/5 pl-8 py-2">
+              Specialized vehicle infrastructure engineered for the modern African terrain and enterprise economy.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
-            {[
-              { icon: <Lightning size={32} weight="duotone" />, color: 'text-emerald-400', title: "Eco-Gig EVs", desc: "Optimized for maximum earnings. Zero emissions, zero fuel spend." },
-              { icon: <Crown size={32} weight="duotone" />, color: 'text-indigo-400', title: "Elite Executive", desc: "Discreet luxury and armored variants for high-profile operations." },
-              { icon: <Truck size={32} weight="duotone" />, color: 'text-amber-400', title: "Industrial Ops", desc: "Heavy logistics and security escort units with mission comms." },
-            ].map((tier, i) => (
-              <motion.div 
-                key={i}
-                whileHover={{ y: -12 }}
-                className="glass rounded-[3rem] p-12 border-white/5 relative group transition-all duration-500"
-              >
-                <div className={`mb-10 ${tier.color} transform transition-transform group-hover:scale-110 duration-500`}>
-                  {tier.icon}
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 auto-rows-[320px]">
+            {/* Elite Executive - The Hero Bento Card */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="lg:col-span-8 lg:row-span-2 glass rounded-[3rem] p-12 border-white/5 relative group overflow-hidden flex flex-col justify-end"
+            >
+              <div className="absolute top-0 right-0 p-12 text-[120px] font-black text-white/[0.02] leading-none select-none group-hover:text-indigo-500/[0.05] transition-colors">01</div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+              <div className="relative z-10">
+                <div className="mb-10 text-indigo-400 transform transition-transform group-hover:scale-110 duration-500">
+                  <Crown size={64} weight="duotone" />
                 </div>
-                <h3 className="text-2xl font-bold mb-6">{tier.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-base">{tier.desc}</p>
-                <Link href="/fleet" className="mt-10 flex items-center gap-2 text-indigo-400 text-sm font-bold group-hover:gap-3 transition-all" aria-label={`View ${tier.title} fleet`}>
-                  Explore Tier <CaretRight size={16} />
+                <h3 className="text-4xl md:text-5xl font-black mb-6">Elite Executive</h3>
+                <p className="text-slate-400 leading-relaxed text-lg max-w-xl mb-10">
+                  Discreet luxury and armored variants for high-profile operations. Standardized security meets unparalleled comfort.
+                </p>
+                <Link href="/fleet" className="btn btn-accent px-10 h-14 w-fit">
+                  Explore Elite Registry <CaretRight size={20} />
                 </Link>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>
+
+            {/* Eco-Gig EVs */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="lg:col-span-4 lg:row-span-1 glass rounded-[2.5rem] p-10 border-white/5 relative group overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 text-6xl font-black text-white/[0.02] select-none">02</div>
+              <div className="mb-8 text-emerald-400 group-hover:float duration-1000">
+                <Lightning size={40} weight="duotone" />
+              </div>
+              <h3 className="text-2xl font-black mb-4">Eco-Gig EVs</h3>
+              <p className="text-slate-400 leading-relaxed text-sm">
+                Optimized for maximum earnings. Zero emissions, zero fuel spend, 100% uptime.
+              </p>
+            </motion.div>
+
+            {/* Industrial Ops */}
+            <motion.div 
+              whileHover={{ y: -10 }}
+              className="lg:col-span-4 lg:row-span-1 glass rounded-[2.5rem] p-10 border-white/5 relative group overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 text-6xl font-black text-white/[0.02] select-none">03</div>
+              <div className="mb-8 text-amber-400 group-hover:scale-110 transition-transform">
+                <Truck size={40} weight="duotone" />
+              </div>
+              <h3 className="text-2xl font-black mb-4">Industrial Ops</h3>
+              <p className="text-slate-400 leading-relaxed text-sm">
+                Heavy logistics and security escort units equipped with mission-grade communications.
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
