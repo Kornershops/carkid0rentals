@@ -7,12 +7,14 @@ import { useState, useCallback } from "react";
 import { ArrowLeft, Clock, ArrowsClockwise, CaretRight, CaretLeft, MapPin, Check, Gauge, Shield, Star } from "@phosphor-icons/react";
 import { RentalDuration, calculatePrice, formatPrice } from "@/lib/pricing";
 import { Logo } from "@/components/ui/logo";
+import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
 
 export default function VehicleDetailClient() {
   const params = useParams();
   const id = params.id as string;
   const vehicle = MOCK_FLEET.find((v) => v.id === id);
   const [selectedDuration, setSelectedDuration] = useState<RentalDuration>("24 Hours");
+  const [startDate, setStartDate] = useState("");
   const [autoRenew, setAutoRenew] = useState(false);
   const [currentImg, setCurrentImg] = useState(0);
 
@@ -50,10 +52,11 @@ export default function VehicleDetailClient() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 32 }} className="detail-layout">
           <div>
             <div style={{ position: 'relative', aspectRatio: '16/9', borderRadius: 16, overflow: 'hidden', background: 'var(--bg-surface)', marginBottom: 12 }}>
-              {vehicle.images.map((src, i) => (
-                <Image key={i} src={src} alt={`${vehicle.brand} ${vehicle.model} view ${i + 1}`} fill
+              {vehicle.images.map((img, i) => (
+                <Image key={i} src={img.path} alt={img.altText} fill
                   style={{ objectFit: 'cover', opacity: i === currentImg ? 1 : 0, transition: 'opacity 0.35s ease', position: 'absolute', inset: 0 }}
-                  unoptimized priority={i === 0}
+                  placeholder={img.blurHash ? "blur" : "empty"}
+                  blurDataURL={img.blurHash}
                 />
               ))}
               {vehicle.images.length > 1 && (
@@ -74,12 +77,12 @@ export default function VehicleDetailClient() {
               )}
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              {vehicle.images.map((src, i) => (
+              {vehicle.images.map((img, i) => (
                 <button key={i} onClick={() => setCurrentImg(i)} style={{
                   position: 'relative', width: 80, height: 56, borderRadius: 10, overflow: 'hidden', border: 'none', cursor: 'pointer', padding: 0,
                   outline: i === currentImg ? '2px solid var(--accent)' : '2px solid transparent', outlineOffset: 2, transition: 'outline 0.2s',
                 }}>
-                  <Image src={src} alt={`View ${i + 1}`} fill style={{ objectFit: 'cover' }} unoptimized />
+                  <Image src={img.path} alt={`View ${i + 1}`} fill style={{ objectFit: 'cover' }} />
                 </button>
               ))}
             </div>
@@ -118,6 +121,15 @@ export default function VehicleDetailClient() {
             </div>
 
             <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24 }}>
+              <div style={{ marginBottom: 20 }}>
+                <EnhancedDatePicker 
+                  value={startDate} 
+                  onChange={setStartDate} 
+                  label="Pick-up Date"
+                  placeholder="Select start date"
+                />
+              </div>
+
               <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Clock size={16} weight="bold" style={{ color: 'var(--accent)' }} /> Rental Duration
               </h3>

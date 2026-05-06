@@ -3,19 +3,24 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { OperatingHub, useStore } from "@/store/use-store";
 import { MOCK_FLEET, Vehicle } from "@/data/mock-fleet";
-import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database, TrendUp } from "@phosphor-icons/react";
+import { MapPin, Faders, Lightning, ShieldCheck, Truck, CaretRight, CaretLeft, Clock, ArrowsLeftRight, Database, TrendUp, CalendarBlank } from "@phosphor-icons/react";
 import Link from "next/link";
 import Image from "next/image";
 import { RentalDuration, calculatePrice } from "@/lib/pricing";
 import { formatPrice, getCurrencyForCountry } from "@/lib/currency";
 import { Logo } from "@/components/ui/logo";
 import { HUB_DATA } from "@/lib/constants";
+import { VehicleCard } from "@/components/vehicle-card";
+import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
+import { SkeletonVehicleCard } from "@/components/skeleton-vehicle-card";
 
 export default function FleetPage() {
   const { tier, setTier, hub, setHub, country, route, setRoute } = useStore();
   const [filteredFleet, setFilteredFleet] = useState<Vehicle[]>([]);
   const [duration, setDuration] = useState<RentalDuration>("24 Hours");
+  const [pickupDate, setPickupDate] = useState("");
   const [showComparison, setShowComparison] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const currency = getCurrencyForCountry(country);
 
@@ -31,9 +36,14 @@ export default function FleetPage() {
   ] as const;
 
   useEffect(() => {
-    let filtered = MOCK_FLEET.filter(v => v.hubs.includes(hub));
-    if (tier !== "all") filtered = filtered.filter(v => v.tier === tier);
-    setFilteredFleet(filtered);
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      let filtered = MOCK_FLEET.filter(v => v.hubs.includes(hub));
+      if (tier !== "all") filtered = filtered.filter(v => v.tier === tier);
+      setFilteredFleet(filtered);
+      setIsLoading(false);
+    }, 400); // Fast simulation for premium feel
+    return () => clearTimeout(timer);
   }, [tier, hub]);
 
   return (
@@ -63,6 +73,9 @@ export default function FleetPage() {
           <select value={duration} onChange={e => setDuration(e.target.value as RentalDuration)} style={selectStyle}>
             {durations.map(d => <option key={d} value={d}>{d}</option>)}
           </select>
+          <div style={{ width: '100%', marginTop: 8 }}>
+            <EnhancedDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Pick-up Date" />
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: 32 }}>
@@ -78,6 +91,10 @@ export default function FleetPage() {
               {tierOptions.map(t => (
                 <SidebarButton key={t.id} active={tier === t.id} onClick={() => setTier(t.id as any)} label={t.label} icon={t.icon} />
               ))}
+            </FilterSection>
+
+            <FilterSection title="Booking Date" icon={<CalendarBlank size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
+              <EnhancedDatePicker value={pickupDate} onChange={setPickupDate} placeholder="Select date" />
             </FilterSection>
 
             <FilterSection title="Rental Duration" icon={<Clock size={14} weight="bold" style={{ color: 'var(--accent)' }} />}>
@@ -140,7 +157,11 @@ export default function FleetPage() {
               </button>
             </div>
 
-            {filteredFleet.length === 0 ? (
+            {isLoading ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
+                {[...Array(6)].map((_, i) => <SkeletonVehicleCard key={i} />)}
+              </div>
+            ) : filteredFleet.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', border: '2px dashed var(--border-primary)', borderRadius: 16, background: 'var(--bg-elevated)' }}>
                 <p style={{ fontSize: 15, color: 'var(--text-tertiary)', fontWeight: 500, marginBottom: 12 }}>No vehicles available in {hub} for this category.</p>
                 <button onClick={() => setTier("all")} className="btn btn-accent" style={{ height: 40, padding: '0 20px' }}>Show all vehicles</button>
@@ -148,7 +169,7 @@ export default function FleetPage() {
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
                 {filteredFleet.map((v, i) => (
-                  <VehicleCard key={v.id} vehicle={v} duration={duration} currency={currency} index={i} hub={hub} />
+                  <VehicleCard key={v.id} vehicle={v} duration={duration} currency={currency} index={i} activeHub={hub} />
                 ))}
               </div>
             )}
@@ -195,135 +216,6 @@ function FilterSection({ title, icon, children }: { title: string; icon: React.R
   );
 }
 
-/* ── Vehicle Card with WORKING Image Slider ──────────── */
-function VehicleCard({ vehicle: v, duration, currency, index, hub }: { vehicle: Vehicle; duration: RentalDuration; currency: any; index: number; hub: string }) {
-  const [imgIdx, setImgIdx] = useState(0);
-  const price = calculatePrice(v.pricePerDay, duration);
-
-  const prevImg = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(p => p === 0 ? v.images.length - 1 : p - 1);
-  }, [v.images.length]);
-
-  const nextImg = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(p => (p + 1) % v.images.length);
-  }, [v.images.length]);
-
-  const selectImg = useCallback((e: React.MouseEvent, i: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(i);
-  }, []);
-
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * 0.04, 0.5), duration: 0.35 }}>
-      <div className="card" style={{ cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column' }}>
-        {/* Image Slider — NOT wrapped in Link so buttons work */}
-        <div style={{ position: 'relative', aspectRatio: '16/10', background: 'var(--bg-surface)', overflow: 'hidden', flexShrink: 0 }}>
-          {v.images.map((src, i) => (
-            <Image
-              key={i}
-              src={src}
-              alt={`${v.brand} ${v.model} view ${i + 1}`}
-              fill
-              style={{
-                objectFit: 'cover',
-                opacity: i === imgIdx ? 1 : 0,
-                transition: 'opacity 0.35s ease',
-                position: 'absolute',
-                inset: 0,
-              }}
-              unoptimized
-            />
-          ))}
-
-          {/* Tier badge */}
-          <div style={{
-            position: 'absolute', top: 10, left: 10, padding: '4px 10px', borderRadius: 6, zIndex: 2,
-            fontSize: 11, fontWeight: 600,
-            background: v.tier === 'elite' ? 'var(--gold)' : v.tier === 'eco-gig' ? 'var(--success)' : 'var(--accent)',
-            color: v.tier === 'elite' ? '#1a1a1a' : 'white',
-          }}>
-            {v.tier === 'eco-gig' ? 'Eco-Gig' : v.tier === 'heavy-haul' ? 'Haulage' : 'Exotic'}
-          </div>
-
-          {v.hubs[0] === hub && (
-            <div style={{
-              position: 'absolute', top: 10, right: 10, padding: '4px 10px', borderRadius: 6, zIndex: 2,
-              fontSize: 10, fontWeight: 800, background: 'rgba(255,255,255,0.95)', color: '#000',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: 4
-            }}>
-              <TrendUp size={12} weight="bold" /> MOST USED IN {hub.toUpperCase()}
-            </div>
-          )}
-
-          {/* Arrow buttons */}
-          {v.images.length > 1 && (
-            <>
-              <button onClick={prevImg} aria-label="Previous image" style={{ ...arrowBtnStyle, left: 8 }}>
-                <CaretLeft size={14} weight="bold" />
-              </button>
-              <button onClick={nextImg} aria-label="Next image" style={{ ...arrowBtnStyle, right: 8 }}>
-                <CaretRight size={14} weight="bold" />
-              </button>
-            </>
-          )}
-
-          {/* Dot indicators */}
-          {v.images.length > 1 && (
-            <div style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 2 }}>
-              {v.images.map((_, i) => (
-                <button key={i} onClick={e => selectImg(e, i)} aria-label={`View image ${i + 1}`} style={{
-                  width: i === imgIdx ? 18 : 7, height: 7, borderRadius: 100, border: 'none', cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  background: i === imgIdx ? 'white' : 'rgba(255,255,255,0.45)',
-                  padding: 0,
-                }} />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Card content — Link wraps here so navigation works on text/price click */}
-        <Link href={`/fleet/${v.id}`} style={{ display: 'flex', flexDirection: 'column', flex: 1, textDecoration: 'none', color: 'inherit' }}>
-          <div style={{ padding: '14px 16px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
-              {v.brand} · {v.year}
-            </p>
-            <h3 style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>{v.model}</h3>
-
-            <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 12 }}>
-              {v.features.slice(0, 3).map((f, j) => (
-                <span key={j} style={{
-                  fontSize: 10, padding: '2px 7px', borderRadius: 4, fontWeight: 500,
-                  background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-primary)',
-                }}>{f}</span>
-              ))}
-            </div>
-
-            <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid var(--border-primary)' }}>
-              <div>
-                <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>
-                  {duration}
-                </p>
-                <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>{formatPrice(price, currency)}</span>
-              </div>
-              <div style={{
-                width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: 'var(--accent-soft)', color: 'var(--accent)',
-              }}>
-                <CaretRight size={14} weight="bold" />
-              </div>
-            </div>
-          </div>
-        </Link>
-      </div>
-    </motion.div>
-  );
-}
 
 /* ── Styles ──────────────────────────────────────────── */
 const inputStyle: React.CSSProperties = {
