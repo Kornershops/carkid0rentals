@@ -235,14 +235,14 @@ export default function Home() {
       </section>
 
       {/* --- Purpose Grid --- */}
-      <section className="py-24 md:py-32 bg-white/[0.01]" aria-labelledby="purpose-heading">
+      <section className="py-32 md:py-48 bg-white/[0.01]" aria-labelledby="purpose-heading">
         <div className="container-wide">
-          <div className="mb-16 md:mb-24 text-center max-w-2xl mx-auto">
-            <h2 id="purpose-heading" className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Mission Critical Fleet</h2>
-            <p className="text-slate-400 text-base md:text-lg">Specialized vehicle infrastructure for the modern African terrain and economy.</p>
+          <div className="mb-24 md:mb-32 text-center max-w-2xl mx-auto">
+            <h2 id="purpose-heading" className="text-4xl md:text-6xl font-black mb-8 tracking-tight">Mission Critical Fleet</h2>
+            <p className="text-slate-400 text-lg md:text-xl">Specialized vehicle infrastructure for the modern African terrain and economy.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
             {[
               { icon: <Lightning size={32} weight="duotone" />, color: 'text-emerald-400', title: "Eco-Gig EVs", desc: "Optimized for maximum earnings. Zero emissions, zero fuel spend." },
               { icon: <Crown size={32} weight="duotone" />, color: 'text-indigo-400', title: "Elite Executive", desc: "Discreet luxury and armored variants for high-profile operations." },
@@ -250,15 +250,15 @@ export default function Home() {
             ].map((tier, i) => (
               <motion.div 
                 key={i}
-                whileHover={{ y: -8 }}
-                className="glass rounded-[2.5rem] p-10 border-white/5 relative group transition-all duration-500"
+                whileHover={{ y: -12 }}
+                className="glass rounded-[3rem] p-12 border-white/5 relative group transition-all duration-500"
               >
-                <div className={`mb-8 ${tier.color} transform transition-transform group-hover:scale-110 duration-500`}>
+                <div className={`mb-10 ${tier.color} transform transition-transform group-hover:scale-110 duration-500`}>
                   {tier.icon}
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{tier.title}</h3>
-                <p className="text-slate-400 leading-relaxed text-sm md:text-base">{tier.desc}</p>
-                <Link href="/fleet" className="mt-8 flex items-center gap-2 text-indigo-400 text-sm font-bold group-hover:gap-3 transition-all" aria-label={`View ${tier.title} fleet`}>
+                <h3 className="text-2xl font-bold mb-6">{tier.title}</h3>
+                <p className="text-slate-400 leading-relaxed text-base">{tier.desc}</p>
+                <Link href="/fleet" className="mt-10 flex items-center gap-2 text-indigo-400 text-sm font-bold group-hover:gap-3 transition-all" aria-label={`View ${tier.title} fleet`}>
                   Explore Tier <CaretRight size={16} />
                 </Link>
               </motion.div>
@@ -268,20 +268,20 @@ export default function Home() {
       </section>
 
       {/* --- Fleet Gallery --- */}
-      <section className="py-24 md:py-32" aria-labelledby="fleet-heading">
+      <section className="py-32 md:py-48 border-t border-white/5" aria-labelledby="fleet-heading">
         <div className="container-wide">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 md:mb-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-24">
             <div className="text-center md:text-left">
-              <div className="section-divider mb-6 mx-auto md:mx-0" />
-              <h2 id="fleet-heading" className="text-4xl md:text-6xl font-black tracking-tighter mb-4">Available in {hub}</h2>
-              <p className="text-slate-400 text-lg">Personalized fleet for <span className="text-white font-bold">{role}</span> profile.</p>
+              <div className="section-divider mb-8 mx-auto md:mx-0" />
+              <h2 id="fleet-heading" className="text-5xl md:text-7xl font-black tracking-tighter mb-6">Available in {hub}</h2>
+              <p className="text-slate-400 text-xl">Personalized fleet for <span className="text-white font-bold">{role}</span> profile.</p>
             </div>
-            <Link href="/fleet" className="btn btn-outline h-14 px-10 w-full md:w-auto" aria-label="View our full vehicle fleet">
+            <Link href="/fleet" className="btn btn-outline h-16 px-12 w-full md:w-auto text-sm uppercase tracking-widest font-black" aria-label="View our full vehicle fleet">
               Browse Full Catalog
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
             {featured.map((v, i) => (
               <VehicleCard 
                 key={v.id} 
@@ -297,15 +297,15 @@ export default function Home() {
       </section>
 
       {/* --- Footer --- */}
-      <footer className="pt-24 pb-12 border-t border-white/5 bg-black/40" role="contentinfo">
+      <footer className="pt-32 pb-16 border-t border-white/5 bg-black/40" role="contentinfo">
         <div className="container-wide">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20">
-            <div className="sm:col-span-2">
-              <Logo className="mb-8" />
-              <p className="text-slate-400 leading-relaxed max-w-sm text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-24 mb-24">
+            <div className="lg:col-span-1">
+              <Logo className="mb-10 scale-110 origin-left" />
+              <p className="text-slate-400 leading-relaxed text-base mb-10">
                 Africa's infrastructure layer for standardized mobility. Delivering fleet excellence for the gig economy and executive transport.
               </p>
-              <div className="mt-8 flex gap-4">
+              <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center hover:bg-indigo-600/20 transition-all cursor-pointer">
                   <Users size={22} weight="duotone" className="text-indigo-400" />
                 </div>
@@ -321,11 +321,11 @@ export default function Home() {
               { title: "Legal", links: ["Rental Terms", "Insurance Policy", "Safety Logic", "Privacy Hub"] }
             ].map((col, i) => (
               <div key={i}>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-8">{col.title}</h4>
-                <ul className="space-y-4">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-10">{col.title}</h4>
+                <ul className="space-y-6">
                   {col.links.map(link => (
                     <li key={link}>
-                      <Link href="#" className="text-sm text-slate-400 hover:text-indigo-400 transition-colors">{link}</Link>
+                      <Link href="#" className="text-base text-slate-400 hover:text-indigo-400 transition-colors">{link}</Link>
                     </li>
                   ))}
                 </ul>
@@ -333,11 +333,11 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-widest text-center md:text-left">
+          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest text-center md:text-left">
               © {new Date().getFullYear()} CarKid0 Rentals. Institutional Mobility Engine.
             </p>
-            <div className="flex gap-8 text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-500">
+            <div className="flex flex-wrap justify-center gap-10 text-xs font-black uppercase tracking-widest text-slate-500">
               <Link href="#" className="hover:text-white transition-colors">Compliance</Link>
               <Link href="#" className="hover:text-white transition-colors">Governance</Link>
               <Link href="#" className="hover:text-white transition-colors">Fleet API</Link>

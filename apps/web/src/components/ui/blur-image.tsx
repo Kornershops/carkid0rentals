@@ -8,14 +8,23 @@ interface BlurImageProps extends ImageProps {
   shimmer?: boolean;
 }
 
+import { Users } from "@phosphor-icons/react";
+
 export function BlurImage({ src, alt, className, shimmer = true, ...props }: BlurImageProps) {
-  const [isLoading, setLoading] = useState(true);
+  const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
 
   return (
-    <div className={`relative overflow-hidden bg-white/5 ${className}`}>
-      {shimmer && isLoading && (
+    <div className={`relative overflow-hidden bg-neutral-900 ${className}`}>
+      {shimmer && status === "loading" && (
         <div className="absolute inset-0 z-10">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+        </div>
+      )}
+      
+      {status === "error" && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white/10 gap-2">
+          <Users size={32} weight="thin" />
+          <span className="text-[10px] font-black uppercase tracking-widest">Asset Unavailable</span>
         </div>
       )}
       
@@ -25,9 +34,10 @@ export function BlurImage({ src, alt, className, shimmer = true, ...props }: Blu
         alt={alt}
         className={`
           duration-700 ease-in-out
-          ${isLoading ? "scale-105 blur-lg grayscale" : "scale-100 blur-0 grayscale-0"}
+          ${status === "loading" ? "scale-105 blur-lg grayscale opacity-0" : "scale-100 blur-0 grayscale-0 opacity-100"}
         `}
-        onLoad={() => setLoading(false)}
+        onLoad={() => setStatus("loaded")}
+        onError={() => setStatus("error")}
       />
     </div>
   );
