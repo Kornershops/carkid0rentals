@@ -1,5 +1,13 @@
 {
   "name": "carkid0rentals-root",
   "private": true,
-  "description": "Root placeholder for Netlify deployment"
+  "description": "Institutional Fleet Management Monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=apps/web",
+    "dev": "npm run dev --workspace=apps/web"
+  }
 }
