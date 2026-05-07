@@ -10,8 +10,9 @@ export function Logo({ className = "" }: { className?: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 4px 16px rgba(255, 107, 44, 0.3)',
-        transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        border: '2px solid black',
+        boxShadow: '2px 2px 0px #000000',
+        transition: 'all 0.2s',
         fontFamily: 'var(--font-display)',
         fontWeight: 900,
         fontSize: 18,
@@ -24,8 +25,8 @@ export function Logo({ className = "" }: { className?: string }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         <span style={{
           fontFamily: 'var(--font-display)',
-          fontWeight: 800,
-          fontSize: 17,
+          fontWeight: 900,
+          fontSize: 18,
           letterSpacing: '-0.03em',
           color: 'var(--text-primary)',
           lineHeight: 1,
@@ -34,15 +35,15 @@ export function Logo({ className = "" }: { className?: string }) {
         </span>
         <span style={{
           fontFamily: 'var(--font-body)',
-          fontWeight: 500,
-          fontSize: 9,
-          letterSpacing: '0.12em',
+          fontWeight: 900,
+          fontSize: 8,
+          letterSpacing: '0.1em',
           color: 'var(--text-tertiary)',
           textTransform: 'uppercase' as const,
           lineHeight: 1,
           marginTop: 2,
         }}>
-          Vehicle Rentals
+          Mobility Layer
         </span>
       </div>
     </a>

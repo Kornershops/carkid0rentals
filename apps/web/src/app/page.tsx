@@ -44,341 +44,323 @@ export default function Home() {
   const currency = getCurrencyForCountry(country);
 
   return (
-    <main className="min-h-screen selection:bg-indigo-500/30 overflow-x-hidden">
-
-      {/* --- Navigation --- */}
-      <nav className="glass fixed top-0 w-full z-[100] border-b border-white/5 h-20" aria-label="Main Navigation">
-        <div className="container-wide h-full flex items-center justify-between">
-          <div className="flex items-center gap-4 md:gap-8">
-            <Logo />
-            <div className="hidden md:block w-px h-6 bg-white/10" />
-            <div className="hidden sm:block">
-              <RegionSelector />
-            </div>
-          </div>
-
-          {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-6">
-            <RoleSelector />
-            <Link href="/auth/login" className="btn btn-outline h-11 px-6" aria-label="Sign in to your account">
-              Sign In
-            </Link>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="lg:hidden w-12 h-12 flex items-center justify-center glass rounded-xl text-white"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-expanded={isMobileMenuOpen}
-            aria-label="Toggle navigation menu"
-          >
-            {isMobileMenuOpen ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Navigation Drawer */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[90] glass bg-[#050505]/95 backdrop-blur-2xl lg:hidden pt-32 p-8"
-          >
-            <div className="space-y-8">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 block">Regional Hub</label>
-                <RegionSelector />
-              </div>
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4 block">Active Role</label>
-                <RoleSelector />
-              </div>
-              <div className="pt-8 border-t border-white/10">
-                <Link 
-                  href="/auth/login" 
-                  className="btn btn-accent w-full h-14"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Access Platform
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* --- Hero Section --- */}
-      <section className="relative min-h-[100vh] flex items-center pt-20" aria-labelledby="hero-heading">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop"
-            alt=""
-            fill
-            className="object-cover kenburns brightness-[0.3] md:brightness-[0.4]"
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#050505]" />
-        </div>
-
-        <div className="container-wide relative z-10 pt-12 pb-20">
-          <motion.div 
-            variants={stagger} 
-            initial="hidden" 
-            animate="visible" 
-            className="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center"
-          >
-            {/* Left Content */}
-            <div className="text-center lg:text-left">
-              <motion.div 
-                variants={fadeUp} 
-                className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-black text-[10px] uppercase tracking-[0.3em] mb-10"
-              >
-                <Globe size={14} className="animate-pulse" />
-                <span>Pan-African Fleet Network</span>
-              </motion.div>
-
-              <motion.h1 
-                id="hero-heading"
-                variants={fadeUp} 
-                className="text-[clamp(48px,11vw,100px)] leading-[0.85] font-black tracking-tighter mb-10 text-gradient"
-              >
-                Institutional<br className="hidden md:block" /> 
-                <span className="text-indigo-500">Fleet Access.</span>
-              </motion.h1>
-
-              <motion.p 
-                variants={fadeUp} 
-                className="text-slate-400 text-lg md:text-2xl leading-relaxed mb-12 max-w-xl mx-auto lg:mx-0 font-medium"
-              >
-                Africa's infrastructure layer for standardized mobility. Delivering <span className="text-white">mission-grade</span> fleet excellence.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                <Link href="/fleet" className="btn btn-accent h-16 px-12 text-sm uppercase tracking-widest font-black shadow-[0_0_40px_rgba(255,107,44,0.3)]">
-                  Reserve Unit Now
-                </Link>
-                <Link href="/tech" className="btn btn-outline h-16 px-12 text-sm uppercase tracking-widest font-black">
-                  Platform Tech
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Booking Widget */}
-            <motion.div variants={fadeUp} className="glass rounded-[2rem] md:rounded-[32px] p-6 md:p-8 border-white/10 shadow-2xl relative overflow-hidden max-w-xl mx-auto w-full">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[80px] -mr-16 -mt-16" />
-              
-              <h2 className="text-xl md:text-2xl font-bold mb-8 flex items-center gap-3">
-                <Lightning size={24} weight="duotone" className="text-indigo-500" />
-                Quick Reserve
-              </h2>
-
-              <div className="space-y-6">
-                <div role="group" aria-labelledby="label-location">
-                  <label id="label-location" className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 block">Pick-up Location</label>
-                  <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 transition-all focus-within:border-indigo-500/50 focus-within:bg-white/10">
-                    <MapPin size={20} className="text-indigo-500" />
-                    <select 
-                      value={hub} 
-                      onChange={e => setHub(e.target.value as any)}
-                      className="w-full text-sm font-bold focus:outline-none bg-transparent cursor-pointer"
-                      aria-label="Select pick-up hub"
-                    >
-                      {hubsInCountry.map(h => <option key={h} value={h} className="bg-slate-900 text-white">{h}</option>)}
-                    </select>
-                  </div>
-                </div>
-
-                <EnhancedDatePicker 
-                  value={pickupDate}
-                  onChange={setPickupDate}
-                  label="Pick-up Schedule"
-                />
-
-                <Link 
-                  href="/fleet" 
-                  className="btn btn-accent w-full h-14 md:h-16 text-base tracking-tight mt-4"
-                  aria-label="Find available vehicles for rent"
-                >
-                  Explore Available Fleet
-                  <CaretRight size={20} weight="bold" />
-                </Link>
-              </div>
-
-              <div className="mt-8 pt-8 border-t border-white/5 grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-indigo-400 font-bold text-lg md:text-xl">500+</div>
-                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Units</div>
-                </div>
-                <div>
-                  <div className="text-indigo-400 font-bold text-lg md:text-xl">12k+</div>
-                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Active</div>
-                </div>
-                <div>
-                  <div className="text-indigo-400 font-bold text-lg md:text-xl">24/7</div>
-                  <div className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Ops</div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* --- Purpose Grid (Bento) --- */}
-      <section className="py-32 md:py-48" aria-labelledby="purpose-heading">
-        <div className="container-wide">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-24 md:mb-32">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-3 text-orange-500 font-black text-[10px] uppercase tracking-[0.3em] mb-6">
-                <span className="w-8 h-px bg-orange-500/50" />
-                Strategic Verticals
-              </div>
-              <h2 id="purpose-heading" className="text-5xl md:text-8xl font-black mb-8 tracking-tighter text-gradient leading-[0.85]">
-                Mission<br />Critical <span className="text-orange-500">Fleet.</span>
-              </h2>
-            </div>
-            <p className="text-slate-400 text-lg md:text-xl max-w-md leading-relaxed border-l-2 border-white/5 pl-8 py-2">
-              Specialized vehicle infrastructure engineered for the modern African terrain and enterprise economy.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 auto-rows-[320px]">
-            {/* Elite Executive - The Hero Bento Card */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="lg:col-span-8 lg:row-span-2 glass rounded-[3rem] p-12 border-white/5 relative group overflow-hidden flex flex-col justify-end"
-            >
-              <div className="absolute top-0 right-0 p-12 text-[120px] font-black text-white/[0.02] leading-none select-none group-hover:text-indigo-500/[0.05] transition-colors">01</div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-              <div className="relative z-10">
-                <div className="mb-10 text-indigo-400 transform transition-transform group-hover:scale-110 duration-500">
-                  <Crown size={64} weight="duotone" />
-                </div>
-                <h3 className="text-4xl md:text-5xl font-black mb-6">Elite Executive</h3>
-                <p className="text-slate-400 leading-relaxed text-lg max-w-xl mb-10">
-                  Discreet luxury and armored variants for high-profile operations. Standardized security meets unparalleled comfort.
-                </p>
-                <Link href="/fleet" className="btn btn-accent px-10 h-14 w-fit">
-                  Explore Elite Registry <CaretRight size={20} />
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Eco-Gig EVs */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="lg:col-span-4 lg:row-span-1 glass rounded-[2.5rem] p-10 border-white/5 relative group overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 text-6xl font-black text-white/[0.02] select-none">02</div>
-              <div className="mb-8 text-emerald-400 group-hover:float duration-1000">
-                <Lightning size={40} weight="duotone" />
-              </div>
-              <h3 className="text-2xl font-black mb-4">Eco-Gig EVs</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">
-                Optimized for maximum earnings. Zero emissions, zero fuel spend, 100% uptime.
-              </p>
-            </motion.div>
-
-            {/* Industrial Ops */}
-            <motion.div 
-              whileHover={{ y: -10 }}
-              className="lg:col-span-4 lg:row-span-1 glass rounded-[2.5rem] p-10 border-white/5 relative group overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 text-6xl font-black text-white/[0.02] select-none">03</div>
-              <div className="mb-8 text-amber-400 group-hover:scale-110 transition-transform">
-                <Truck size={40} weight="duotone" />
-              </div>
-              <h3 className="text-2xl font-black mb-4">Industrial Ops</h3>
-              <p className="text-slate-400 leading-relaxed text-sm">
-                Heavy logistics and security escort units equipped with mission-grade communications.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- Fleet Gallery --- */}
-      <section className="py-32 md:py-48 border-t border-white/5" aria-labelledby="fleet-heading">
-        <div className="container-wide">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-24">
-            <div className="text-center md:text-left">
-              <div className="section-divider mb-8 mx-auto md:mx-0" />
-              <h2 id="fleet-heading" className="text-5xl md:text-7xl font-black tracking-tighter mb-6">Available in {hub}</h2>
-              <p className="text-slate-400 text-xl">Personalized fleet for <span className="text-white font-bold">{role}</span> profile.</p>
-            </div>
-            <Link href="/fleet" className="btn btn-outline h-16 px-12 w-full md:w-auto text-sm uppercase tracking-widest font-black" aria-label="View our full vehicle fleet">
-              Browse Full Catalog
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-12">
-            {featured.map((v, i) => (
-              <VehicleCard 
-                key={v.id} 
-                vehicle={v} 
-                duration="24 Hours" 
-                currency={currency} 
-                index={i} 
-                activeHub={hub} 
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- Footer --- */}
-      <footer className="pt-32 pb-16 border-t border-white/5 bg-black/40" role="contentinfo">
-        <div className="container-wide">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-24 mb-24">
-            <div className="lg:col-span-1">
-              <Logo className="mb-10 scale-110 origin-left" />
-              <p className="text-slate-400 leading-relaxed text-base mb-10">
-                Africa's infrastructure layer for standardized mobility. Delivering fleet excellence for the gig economy and executive transport.
-              </p>
-              <div className="flex gap-4">
-                <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center hover:bg-indigo-600/20 transition-all cursor-pointer">
-                  <Users size={22} weight="duotone" className="text-indigo-400" />
-                </div>
-                <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center hover:bg-indigo-600/20 transition-all cursor-pointer">
-                  <Globe size={22} weight="duotone" className="text-indigo-400" />
-                </div>
-              </div>
-            </div>
-            
-            {[
-              { title: "Fleet Ops", links: ["Electric Units", "Security Escort", "Logistics Hub", "Premium Shield"] },
-              { title: "Network", links: ["Hub Locations", "Partner Portal", "Fleet Health", "Coverage Map"] },
-              { title: "Legal", links: ["Rental Terms", "Insurance Policy", "Safety Logic", "Privacy Hub"] }
-            ].map((col, i) => (
-              <div key={i}>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-10">{col.title}</h4>
-                <ul className="space-y-6">
-                  {col.links.map(link => (
-                    <li key={link}>
-                      <Link href="#" className="text-base text-slate-400 hover:text-indigo-400 transition-colors">{link}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-10">
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest text-center md:text-left">
-              © {new Date().getFullYear()} CarKid0 Rentals. Institutional Mobility Engine.
-            </p>
-            <div className="flex flex-wrap justify-center gap-10 text-xs font-black uppercase tracking-widest text-slate-500">
-              <Link href="#" className="hover:text-white transition-colors">Compliance</Link>
-              <Link href="#" className="hover:text-white transition-colors">Governance</Link>
-              <Link href="#" className="hover:text-white transition-colors">Fleet API</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </main>
-  );
+    <main className="min-h-screen bg-white selection:bg-blue-500/30 overflow-x-hidden">
+ 
+       {/* --- Navigation --- */}
+       <nav className="glass fixed top-0 w-full z-[100] h-20" aria-label="Main Navigation">
+         <div className="container-wide h-full flex items-center justify-between">
+           <div className="flex items-center gap-4 md:gap-8">
+             <Logo />
+             <div className="hidden md:block w-px h-6 bg-black/10" />
+             <div className="hidden sm:block">
+               <RegionSelector />
+             </div>
+           </div>
+ 
+           {/* Desktop Actions */}
+           <div className="hidden lg:flex items-center gap-6">
+             <RoleSelector />
+             <Link href="/auth/login" className="btn btn-outline h-12 px-8" aria-label="Sign in to your account">
+               Sign In
+             </Link>
+           </div>
+ 
+           {/* Mobile Menu Toggle */}
+           <button 
+             className="lg:hidden w-12 h-12 flex items-center justify-center bg-white border-2 border-black rounded-xl text-black shadow-[2px_2px_0px_#000000]"
+             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+             aria-expanded={isMobileMenuOpen}
+             aria-label="Toggle navigation menu"
+           >
+             {isMobileMenuOpen ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
+           </button>
+         </div>
+       </nav>
+ 
+       {/* Mobile Navigation Drawer */}
+       <AnimatePresence>
+         {isMobileMenuOpen && (
+           <motion.div 
+             initial={{ opacity: 0, x: '100%' }}
+             animate={{ opacity: 1, x: 0 }}
+             exit={{ opacity: 0, x: '100%' }}
+             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+             className="fixed inset-0 z-[90] bg-white lg:hidden pt-32 p-8"
+           >
+             <div className="space-y-8">
+               <div>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-4 block">Regional Hub</label>
+                 <RegionSelector />
+               </div>
+               <div>
+                 <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-4 block">Active Role</label>
+                 <RoleSelector />
+               </div>
+               <div className="pt-8 border-t-2 border-neutral-100">
+                 <Link 
+                   href="/auth/login" 
+                   className="btn btn-accent w-full h-16 shadow-[4px_4px_0px_#000000]"
+                   onClick={() => setIsMobileMenuOpen(false)}
+                 >
+                   Access Platform
+                 </Link>
+               </div>
+             </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
+ 
+       {/* --- Hero Section --- */}
+       <section className="relative min-h-[90vh] flex items-center pt-20 bg-[#D8F8C8] border-b-2 border-black overflow-hidden" aria-labelledby="hero-heading">
+         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/10 blur-[120px] rounded-full -mr-64 -mt-64" />
+         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/40 blur-[80px] rounded-full -ml-32 -mb-32" />
+ 
+         <div className="container-wide relative z-10 pt-12 pb-20">
+           <motion.div 
+             variants={stagger} 
+             initial="hidden" 
+             animate="visible" 
+             className="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center"
+           >
+             {/* Left Content */}
+             <div className="text-center lg:text-left">
+               <motion.div 
+                 variants={fadeUp} 
+                 className="inline-flex items-center gap-3 px-4 py-2 rounded-lg bg-white border-2 border-black text-black font-black text-[10px] uppercase tracking-[0.2em] mb-10 shadow-[2px_2px_0px_#000000]"
+               >
+                 <Globe size={14} className="text-blue-600" />
+                 <span>Pan-African Fleet Network</span>
+               </motion.div>
+ 
+               <motion.h1 
+                 id="hero-heading"
+                 variants={fadeUp} 
+                 className="text-[clamp(44px,10vw,88px)] leading-[0.9] font-black tracking-tight mb-8 text-black"
+               >
+                 Get your<br className="hidden md:block" /> 
+                 <span className="text-blue-600 underline decoration-black decoration-8 underline-offset-8">Virtual Fleet.</span>
+               </motion.h1>
+ 
+               <motion.p 
+                 variants={fadeUp} 
+                 className="text-neutral-700 text-lg md:text-xl leading-relaxed mb-12 max-w-xl mx-auto lg:mx-0 font-bold"
+               >
+                 Institutional-grade vehicle infrastructure for the modern African terrain. Rent with power and flexibility.
+               </motion.p>
+ 
+               <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
+                 <Link href="/fleet" className="btn btn-accent h-16 px-12 shadow-[4px_4px_0px_#000000]">
+                   Reserve Unit Now
+                 </Link>
+                 <Link href="/tech" className="btn btn-outline h-16 px-12">
+                   Platform Tech
+                 </Link>
+               </motion.div>
+             </div>
+ 
+             {/* Booking Widget */}
+             <motion.div variants={fadeUp} className="bg-white rounded-[32px] p-6 md:p-10 border-2 border-black shadow-[8px_8px_0px_#000000] relative overflow-hidden max-w-xl mx-auto w-full">
+               <h2 className="text-2xl font-black mb-10 flex items-center gap-3 text-black">
+                 <Lightning size={28} weight="bold" className="text-blue-600" />
+                 Quick Reserve
+               </h2>
+ 
+               <div className="space-y-8">
+                 <div role="group">
+                   <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-4 block">Pick-up Location</label>
+                   <div className="flex items-center gap-4 bg-neutral-50 border-2 border-black rounded-2xl px-5 py-5 transition-all focus-within:bg-white shadow-[2px_2px_0px_#000000]">
+                     <MapPin size={22} className="text-blue-600" />
+                     <select 
+                       value={hub} 
+                       onChange={e => setHub(e.target.value as any)}
+                       className="w-full text-base font-black focus:outline-none bg-transparent cursor-pointer text-black"
+                     >
+                       {hubsInCountry.map(h => <option key={h} value={h} className="bg-white text-black">{h}</option>)}
+                     </select>
+                   </div>
+                 </div>
+ 
+                 <EnhancedDatePicker 
+                   value={pickupDate}
+                   onChange={setPickupDate}
+                   label="Pick-up Schedule"
+                 />
+ 
+                 <Link 
+                   href="/fleet" 
+                   className="btn btn-accent w-full h-16 text-lg mt-4 shadow-[4px_4px_0px_#000000]"
+                 >
+                   Find Vehicles
+                   <CaretRight size={22} weight="bold" />
+                 </Link>
+               </div>
+ 
+               <div className="mt-10 pt-10 border-t-2 border-neutral-100 grid grid-cols-3 gap-4 text-center">
+                 <div>
+                   <div className="text-blue-600 font-black text-xl md:text-2xl">500+</div>
+                   <div className="text-[9px] text-neutral-400 uppercase font-black tracking-widest">Units</div>
+                 </div>
+                 <div>
+                   <div className="text-blue-600 font-black text-xl md:text-2xl">12k+</div>
+                   <div className="text-[9px] text-neutral-400 uppercase font-black tracking-widest">Active</div>
+                 </div>
+                 <div>
+                   <div className="text-blue-600 font-black text-xl md:text-2xl">24/7</div>
+                   <div className="text-[9px] text-neutral-400 uppercase font-black tracking-widest">Ops</div>
+                 </div>
+               </div>
+             </motion.div>
+           </motion.div>
+         </div>
+       </section>
+ 
+       {/* --- Purpose Grid --- */}
+       <section className="py-24 md:py-32 bg-white" aria-labelledby="purpose-heading">
+         <div className="container-wide">
+           <div className="max-w-3xl mb-20 md:mb-24">
+             <div className="flex items-center gap-3 text-blue-600 font-black text-[10px] uppercase tracking-widest mb-6">
+               <span className="w-10 h-[2px] bg-blue-600" />
+               Strategic Verticals
+             </div>
+             <h2 id="purpose-heading" className="text-5xl md:text-7xl font-black mb-8 tracking-tight text-black leading-[0.9]">
+               Mission Critical <span className="text-blue-600 italic">Fleet.</span>
+             </h2>
+             <p className="text-neutral-600 text-lg md:text-xl max-w-xl font-bold">
+               Specialized vehicle infrastructure engineered for the modern African enterprise economy.
+             </p>
+           </div>
+ 
+           <div className="grid lg:grid-cols-12 gap-6 md:gap-10 auto-rows-[340px]">
+             {/* Elite Executive */}
+             <motion.div 
+               whileHover={{ translate: '-4px -4px', boxShadow: '8px 8px 0px #000000' }}
+               className="lg:col-span-8 lg:row-span-2 bg-white border-2 border-black rounded-[2.5rem] p-10 md:p-14 relative group overflow-hidden flex flex-col justify-end shadow-[4px_4px_0px_#000000] transition-all"
+             >
+               <div className="absolute top-0 right-0 p-12 text-[160px] font-black text-black/[0.03] leading-none select-none">01</div>
+               <div className="relative z-10">
+                 <div className="mb-10 text-blue-600">
+                   <Crown size={72} weight="bold" />
+                 </div>
+                 <h3 className="text-4xl md:text-5xl font-black mb-6 text-black">Elite Executive</h3>
+                 <p className="text-neutral-600 leading-relaxed text-lg max-w-xl mb-10 font-bold">
+                   Discreet luxury and armored variants for high-profile operations. Standardized security meets comfort.
+                 </p>
+                 <Link href="/fleet" className="btn btn-accent px-10 h-14 w-fit">
+                   Explore Registry <CaretRight size={22} />
+                 </Link>
+               </div>
+             </motion.div>
+ 
+             {/* Eco-Gig EVs */}
+             <motion.div 
+               whileHover={{ translate: '-4px -4px', boxShadow: '8px 8px 0px #000000' }}
+               className="lg:col-span-4 lg:row-span-1 bg-[#D8F8C8] border-2 border-black rounded-[2rem] p-10 relative group overflow-hidden shadow-[4px_4px_0px_#000000] transition-all"
+             >
+               <div className="absolute top-0 right-0 p-8 text-6xl font-black text-black/[0.05] select-none">02</div>
+               <div className="mb-8 text-black">
+                 <Lightning size={44} weight="bold" />
+               </div>
+               <h3 className="text-2xl font-black mb-4 text-black">Eco-Gig EVs</h3>
+               <p className="text-neutral-800 leading-relaxed text-sm font-bold">
+                 Maximum earnings. Zero emissions, zero fuel spend, 100% uptime.
+               </p>
+             </motion.div>
+ 
+             {/* Industrial Ops */}
+             <motion.div 
+               whileHover={{ translate: '-4px -4px', boxShadow: '8px 8px 0px #000000' }}
+               className="lg:col-span-4 lg:row-span-1 bg-blue-600 border-2 border-black rounded-[2rem] p-10 relative group overflow-hidden shadow-[4px_4px_0px_#000000] transition-all"
+             >
+               <div className="absolute top-0 right-0 p-8 text-6xl font-black text-white/[0.1] select-none">03</div>
+               <div className="mb-8 text-white">
+                 <Truck size={44} weight="bold" />
+               </div>
+               <h3 className="text-2xl font-black mb-4 text-white">Industrial Ops</h3>
+               <p className="text-blue-100 leading-relaxed text-sm font-bold">
+                 Heavy logistics and security units equipped with mission-grade gear.
+               </p>
+             </motion.div>
+           </div>
+         </div>
+       </section>
+ 
+       {/* --- Fleet Gallery --- */}
+       <section className="py-24 md:py-32 bg-neutral-50 border-t-2 border-black" aria-labelledby="fleet-heading">
+         <div className="container-wide">
+           <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-24">
+             <div className="text-center md:text-left">
+               <h2 id="fleet-heading" className="text-5xl md:text-7xl font-black tracking-tight mb-6 text-black">Available in {hub}</h2>
+               <p className="text-neutral-500 text-xl font-bold">Personalized fleet for <span className="text-blue-600 font-black">{role}</span> profile.</p>
+             </div>
+             <Link href="/fleet" className="btn btn-outline h-16 px-12 w-full md:w-auto shadow-[4px_4px_0px_#000000]">
+               Browse Catalog
+             </Link>
+           </div>
+ 
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+             {featured.map((v, i) => (
+               <VehicleCard 
+                 key={v.id} 
+                 vehicle={v} 
+                 duration="24 Hours" 
+                 currency={currency} 
+                 index={i} 
+                 activeHub={hub} 
+               />
+             ))}
+           </div>
+         </div>
+       </section>
+ 
+       {/* --- Footer --- */}
+       <footer className="pt-24 pb-12 bg-white border-t-2 border-black" role="contentinfo">
+         <div className="container-wide">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+             <div className="lg:col-span-1">
+               <Logo className="mb-10 scale-110 origin-left" />
+               <p className="text-neutral-600 leading-relaxed text-base mb-10 font-bold">
+                 Africa's infrastructure layer for standardized mobility. Delivering fleet excellence for the modern economy.
+               </p>
+               <div className="flex gap-4">
+                 <div className="w-12 h-12 rounded-xl bg-white border-2 border-black flex items-center justify-center hover:bg-neutral-50 transition-all cursor-pointer shadow-[2px_2px_0px_#000000]">
+                   <Users size={24} weight="bold" className="text-black" />
+                 </div>
+                 <div className="w-12 h-12 rounded-xl bg-white border-2 border-black flex items-center justify-center hover:bg-neutral-50 transition-all cursor-pointer shadow-[2px_2px_0px_#000000]">
+                   <Globe size={24} weight="bold" className="text-black" />
+                 </div>
+               </div>
+             </div>
+             
+             {[
+               { title: "Fleet Ops", links: ["Electric Units", "Security Escort", "Logistics Hub", "Premium Shield"] },
+               { title: "Network", links: ["Hub Locations", "Partner Portal", "Fleet Health", "Coverage Map"] },
+               { title: "Legal", links: ["Rental Terms", "Insurance Policy", "Safety Logic", "Privacy Hub"] }
+             ].map((col, i) => (
+               <div key={i}>
+                 <h4 className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-10">{col.title}</h4>
+                 <ul className="space-y-6">
+                   {col.links.map(link => (
+                     <li key={link}>
+                       <Link href="#" className="text-base text-neutral-600 hover:text-blue-600 transition-colors font-black uppercase tracking-wider">{link}</Link>
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+             ))}
+           </div>
+ 
+           <div className="pt-10 border-t-2 border-neutral-100 flex flex-col md:flex-row justify-between items-center gap-8">
+             <p className="text-[10px] text-neutral-400 font-black uppercase tracking-widest text-center md:text-left">
+               © {new Date().getFullYear()} CarKid0 Rentals. Institutional Mobility Engine.
+             </p>
+             <div className="flex flex-wrap justify-center gap-10 text-[10px] font-black uppercase tracking-widest text-neutral-400">
+               <Link href="#" className="hover:text-black transition-colors">Compliance</Link>
+               <Link href="#" className="hover:text-black transition-colors">Governance</Link>
+               <Link href="#" className="hover:text-black transition-colors">Fleet API</Link>
+             </div>
+           </div>
+         </div>
+       </footer>
+     </main>
+   );;
 }

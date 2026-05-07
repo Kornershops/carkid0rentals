@@ -5,34 +5,33 @@
    Expert-grade automotive platform styling
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Warm Obsidian Palette ─────────────────────────────── */
+/* ── Neo-Brutalist Light Palette ────────────────────────── */
 :root {
-  --bg-primary:         #0C0C0E;
-  --bg-elevated:        #141416;
-  --bg-surface:         #1C1C1F;
-  --bg-hover:           #232326;
-  --bg-overlay:         rgba(12, 12, 14, 0.72);
+  --bg-primary:         #FFFFFF;
+  --bg-elevated:        #F9FAFB;
+  --bg-surface:         #F3F4F6;
+  --bg-hover:           #E5E7EB;
+  --bg-overlay:         rgba(255, 255, 255, 0.85);
 
-  --text-primary:       #F5F5F7;
-  --text-secondary:     #8E8E93;
-  --text-tertiary:      #48484A;
+  --text-primary:       #000000;
+  --text-secondary:     #4B5563;
+  --text-tertiary:      #9CA3AF;
 
-  --border-primary:     rgba(255, 255, 255, 0.06);
-  --border-hover:       rgba(255, 255, 255, 0.12);
+  --border-primary:     #000000;
+  --border-soft:        rgba(0, 0, 0, 0.08);
 
-  --accent:             #FF6B2C;
-  --accent-glow:        rgba(255, 107, 44, 0.15);
-  --accent-soft:        rgba(255, 107, 44, 0.08);
-  --gold:               #BFA14A;
-  --success:            #30D158;
-  --danger:             #FF453A;
+  --accent:             #0033FF; /* Boldswitch Blue */
+  --accent-glow:        rgba(0, 51, 255, 0.1);
+  --accent-soft:        #D8F8C8; /* Boldswitch Lime */
+  
+  --success:            #00C853;
+  --danger:             #FF1744;
 
-  /* Elevation system */
-  --shadow-sm:          0 1px 2px rgba(0,0,0,0.4);
-  --shadow-md:          0 4px 16px rgba(0,0,0,0.4);
-  --shadow-lg:          0 16px 48px rgba(0,0,0,0.5);
-  --shadow-xl:          0 32px 80px rgba(0,0,0,0.6);
-  --shadow-accent:      0 8px 32px rgba(255, 107, 44, 0.25);
+  /* Elevation system - Harder shadows for Neo-Brutalism */
+  --shadow-sm:          2px 2px 0px #000000;
+  --shadow-md:          4px 4px 0px #000000;
+  --shadow-lg:          8px 8px 0px #000000;
+  --shadow-xl:          12px 12px 0px #000000;
 
   /* Type scale */
   --font-display:       'Outfit', system-ui, sans-serif;
@@ -73,8 +72,8 @@ html {
 body {
   background-color: var(--bg-primary);
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
-    url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+    radial-gradient(circle at 100% 0%, var(--accent-soft) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, var(--accent-glow) 0%, transparent 40%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-body);
@@ -127,25 +126,26 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* ── Glassmorphism ─────────────────────────────────────── */
+/* ── Light Glassmorphism ───────────────────────────────── */
 .glass {
-  background: rgba(5, 5, 5, 0.85);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 2px solid var(--border-primary);
 }
 
 .glass-elevated {
-  background: rgba(10, 10, 12, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 2px solid var(--border-primary);
+  box-shadow: var(--shadow-md);
 }
 
 .glass-accent {
-  background: rgba(99, 102, 241, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--accent-soft);
+  background: var(--accent-soft);
+  border: 2px solid var(--border-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 /* --- Modern Interactive Elements --- */
@@ -154,80 +154,66 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 20px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 0 24px;
+  height: 54px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   cursor: pointer;
-  border: none;
+  border: 2px solid var(--border-primary);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .btn-accent {
   background: var(--accent);
   color: white;
-  box-shadow: var(--glow-accent);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-accent:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
 }
 
 .btn-outline {
-  background: transparent;
-  border: 1px solid var(--border-secondary);
+  background: white;
   color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-outline:hover {
-  background: var(--border-primary);
-  border-color: var(--text-secondary);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
 }
 
 .btn-ghost {
   background: transparent;
+  border-color: transparent;
   color: var(--text-secondary);
 }
 
 .btn-ghost:hover {
   color: var(--text-primary);
-  background: var(--border-primary);
+  background: var(--bg-surface);
 }
 
 /* --- Premium Cards --- */
 .card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg);
+  background: white;
+  border: 2px solid var(--border-primary);
+  border-radius: 24px;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
+  box-shadow: var(--shadow-md);
 }
 
 .card:hover {
-  transform: translateY(-8px);
-  border-color: var(--border-secondary);
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow-lg);
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-
-.card:hover::after {
-  opacity: 1;
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0px #000000;
 }
 
 /* --- Typography Enhancements --- */
