@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { PaperPlaneRight, User } from '@phosphor-icons/react';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Card from '@/components/ui/card';
-import Textarea from '@/components/ui/textarea';
-import Button from '@/components/ui/button';
-import Badge from '@/components/ui/badge';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Card } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function ListerMessagesPage() {
   const [selectedConversation, setSelectedConversation] = useState(1);

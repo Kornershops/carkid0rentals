@@ -1,11 +1,11 @@
 'use client';
 
 import { CheckCircle, Download, Truck, Calendar, CurrencyCircleDollar, FileText } from '@phosphor-icons/react';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Card from '@/components/ui/card';
-import Button from '@/components/ui/button';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function HaulerConfirmationPage() {
   const bookingRef = 'HH' + Math.random().toString(36).substring(2, 9).toUpperCase();

@@ -3,21 +3,21 @@
 import { useState } from 'react';
 import { MagnifyingGlass, Plus, PencilSimple, Trash, Eye } from '@phosphor-icons/react';
 import Link from 'next/link';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Card from '@/components/ui/card';
-import Input from '@/components/ui/input';
-import Select from '@/components/ui/select';
-import Button from '@/components/ui/button';
-import Badge from '@/components/ui/badge';
-import { mockListings } from '@/data/mock-listings';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { MOCK_LISTINGS } from '@/data/mock-listings';
 
 export default function ListerFleetPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
-  const myVehicles = mockListings.map(v => ({
+  const myVehicles = MOCK_LISTINGS.map(v => ({
     ...v,
     status: Math.random() > 0.3 ? 'available' : 'rented',
     bookings: Math.floor(Math.random() * 20) + 5,

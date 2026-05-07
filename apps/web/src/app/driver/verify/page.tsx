@@ -105,7 +105,7 @@ export default function DriverVerifyPage() {
                   <p className="text-sm text-gray-600">
                     {overallStatus === 'approved' && 'All documents have been approved. You can now access gig vehicles.'}
                     {overallStatus === 'rejected' && 'Some documents need to be resubmitted. Please check below.'}
-                    {overallStatus === 'pending' && 'Our team is reviewing your documents. You'll be notified once complete.'}
+                    {overallStatus === 'pending' && "Our team is reviewing your documents. You'll be notified once complete."}
                   </p>
                 </div>
                 {overallStatus === 'approved' && (

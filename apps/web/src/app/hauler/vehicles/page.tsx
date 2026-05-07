@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 import { MagnifyingGlass, MapPin, SortAscending, Truck } from '@phosphor-icons/react';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Input from '@/components/ui/input';
-import Select from '@/components/ui/select';
-import ListingCard from '@/components/listing-card';
-import { mockListings } from '@/data/mock-listings';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { ListingCard } from '@/components/listing-card';
+import { MOCK_LISTINGS } from '@/data/mock-listings';
 
 export default function HaulerVehiclesPage() {
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('all');
   const [sortBy, setSortBy] = useState('price-asc');
 
-  const heavyHaulVehicles = mockListings.filter(v => v.category === 'heavy-haul');
+  const heavyHaulVehicles = MOCK_LISTINGS.filter(v => v.category === 'heavy-haul');
 
   const filtered = heavyHaulVehicles
     .filter(v => 

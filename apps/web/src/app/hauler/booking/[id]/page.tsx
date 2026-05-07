@@ -3,20 +3,20 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Calendar, User, Envelope, Phone, Package, Ruler, Barcode, ArrowRight } from '@phosphor-icons/react';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Card from '@/components/ui/card';
-import Input from '@/components/ui/input';
-import Textarea from '@/components/ui/textarea';
-import Select from '@/components/ui/select';
-import Button from '@/components/ui/button';
-import { mockListings } from '@/data/mock-listings';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { MOCK_LISTINGS } from '@/data/mock-listings';
 
 export default function HaulerBookingPage() {
   const params = useParams();
   const router = useRouter();
-  const vehicle = mockListings.find(v => v.id === params.id);
+  const vehicle = MOCK_LISTINGS.find(v => v.id === params.id);
 
   const [pickupDate, setPickupDate] = useState('');
   const [returnDate, setReturnDate] = useState('');

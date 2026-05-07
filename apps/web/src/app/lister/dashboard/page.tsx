@@ -2,13 +2,13 @@
 
 import { CurrencyCircleDollar, Car, CalendarCheck, TrendUp, Plus } from '@phosphor-icons/react';
 import Link from 'next/link';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
-import Container from '@/components/layout/container';
-import Card from '@/components/ui/card';
-import Button from '@/components/ui/button';
-import Stats from '@/components/data/stats';
-import Badge from '@/components/ui/badge';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Container } from '@/components/layout/container';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Stats } from '@/components/data/stats';
+import { Badge } from '@/components/ui/badge';
 
 export default function ListerDashboardPage() {
   const stats = [
