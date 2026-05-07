@@ -28,21 +28,34 @@
   --success:            #28CD41;
   --danger:             #FF3B30;
 
-  /* Elevation system - Extremely subtle */
-  --shadow-sm:          0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md:          0 4px 12px rgba(0,0,0,0.05);
-  --shadow-lg:          0 8px 24px rgba(0,0,0,0.08);
-  --shadow-xl:          0 20px 40px rgba(0,0,0,0.1);
+  /* Elevation system - Premium Depth */
+  --shadow-sm:          0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md:          0 10px 30px rgba(0,0,0,0.06);
+  --shadow-lg:          0 20px 50px rgba(0,0,0,0.08);
+  --shadow-xl:          0 30px 70px rgba(0,0,0,0.12);
 
-  /* Radius scale - Refined, not-so-large corners */
-  --radius-sm:          8px;
-  --radius-md:          12px;
-  --radius-lg:          16px;
-  --radius-xl:          24px;
+  /* Radius scale - Premium Apple Refined */
+  --radius-sm:          10px;
+  --radius-md:          16px;
+  --radius-lg:          24px;
+  --radius-xl:          32px;
 
-  /* Type scale */
-  --font-display:       'Outfit', 'Inter', system-ui, sans-serif;
-  --font-body:          'Inter', system-ui, sans-serif;
+  /* Global utility for rounded containers */
+  --rounded-card:       var(--radius-lg);
+}
+
+.card-apple {
+  background: var(--bg-primary);
+  border-radius: var(--rounded-card);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-apple:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 * {
