@@ -171,6 +171,6 @@ export function VehicleCard({
           </div>
         </Link>
       </div>
-    </motion.div>v>
+    </motion.div>
   );
 }
