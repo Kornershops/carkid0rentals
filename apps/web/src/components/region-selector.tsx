@@ -1,6 +1,6 @@
 "use client";
 
-import { useStore, OperatingCountry, OperatingHub } from "@/store/use-store";
+import { useStore, OperatingCountry } from "@/store/use-store";
 import { MapPin, Globe, CaretDown, Check } from "@phosphor-icons/react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,82 +11,46 @@ export function RegionSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"country" | "city">("country");
 
-  const toggle = () => setIsOpen(!isOpen);
-
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="relative">
       <button 
-        onClick={toggle}
-        className="btn btn-ghost" 
-        style={{ 
-          height: 44, 
-          padding: '0 16px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 8,
-          background: 'var(--bg-elevated)',
-          border: '1px solid var(--border-primary)',
-          fontSize: 13,
-          fontWeight: 600,
-          color: 'var(--text-primary)'
-        }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-4 h-10 rounded-full bg-neutral-50 hover:bg-neutral-100 transition-all text-[13px] font-semibold text-black"
       >
-        <Globe size={18} weight="duotone" />
+        <Globe size={18} weight="bold" className="text-blue-600" />
         <span>{country} • {hub}</span>
-        <CaretDown size={14} style={{ opacity: 0.5 }} />
+        <CaretDown size={14} className="opacity-40" />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+            <div 
+              className="fixed inset-0 z-[110]" 
+              onClick={() => setIsOpen(false)} 
             />
             <motion.div 
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              style={{ 
-                position: 'absolute', 
-                top: 'calc(100% + 12px)', 
-                right: 0, 
-                zIndex: 101, 
-                width: 320,
-                background: 'var(--bg-primary)',
-                border: '1px solid var(--border-primary)',
-                borderRadius: 16,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                overflow: 'hidden'
-              }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              className="absolute top-full mt-3 right-0 z-[120] w-72 bg-white rounded-3xl shadow-xl border border-black/5 overflow-hidden"
             >
-              <div style={{ display: 'flex', borderBottom: '1px solid var(--border-primary)' }}>
+              <div className="flex p-1 bg-neutral-50 rounded-full m-3">
                 <button 
                   onClick={() => setActiveTab("country")}
-                  style={{ 
-                    flex: 1, padding: '14px', fontSize: 12, fontWeight: 700, 
-                    color: activeTab === "country" ? 'var(--accent)' : 'var(--text-tertiary)',
-                    borderBottom: activeTab === "country" ? '2px solid var(--accent)' : 'none'
-                  }}
+                  className={`flex-1 py-1.5 rounded-full text-[11px] font-bold transition-all ${activeTab === "country" ? "bg-white shadow-sm text-blue-600" : "text-neutral-400"}`}
                 >
-                  SELECT COUNTRY
+                  COUNTRY
                 </button>
                 <button 
                   onClick={() => setActiveTab("city")}
-                  style={{ 
-                    flex: 1, padding: '14px', fontSize: 12, fontWeight: 700, 
-                    color: activeTab === "city" ? 'var(--accent)' : 'var(--text-tertiary)',
-                    borderBottom: activeTab === "city" ? '2px solid var(--accent)' : 'none'
-                  }}
+                  className={`flex-1 py-1.5 rounded-full text-[11px] font-bold transition-all ${activeTab === "city" ? "bg-white shadow-sm text-blue-600" : "text-neutral-400"}`}
                 >
-                  SELECT CITY
+                  CITY
                 </button>
               </div>
 
-              <div style={{ padding: 8, maxHeight: 300, overflowY: 'auto' }}>
+              <div className="p-2 max-h-[300px] overflow-y-auto">
                 {activeTab === "country" ? (
                   Object.keys(HUB_DATA).map((c) => (
                     <button
@@ -96,17 +60,10 @@ export function RegionSelector() {
                         setHub(HUB_DATA[c as OperatingCountry][0]);
                         setActiveTab("city");
                       }}
-                      style={{ 
-                        width: '100%', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        borderRadius: 8, textAlign: 'left', fontSize: 14, color: 'var(--text-secondary)',
-                        background: country === c ? 'var(--accent-soft)' : 'transparent'
-                      }}
+                      className={`w-full px-4 py-3 rounded-2xl flex items-center justify-between transition-colors ${country === c ? "bg-blue-50/50 text-blue-600" : "hover:bg-neutral-50 text-neutral-600"}`}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: country === c ? 'var(--accent)' : 'var(--border-primary)' }} />
-                        {c}
-                      </div>
-                      {country === c && <Check size={16} weight="bold" color="var(--accent)" />}
+                      <span className="text-sm font-semibold">{c}</span>
+                      {country === c && <Check size={16} weight="bold" />}
                     </button>
                   ))
                 ) : (
@@ -117,17 +74,13 @@ export function RegionSelector() {
                         setHub(h);
                         setIsOpen(false);
                       }}
-                      style={{ 
-                        width: '100%', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        borderRadius: 8, textAlign: 'left', fontSize: 14, color: 'var(--text-secondary)',
-                        background: hub === h ? 'var(--accent-soft)' : 'transparent'
-                      }}
+                      className={`w-full px-4 py-3 rounded-2xl flex items-center justify-between transition-colors ${hub === h ? "bg-blue-50/50 text-blue-600" : "hover:bg-neutral-50 text-neutral-600"}`}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <MapPin size={16} color={hub === h ? 'var(--accent)' : 'var(--text-tertiary)'} />
-                        {h}
+                      <div className="flex items-center gap-3">
+                        <MapPin size={16} weight={hub === h ? "bold" : "regular"} />
+                        <span className="text-sm font-semibold">{h}</span>
                       </div>
-                      {hub === h && <Check size={16} weight="bold" color="var(--accent)" />}
+                      {hub === h && <Check size={16} weight="bold" />}
                     </button>
                   ))
                 )}

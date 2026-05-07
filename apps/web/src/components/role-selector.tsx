@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore, UserRole } from "@/store/use-store";
-import { SteeringWheel, Crown, Truck, User, CaretDown, Check } from "@phosphor-icons/react";
+import { SteeringWheel, Crown, Truck, CaretDown, Check } from "@phosphor-icons/react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -19,58 +19,30 @@ export function RoleSelector() {
   const Icon = activeRole.icon;
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="btn btn-ghost" 
-        style={{ 
-          height: 44, 
-          padding: '0 16px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 8,
-          background: 'var(--accent-soft)',
-          border: '1px solid var(--accent)',
-          fontSize: 13,
-          fontWeight: 700,
-          color: 'var(--accent)'
-        }}
+        className="flex items-center gap-2 px-4 h-10 rounded-full bg-blue-50/50 hover:bg-blue-50 transition-all text-[13px] font-semibold text-blue-600 border border-blue-100"
       >
-        <Icon size={18} weight="duotone" />
+        <Icon size={18} weight="bold" />
         <span>{activeRole.label}</span>
-        <CaretDown size={14} style={{ opacity: 0.5 }} />
+        <CaretDown size={14} className="opacity-40" />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+            <div 
+              className="fixed inset-0 z-[110]" 
+              onClick={() => setIsOpen(false)} 
             />
             <motion.div 
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              style={{ 
-                position: 'absolute', 
-                top: 'calc(100% + 12px)', 
-                left: 0, 
-                zIndex: 101, 
-                width: 280,
-                background: 'var(--bg-primary)',
-                border: '1px solid var(--border-primary)',
-                borderRadius: 16,
-                boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-                padding: 8
-              }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              className="absolute top-full mt-3 left-0 z-[120] w-72 bg-white rounded-3xl shadow-xl border border-black/5 p-2 overflow-hidden"
             >
-              <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-tertiary)', padding: '8px 12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                SELECT YOUR PROFILE
-              </p>
+              <p className="text-[10px] font-bold text-neutral-400 px-3 py-2 uppercase tracking-tight">Profile Mode</p>
               {ROLES.map((r) => {
                 const RIcon = r.icon;
                 return (
@@ -80,25 +52,16 @@ export function RoleSelector() {
                       setRole(r.id);
                       setIsOpen(false);
                     }}
-                    style={{ 
-                      width: '100%', padding: '12px', display: 'flex', alignItems: 'center', gap: 12,
-                      borderRadius: 12, textAlign: 'left',
-                      background: role === r.id ? 'var(--accent-soft)' : 'transparent',
-                      transition: 'all 0.2s ease'
-                    }}
+                    className={`w-full p-3 rounded-2xl flex items-center gap-4 transition-all ${role === r.id ? "bg-blue-50/50" : "hover:bg-neutral-50"}`}
                   >
-                    <div style={{ 
-                      width: 36, height: 36, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: role === r.id ? 'var(--accent)' : 'var(--bg-elevated)',
-                      color: role === r.id ? 'white' : 'var(--accent)'
-                    }}>
-                      <RIcon size={20} weight="duotone" />
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${role === r.id ? "bg-blue-600 text-white" : "bg-neutral-100 text-neutral-500"}`}>
+                      <RIcon size={20} weight="bold" />
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: role === r.id ? 'var(--accent)' : 'var(--text-primary)' }}>{r.label}</p>
-                      <p style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{r.desc}</p>
+                    <div className="text-left flex-1">
+                      <p className={`text-sm font-semibold ${role === r.id ? "text-blue-600" : "text-black"}`}>{r.label}</p>
+                      <p className="text-[11px] text-neutral-400 font-medium leading-tight">{r.desc}</p>
                     </div>
-                    {role === r.id && <Check size={16} weight="bold" color="var(--accent)" />}
+                    {role === r.id && <Check size={16} weight="bold" className="text-blue-600" />}
                   </button>
                 );
               })}
