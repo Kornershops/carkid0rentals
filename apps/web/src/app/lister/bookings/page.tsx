@@ -6,7 +6,6 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Container } from '@/components/layout/container';
 import { Card } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -88,16 +87,16 @@ export default function ListerBookingsPage() {
           </div>
 
           <div className="flex items-center justify-between mb-8">
-            <Select
+            <select
+              className="h-10 px-4 pr-10 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 appearance-none cursor-pointer w-48"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-48"
             >
               <option value="all">All Bookings</option>
               <option value="active">Active</option>
               <option value="upcoming">Upcoming</option>
               <option value="completed">Completed</option>
-            </Select>
+            </select>
             <p className="text-sm text-neutral-600">
               {filtered.length} booking{filtered.length !== 1 ? 's' : ''}
             </p>

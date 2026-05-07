@@ -6,7 +6,6 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Container } from '@/components/layout/container';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
 import { ListingCard } from '@/components/listing-card';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 
@@ -51,14 +50,13 @@ export default function HaulerVehiclesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="md:col-span-2">
               <Input
-                icon={<MagnifyingGlass size={20} />}
                 placeholder="Search by brand or model..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Select
-              icon={<MapPin size={20} />}
+            <select
+              className="h-10 px-4 pr-10 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 appearance-none cursor-pointer"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             >
@@ -66,15 +64,15 @@ export default function HaulerVehiclesPage() {
               {locations.map(loc => (
                 <option key={loc} value={loc}>{loc}</option>
               ))}
-            </Select>
-            <Select
-              icon={<SortAscending size={20} />}
+            </select>
+            <select
+              className="h-10 px-4 pr-10 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 appearance-none cursor-pointer"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
-            </Select>
+            </select>
           </div>
 
           <p className="text-sm text-neutral-600 mb-6">

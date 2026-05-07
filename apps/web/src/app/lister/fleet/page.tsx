@@ -8,7 +8,6 @@ import { Footer } from '@/components/layout/footer';
 import { Container } from '@/components/layout/container';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
@@ -51,13 +50,13 @@ export default function ListerFleetPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="md:col-span-2">
               <Input
-                icon={<MagnifyingGlass size={20} />}
                 placeholder="Search vehicles..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <Select
+            <select
+              className="h-10 px-4 pr-10 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 appearance-none cursor-pointer"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
@@ -66,7 +65,7 @@ export default function ListerFleetPage() {
               <option value="premium">Premium</option>
               <option value="eco-gig">Eco-Gig</option>
               <option value="heavy-haul">Heavy-Haul</option>
-            </Select>
+            </select>
           </div>
 
           <p className="text-sm text-neutral-600 mb-6">

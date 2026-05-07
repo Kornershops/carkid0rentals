@@ -9,7 +9,6 @@ import { Container } from '@/components/layout/container';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 
@@ -132,20 +131,23 @@ export default function HaulerBookingPage() {
                 <Card>
                   <h2 className="text-lg font-medium text-neutral-900 mb-4">Cargo Details</h2>
                   <div className="space-y-4">
-                    <Select
-                      label="Cargo Type"
-                      value={cargoType}
-                      onChange={(e) => setCargoType(e.target.value)}
-                      required
-                    >
-                      <option value="">Select cargo type</option>
-                      <option value="general">General Goods</option>
-                      <option value="furniture">Furniture & Appliances</option>
-                      <option value="construction">Construction Materials</option>
-                      <option value="equipment">Equipment & Machinery</option>
-                      <option value="food">Food & Beverages</option>
-                      <option value="other">Other</option>
-                    </Select>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-900 mb-2">Cargo Type</label>
+                      <select
+                        className="h-10 px-4 pr-10 text-sm bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 appearance-none cursor-pointer w-full"
+                        value={cargoType}
+                        onChange={(e) => setCargoType(e.target.value)}
+                        required
+                      >
+                        <option value="">Select cargo type</option>
+                        <option value="general">General Goods</option>
+                        <option value="furniture">Furniture & Appliances</option>
+                        <option value="construction">Construction Materials</option>
+                        <option value="equipment">Equipment & Machinery</option>
+                        <option value="food">Food & Beverages</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
                     <Input
                       label="Estimated Weight (kg)"
                       type="number"
