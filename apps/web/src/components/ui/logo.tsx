@@ -1,21 +1,20 @@
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <a href="/" className={`flex items-center gap-3 group ${className}`} style={{ textDecoration: 'none' }}>
+    <a href="/" className={`flex items-center gap-2.5 group ${className}`} style={{ textDecoration: 'none' }}>
       {/* Geometric Mark */}
       <div style={{
-        width: 36,
-        height: 36,
+        width: 34,
+        height: 34,
         background: 'var(--accent)',
-        borderRadius: 10,
+        borderRadius: 9,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        border: '2px solid black',
-        boxShadow: '2px 2px 0px #000000',
-        transition: 'all 0.2s',
+        boxShadow: '0 2px 10px rgba(0, 113, 227, 0.2)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         fontFamily: 'var(--font-display)',
-        fontWeight: 900,
-        fontSize: 18,
+        fontWeight: 700,
+        fontSize: 16,
         color: 'white',
         letterSpacing: '-0.04em',
       }}>
@@ -25,9 +24,9 @@ export function Logo({ className = "" }: { className?: string }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
         <span style={{
           fontFamily: 'var(--font-display)',
-          fontWeight: 900,
+          fontWeight: 700,
           fontSize: 18,
-          letterSpacing: '-0.03em',
+          letterSpacing: '-0.02em',
           color: 'var(--text-primary)',
           lineHeight: 1,
         }}>
@@ -35,15 +34,15 @@ export function Logo({ className = "" }: { className?: string }) {
         </span>
         <span style={{
           fontFamily: 'var(--font-body)',
-          fontWeight: 900,
+          fontWeight: 500,
           fontSize: 8,
-          letterSpacing: '0.1em',
-          color: 'var(--text-tertiary)',
+          letterSpacing: '0.05em',
+          color: 'var(--text-secondary)',
           textTransform: 'uppercase' as const,
           lineHeight: 1,
-          marginTop: 2,
+          marginTop: 1,
         }}>
-          Mobility Layer
+          Institutional Fleet
         </span>
       </div>
     </a>
