@@ -8,36 +8,37 @@
 /* ── Apple-esque (Human Interface) Palette ──────────────── */
 :root {
   --bg-primary:         #FFFFFF;
-  --bg-elevated:        #F5F5F7;
+  --bg-secondary:       #F5F5F7;
+  --bg-elevated:        #FFFFFF;
   --bg-surface:         #FBFBFD;
   --bg-hover:           #E8E8ED;
   --bg-overlay:         rgba(255, 255, 255, 0.8);
 
   --text-primary:       #1D1D1F;
-  --text-secondary:     #86868B;
-  --text-tertiary:      #A1A1A6;
+  --text-secondary:     #6E6E73;
+  --text-tertiary:      #86868B;
 
-  --border-primary:     rgba(0, 0, 0, 0.05);
-  --border-soft:        rgba(0, 0, 0, 0.03);
+  --border-primary:     rgba(0, 0, 0, 0.08);
+  --border-soft:        rgba(0, 0, 0, 0.04);
 
   --accent:             #0071E3; /* Apple Blue */
   --accent-glow:        rgba(0, 113, 227, 0.1);
   --accent-soft:        rgba(0, 113, 227, 0.05);
   
-  --success:            #34C759;
+  --success:            #28CD41;
   --danger:             #FF3B30;
 
-  /* Elevation system - Soft, natural shadows */
-  --shadow-sm:          0 2px 8px rgba(0,0,0,0.04);
-  --shadow-md:          0 4px 24px rgba(0,0,0,0.06);
-  --shadow-lg:          0 12px 48px rgba(0,0,0,0.08);
-  --shadow-xl:          0 24px 80px rgba(0,0,0,0.12);
+  /* Elevation system - Extremely subtle */
+  --shadow-sm:          0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:          0 4px 12px rgba(0,0,0,0.05);
+  --shadow-lg:          0 8px 24px rgba(0,0,0,0.08);
+  --shadow-xl:          0 20px 40px rgba(0,0,0,0.1);
 
-  /* Radius scale - Large, organic corners */
-  --radius-sm:          12px;
-  --radius-md:          20px;
-  --radius-lg:          32px;
-  --radius-xl:          48px;
+  /* Radius scale - Refined, not-so-large corners */
+  --radius-sm:          8px;
+  --radius-md:          12px;
+  --radius-lg:          16px;
+  --radius-xl:          24px;
 
   /* Type scale */
   --font-display:       'Outfit', 'Inter', system-ui, sans-serif;

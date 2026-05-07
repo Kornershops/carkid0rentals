@@ -1,176 +1,137 @@
 "use client";
-
-import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { CaretLeft, CaretRight, TrendUp, Lightning, ShieldCheck, Gauge, Package } from "@phosphor-icons/react";
-import { Vehicle } from "@/data/mock-fleet";
-import { RentalDuration, calculatePrice } from "@/lib/pricing";
-import { formatPrice } from "@/lib/currency";
+import { CaretLeft, CaretRight, Lightning } from "@phosphor-icons/react";
+import { useState } from "react";
 import { BlurImage } from "@/components/ui/blur-image";
-
-import { useStore } from "@/store/use-store";
+import { formatPrice } from "@/lib/currency";
+import { FleetVehicle } from "@/data/mock-fleet";
 
 interface VehicleCardProps {
-  vehicle: Vehicle;
-  duration: RentalDuration;
-  currency: any;
+  vehicle: FleetVehicle;
+  duration: string;
+  currency: string;
   index: number;
-  activeHub?: string;
-  compact?: boolean;
+  activeHub: string;
 }
 
-export function VehicleCard({ 
-  vehicle: v, 
-  duration, 
-  currency, 
-  index, 
-  activeHub,
-  compact = false 
-}: VehicleCardProps) {
+export function VehicleCard({ vehicle: v, duration, currency, index }: VehicleCardProps) {
   const [imgIdx, setImgIdx] = useState(0);
-  const { comparisonIds, addToCompare, removeFromCompare } = useStore();
-  const isComparing = comparisonIds.includes(v.id);
-  const canCompare = comparisonIds.length < 3 || isComparing;
-  
-  const price = calculatePrice(v.pricePerDay, duration);
+  const [isComparing, setIsComparing] = useState(false);
+
+  const nextImg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setImgIdx((prev) => (prev + 1) % v.images.length);
+  };
+
+  const prevImg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setImgIdx((prev) => (prev - 1 + v.images.length) % v.images.length);
+  };
 
   const toggleCompare = (e: React.MouseEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    if (isComparing) {
-      removeFromCompare(v.id);
-    } else if (canCompare) {
-      addToCompare(v.id);
-    }
+    setIsComparing(!isComparing);
   };
 
-  const prevImg = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(p => p === 0 ? v.images.length - 1 : p - 1);
-  }, [v.images.length]);
-
-  const nextImg = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImgIdx(p => (p + 1) % v.images.length);
-  }, [v.images.length]);
+  const price = v.pricing?.[duration] || 0;
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }} 
+      initial={{ opacity: 0, y: 15 }} 
       whileInView={{ opacity: 1, y: 0 }} 
       viewport={{ once: true }}
-      transition={{ delay: index * 0.05, duration: 0.8, ease: [0.4, 0, 0.2, 1] as any }}
-      className="group relative h-full"
+      transition={{ delay: index * 0.04, duration: 0.6, ease: [0.4, 0, 0.2, 1] as any }}
+      className="group"
     >
-      <div className="card relative h-full flex flex-col bg-white overflow-hidden">
-        {/* Visual Layer */}
-        <div className="relative aspect-[16/10] overflow-hidden bg-neutral-50">
+      <Link href={`/fleet/${v.id}`} className="block bg-white rounded-2xl overflow-hidden border border-black/[0.06] hover:border-black/10 transition-all hover:shadow-xl group">
+        {/* Image Section */}
+        <div className="relative aspect-[16/10] bg-neutral-50 overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={imgIdx}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.4 }}
               className="absolute inset-0"
             >
               <BlurImage
                 src={v.images[imgIdx].path}
                 alt={v.images[imgIdx].altText}
                 fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </motion.div>
           </AnimatePresence>
-          
-          {/* Tier Badge */}
-          <div className="absolute top-5 left-5 z-20 flex flex-col gap-2">
-            <div className={`
-              px-3 py-1 rounded-full text-[10px] font-semibold tracking-tight backdrop-blur-md
-              ${v.tier === 'elite' ? 'bg-amber-400/90 text-white' : 
-                v.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
-                'bg-blue-500/90 text-white'}
-            `}>
-              {v.tier.replace('-', ' ')}
+
+          {/* Overlays */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
+            <div className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-tight backdrop-blur-md ${
+              v.tier === 'elite' ? 'bg-amber-400/90 text-white' : 
+              v.tier === 'eco-gig' ? 'bg-emerald-500/90 text-white' : 
+              'bg-blue-500/90 text-white'
+            }`}>
+              {v.tier.toUpperCase()}
             </div>
-            
-            <button 
-              onClick={toggleCompare}
-              className={`
-                px-3 py-1 rounded-full text-[10px] font-semibold transition-all backdrop-blur-md
-                ${isComparing 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-white/80 text-black/70 hover:bg-white'}
-              `}
-            >
-              {isComparing ? '✓ Comparing' : '+ Compare'}
-            </button>
           </div>
 
-          {/* Navigation Overlay - Very subtle for Apple style */}
+          <button 
+            onClick={toggleCompare}
+            className={`absolute top-4 right-4 z-20 px-2.5 py-1 rounded-md text-[10px] font-bold backdrop-blur-md transition-all ${
+              isComparing ? 'bg-blue-600 text-white' : 'bg-white/80 text-black/60 hover:bg-white'
+            }`}
+          >
+            {isComparing ? 'COMPARING' : '+ COMPARE'}
+          </button>
+
+          {/* Navigation */}
           {v.images.length > 1 && (
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-3 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-              <button 
-                onClick={prevImg} 
-                className="w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-white transition-all"
-              >
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-3 opacity-0 group-hover:opacity-100 transition-all pointer-events-none">
+              <button onClick={prevImg} className="w-8 h-8 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-white pointer-events-auto transition-transform active:scale-95">
                 <CaretLeft size={16} weight="bold" />
               </button>
-              <button 
-                onClick={nextImg} 
-                className="w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-white transition-all"
-              >
+              <button onClick={nextImg} className="w-8 h-8 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center hover:bg-white pointer-events-auto transition-transform active:scale-95">
                 <CaretRight size={16} weight="bold" />
               </button>
             </div>
           )}
         </div>
 
-        {/* Content Layer */}
-        <Link href={`/fleet/${v.id}`} className="flex-grow flex flex-col p-6 lg:p-7">
-          <div className="flex justify-between items-start mb-6">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-[11px] font-medium text-neutral-400">
-                <span>{v.brand}</span>
-                <span className="w-0.5 h-0.5 rounded-full bg-neutral-300" />
-                <span>{v.year}</span>
-              </div>
-              <h3 className="text-xl lg:text-2xl font-semibold text-black tracking-tight">{v.model}</h3>
+        {/* Info Section */}
+        <div className="p-5">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-tight mb-1">{v.brand} • {v.year}</p>
+              <h3 className="text-lg font-semibold text-black tracking-tight leading-tight">{v.model}</h3>
             </div>
             <div className="text-right">
-              <div className="text-xl lg:text-2xl font-bold text-blue-600 tracking-tight">
-                {formatPrice(price, currency)}
-              </div>
-              <div className="text-[10px] text-neutral-400 font-medium uppercase tracking-tight">Per {duration}</div>
+              <p className="text-lg font-bold text-blue-600 leading-none">{formatPrice(price, currency)}</p>
+              <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-tight mt-1">/{duration}</p>
             </div>
           </div>
 
-          {/* Specs */}
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex flex-wrap gap-1.5 mb-6">
             {v.isEV && (
-              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">
-                <Lightning size={12} weight="fill" /> ELECTRIC
-              </div>
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-600 text-[9px] font-bold">
+                <Lightning size={10} weight="fill" /> ELECTRIC
+              </span>
             )}
-            {v.features.slice(0, 2).map((f, j) => (
-              <div key={j} className="px-3 py-1 rounded-full bg-neutral-100 text-neutral-500 text-[10px] font-semibold">
+            {v.features.slice(0, 2).map((f, i) => (
+              <span key={i} className="px-2 py-0.5 rounded-md bg-neutral-50 text-neutral-500 text-[9px] font-bold uppercase">
                 {f}
-              </div>
+              </span>
             ))}
           </div>
 
-          <div className="mt-auto pt-6 border-t border-neutral-50 flex items-center justify-between group/cta">
-            <span className="text-[11px] font-medium text-neutral-400">View Specs</span>
-            <div className="flex items-center gap-1.5 text-blue-600 text-sm font-semibold">
-              Reserve <CaretRight size={16} weight="bold" />
+          <div className="flex items-center justify-between pt-4 border-t border-black/[0.03]">
+            <span className="text-[11px] font-bold text-neutral-300">DETAILS</span>
+            <div className="flex items-center gap-1 text-[13px] font-bold text-blue-600">
+              Reserve <CaretRight size={14} weight="bold" />
             </div>
           </div>
-        </Link>
-      </div>
+        </div>
+      </Link>
     </motion.div>
   );
 }
