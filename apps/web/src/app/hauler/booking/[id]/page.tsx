@@ -80,7 +80,6 @@ export default function HaulerBookingPage() {
                     <Input
                       label="Pickup Date"
                       type="date"
-                      icon={<Calendar size={20} />}
                       value={pickupDate}
                       onChange={(e) => setPickupDate(e.target.value)}
                       required
@@ -88,7 +87,6 @@ export default function HaulerBookingPage() {
                     <Input
                       label="Return Date"
                       type="date"
-                      icon={<Calendar size={20} />}
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
                       required
@@ -101,7 +99,6 @@ export default function HaulerBookingPage() {
                   <div className="space-y-4">
                     <Input
                       label="Full Name"
-                      icon={<User size={20} />}
                       placeholder="John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -110,7 +107,6 @@ export default function HaulerBookingPage() {
                     <Input
                       label="Email"
                       type="email"
-                      icon={<Envelope size={20} />}
                       placeholder="john@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -119,7 +115,6 @@ export default function HaulerBookingPage() {
                     <Input
                       label="Phone"
                       type="tel"
-                      icon={<Phone size={20} />}
                       placeholder="+234 800 000 0000"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
@@ -127,7 +122,6 @@ export default function HaulerBookingPage() {
                     />
                     <Input
                       label="Company Name (Optional)"
-                      icon={<Barcode size={20} />}
                       placeholder="ABC Logistics Ltd"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
@@ -140,7 +134,6 @@ export default function HaulerBookingPage() {
                   <div className="space-y-4">
                     <Select
                       label="Cargo Type"
-                      icon={<Package size={20} />}
                       value={cargoType}
                       onChange={(e) => setCargoType(e.target.value)}
                       required
@@ -156,7 +149,6 @@ export default function HaulerBookingPage() {
                     <Input
                       label="Estimated Weight (kg)"
                       type="number"
-                      icon={<Ruler size={20} />}
                       placeholder="1000"
                       value={cargoWeight}
                       onChange={(e) => setCargoWeight(e.target.value)}
