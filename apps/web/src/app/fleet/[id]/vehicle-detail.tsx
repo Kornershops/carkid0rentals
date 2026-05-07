@@ -17,6 +17,8 @@ import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
 import { BlurImage } from "@/components/ui/blur-image";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { PaymentModal } from "@/components/payment-modal";
+
 export default function VehicleDetailClient() {
   const params = useParams();
   const id = params.id as string;
@@ -26,6 +28,7 @@ export default function VehicleDetailClient() {
   const [selectedDuration, setSelectedDuration] = useState<RentalDuration>("24 Hours");
   const [startDate, setStartDate] = useState("");
   const [currentImg, setCurrentImg] = useState(0);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -236,13 +239,13 @@ export default function VehicleDetailClient() {
                     </div>
                   </div>
 
-                  <Link 
-                    href="/auth/login" 
+                  <button 
+                    onClick={() => setIsPaymentOpen(true)}
                     className="btn btn-accent w-full h-16 text-lg tracking-tight group"
                   >
                     Confirm Deployment
                     <CaretRight size={20} weight="bold" className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
@@ -250,6 +253,14 @@ export default function VehicleDetailClient() {
 
         </div>
       </div>
+      
+      <PaymentModal 
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        amount={totalPrice}
+        currency={currency}
+        country={country}
+      />
     </main>
   );
 }

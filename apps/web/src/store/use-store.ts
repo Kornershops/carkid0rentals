@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type OperatingCountry = "Nigeria" | "Kenya" | "South Africa" | "Egypt" | "Ghana";
 export type OperatingHub = 
@@ -38,30 +39,37 @@ interface ComparisonState {
 // Merge types for the final hook
 type StoreState = AppState & ComparisonState;
 
-export const useStore = create<StoreState>((set) => ({
-  role: "customer",
-  country: "Nigeria",
-  hub: "Lagos",
-  tier: "all",
-  route: {
-    origin: "",
-    destination: "",
-  },
-  comparisonIds: [],
-  
-  setRole: (role) => set({ role }),
-  setCountry: (country) => set({ country }),
-  setHub: (hub) => set({ hub }),
-  setTier: (tier) => set({ tier }),
-  setRoute: (origin, destination) => set({ route: { origin, destination } }),
-  
-  addToCompare: (id) => set((state) => ({
-    comparisonIds: state.comparisonIds.length < 3 && !state.comparisonIds.includes(id)
-      ? [...state.comparisonIds, id]
-      : state.comparisonIds
-  })),
-  removeFromCompare: (id) => set((state) => ({
-    comparisonIds: state.comparisonIds.filter(cid => cid !== id)
-  })),
-  clearComparison: () => set({ comparisonIds: [] }),
-}));
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      role: "customer",
+      country: "Nigeria",
+      hub: "Lagos",
+      tier: "all",
+      route: {
+        origin: "",
+        destination: "",
+      },
+      comparisonIds: [],
+      
+      setRole: (role) => set({ role }),
+      setCountry: (country) => set({ country }),
+      setHub: (hub) => set({ hub }),
+      setTier: (tier) => set({ tier }),
+      setRoute: (origin, destination) => set({ route: { origin, destination } }),
+      
+      addToCompare: (id) => set((state) => ({
+        comparisonIds: state.comparisonIds.length < 3 && !state.comparisonIds.includes(id)
+          ? [...state.comparisonIds, id]
+          : state.comparisonIds
+      })),
+      removeFromCompare: (id) => set((state) => ({
+        comparisonIds: state.comparisonIds.filter(cid => cid !== id)
+      })),
+      clearComparison: () => set({ comparisonIds: [] }),
+    }),
+    {
+      name: "carkid0-store",
+    }
+  )
+);
