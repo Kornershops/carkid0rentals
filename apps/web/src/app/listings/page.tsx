@@ -1,0 +1,183 @@
+"use client";
+
+import { useState, useMemo } from 'react';
+import { MagnifyingGlass, Faders } from '@phosphor-icons/react';
+import { Container } from '@/components/layout/container';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { Input, Select, Button } from '@/components/ui';
+import { ListingCard } from '@/components/listing-card';
+import { MOCK_LISTINGS, Listing } from '@/data/mock-listings';
+
+export default function ListingsPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [priceSort, setPriceSort] = useState<string>('default');
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Get unique locations
+  const locations = useMemo(() => {
+    const locs = Array.from(new Set(MOCK_LISTINGS.map(l => l.location)));
+    return locs.sort();
+  }, []);
+  
+  // Filter and sort listings
+  const filteredListings = useMemo(() => {
+    let filtered = MOCK_LISTINGS;
+    
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(listing =>
+        listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        listing.model.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    // Category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(listing => listing.category === categoryFilter);
+    }
+    
+    // Location filter
+    if (locationFilter !== 'all') {
+      filtered = filtered.filter(listing => listing.location === locationFilter);
+    }
+    
+    // Price sort
+    if (priceSort === 'low-high') {
+      filtered = [...filtered].sort((a, b) => a.pricePerDay - b.pricePerDay);
+    } else if (priceSort === 'high-low') {
+      filtered = [...filtered].sort((a, b) => b.pricePerDay - a.pricePerDay);
+    }
+    
+    return filtered;
+  }, [searchQuery, categoryFilter, locationFilter, priceSort]);
+  
+  const categoryOptions = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'exotic', label: 'Exotic & Premium' },
+    { value: 'premium', label: 'Premium' },
+    { value: 'eco-gig', label: 'Eco-Gig' },
+    { value: 'heavy-haul', label: 'Heavy-Haul' },
+  ];
+  
+  const locationOptions = [
+    { value: 'all', label: 'All Locations' },
+    ...locations.map(loc => ({ value: loc, label: loc })),
+  ];
+  
+  const sortOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'low-high', label: 'Price: Low to High' },
+    { value: 'high-low', label: 'Price: High to Low' },
+  ];
+  
+  return (
+    <>
+      <Header />
+      
+      <main className="min-h-screen bg-white pt-20">
+        <Container size="xl">
+          {/* Page Header */}
+          <div className="py-12 border-b border-gray-200">
+            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
+              Browse Vehicles
+            </h1>
+            <p className="text-lg text-gray-600">
+              {filteredListings.length} vehicles available across Africa
+            </p>
+          </div>
+          
+          {/* Filters */}
+          <div className="py-6 border-b border-gray-200">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search */}
+              <div className="flex-1">
+                <div className="relative">
+                  <MagnifyingGlass
+                    size={20}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Search by brand, model, or title..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12"
+                    fullWidth
+                  />
+                </div>
+              </div>
+              
+              {/* Mobile Filter Toggle */}
+              <Button
+                variant="secondary"
+                onClick={() => setShowFilters(!showFilters)}
+                className="md:hidden"
+              >
+                <Faders size={20} weight="bold" />
+                Filters
+              </Button>
+            </div>
+            
+            {/* Filter Row */}
+            <div className={`grid md:grid-cols-3 gap-4 mt-4 ${showFilters ? 'block' : 'hidden md:grid'}`}>
+              <Select
+                options={categoryOptions}
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                fullWidth
+              />
+              
+              <Select
+                options={locationOptions}
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                fullWidth
+              />
+              
+              <Select
+                options={sortOptions}
+                value={priceSort}
+                onChange={(e) => setPriceSort(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </div>
+          
+          {/* Results */}
+          <div className="py-12">
+            {filteredListings.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-lg text-gray-600 mb-4">
+                  No vehicles found matching your criteria.
+                </p>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setCategoryFilter('all');
+                    setLocationFilter('all');
+                    setPriceSort('default');
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredListings.map((listing) => (
+                  <ListingCard key={listing.id} listing={listing} />
+                ))}
+              </div>
+            )}
+          </div>
+        </Container>
+      </main>
+      
+      <Footer />
+    </>
+  );
+}

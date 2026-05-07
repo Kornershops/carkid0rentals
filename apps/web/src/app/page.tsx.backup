@@ -14,6 +14,7 @@ export default function Home() {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const { role } = useStore();
   
+  // Show role modal on first visit if no role selected
   useEffect(() => {
     const hasVisited = localStorage.getItem('hasVisited');
     if (!hasVisited && !role) {
@@ -153,6 +154,7 @@ export default function Home() {
             </div>
             
             <div className="grid md:grid-cols-3 gap-8">
+              {/* Exotic & Premium */}
               <div className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 mb-6 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Car size={24} weight="bold" className="text-blue-600" />
@@ -170,6 +172,7 @@ export default function Home() {
                 </Link>
               </div>
               
+              {/* Eco-Gig */}
               <div className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 mb-6 bg-green-100 rounded-lg flex items-center justify-center">
                   <Lightning size={24} weight="bold" className="text-green-600" />
@@ -187,6 +190,7 @@ export default function Home() {
                 </Link>
               </div>
               
+              {/* Heavy-Haul */}
               <div className="bg-white border border-gray-200 rounded-lg p-8 hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 mb-6 bg-orange-100 rounded-lg flex items-center justify-center">
                   <Truck size={24} weight="bold" className="text-orange-600" />
@@ -298,6 +302,7 @@ export default function Home() {
       
       <Footer />
       
+      {/* Role Selection Modal */}
       <RoleModal
         isOpen={isRoleModalOpen}
         onClose={() => setIsRoleModalOpen(false)}

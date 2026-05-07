@@ -17,8 +17,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "CarKid0 — Premium Vehicle Rentals in Nigeria",
-  description: "Rent luxury SUVs, sedans, trucks and logistics vehicles across Lagos, Abuja, Port Harcourt and 4 more cities. From ₦18,000/day.",
+  title: "CarKid0 — Premium Vehicle Rentals Across Africa",
+  description: "Access exotic vehicles, gig cars, and heavy-haul trucks from verified listers across Nigeria, Kenya, South Africa, Egypt, and Ghana.",
 };
 
 export default function RootLayout({
