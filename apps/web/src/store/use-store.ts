@@ -19,6 +19,8 @@ interface AppState {
   tier: VehicleTier;
   isAuthenticated: boolean;
   redirectTo: string | null;
+  token: string | null;
+  user: { id: string; fullName: string; email: string; phone: string; kycStatus: string } | null;
   route: {
     origin: string;
     destination: string;
@@ -30,6 +32,9 @@ interface AppState {
   setRoute: (origin: string, destination: string) => void;
   setAuthenticated: (value: boolean) => void;
   setRedirectTo: (url: string | null) => void;
+  setToken: (token: string | null) => void;
+  setUser: (user: AppState['user']) => void;
+  logout: () => void;
 }
 
 
@@ -52,6 +57,8 @@ export const useStore = create<StoreState>()(
       tier: "all",
       isAuthenticated: false,
       redirectTo: null,
+      token: null,
+      user: null,
       route: {
         origin: "",
         destination: "",
@@ -65,6 +72,17 @@ export const useStore = create<StoreState>()(
       setRoute: (origin, destination) => set({ route: { origin, destination } }),
       setAuthenticated: (value) => set({ isAuthenticated: value }),
       setRedirectTo: (url) => set({ redirectTo: url }),
+      setToken: (token) => {
+        if (token) localStorage.setItem('carkid0_token', token);
+        else localStorage.removeItem('carkid0_token');
+        set({ token });
+      },
+      setUser: (user) => set({ user }),
+      logout: () => {
+        localStorage.removeItem('carkid0_token');
+        document.cookie = 'carkid0_auth=; path=/; max-age=0';
+        set({ isAuthenticated: false, token: null, user: null });
+      },
       
       addToCompare: (id) => set((state) => ({
         comparisonIds: state.comparisonIds.length < 3 && !state.comparisonIds.includes(id)

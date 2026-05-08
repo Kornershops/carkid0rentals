@@ -3,13 +3,33 @@ node_modules/
 out/
 build/
 dist/
-.env*
-!.env.example
 *.log
 .DS_Store
 apps/web/node_modules/
-apps/api/bin/
 infra/data/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Go binaries
+apps/api/main
+apps/api/server
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Docker volumes
+postgres_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Planning and Blueprint files
 proj blueprint.txt

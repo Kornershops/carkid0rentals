@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { CheckCircle, Calendar, MapPin, ShieldCheck, Download } from '@phosphor-icons/react';
+import { CheckCircle, Calendar, MapPin, ShieldCheck } from '@phosphor-icons/react';
 import { Container } from '@/components/layout/container';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -235,13 +235,12 @@ function BookingConfirmationContent() {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/dashboard/customer" className="flex-1">
+                <Button variant="primary" size="lg" fullWidth>Go to My Bookings</Button>
+              </Link>
               <Link href="/listings" className="flex-1">
                 <Button variant="secondary" size="lg" fullWidth>Browse More Vehicles</Button>
               </Link>
-              <Button variant="primary" size="lg" className="flex-1">
-                <Download size={20} weight="bold" />
-                Download Receipt
-              </Button>
             </div>
           </div>
         </Container>

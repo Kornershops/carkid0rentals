@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d carkid0_rentals"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -20,9 +25,9 @@ services:
   mqtt:
     image: emqx/emqx:latest
     ports:
-      - "1883:1883" # MQTT
-      - "8083:8083" # WebSocket
-      - "18083:18083" # Dashboard
+      - "1883:1883"
+      - "8083:8083"
+      - "18083:18083"
     environment:
       - "EMQX_DASHBOARD__ADMIN_PASSWORD=password"
 
@@ -31,6 +36,22 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: "host=db user=admin password=password dbname=carkid0_rentals port=5432 sslmode=disable TimeZone=Africa/Lagos"
+      JWT_SECRET: "${JWT_SECRET:-carkid0-dev-secret-change-in-production}"
+      PAYSTACK_SECRET_KEY: "${PAYSTACK_SECRET_KEY:-sk_test_xxxxxxxxxxxxxxxxxxxxx}"
+      FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   postgres_data:

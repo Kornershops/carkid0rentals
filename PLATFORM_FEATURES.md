@@ -49,17 +49,23 @@ Omni-Tier Vehicle Rental Platform with real-time IoT enforcement.
 
 ### Identity & Verification
 
+- JWT authentication with OTP-based login (phone/email)
 - KYC integration (SmileID / Dojah)
 - Driver onboarding with document upload
 - Role-based access control (Renter, Driver, Hauler, Lister, Admin, Company)
+- Auth guard with intent preservation (redirects back after login/KYC)
+- Token-based API authorization (Bearer JWT)
 
 ### Booking & Payments
 
 - Dynamic pricing with per-day rates
-- Service fee calculation (15%)
+- Service fee calculation (10% standard, 15% heavy-haul)
 - Cargo insurance (hauler tier)
-- Booking state management across navigation
+- Paystack payment integration (NGN, KES, ZAR, GHS)
+- Payment webhook verification (HMAC-SHA512)
+- Booking state lifecycle: pending → confirmed → paid → active → completed
 - Confirmation receipts with full cost breakdown
+- Admin listings: instant confirmation; Lister listings: pending approval
 
 ### IoT & Telematics
 
@@ -136,14 +142,37 @@ Omni-Tier Vehicle Rental Platform with real-time IoT enforcement.
 | Service | Technology |
 |---------|-----------|
 | Frontend | Next.js 16 (Turbopack), React 19, TypeScript 5, Tailwind CSS 4 |
-| Backend | Go (Fiber v3), GORM |
+| Backend | Go (Fiber v3), GORM, JWT |
 | Database | PostgreSQL + PostGIS |
 | Cache | Redis |
 | Messaging | NATS.io |
 | IoT Broker | EMQX (MQTT) |
 | Identity | SmileID / Dojah |
+| Payments | Paystack |
 | Mobile | Expo (React Native) |
 | Deployment | Docker, Netlify (frontend) |
+
+---
+
+## API Endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | /api/v1/auth/login | No | Send OTP to phone/email |
+| POST | /api/v1/auth/verify | No | Verify OTP, receive JWT |
+| POST | /api/v1/auth/kyc | Yes | Submit KYC documents |
+| GET | /api/v1/auth/me | Yes | Get current user |
+| GET | /api/v1/listings | No | Browse listings (filtered) |
+| GET | /api/v1/listings/:id | No | Get listing detail |
+| POST | /api/v1/listings | Yes | Create listing (admin/lister) |
+| POST | /api/v1/bookings | Yes | Create booking |
+| GET | /api/v1/bookings | Yes | Get user's bookings |
+| GET | /api/v1/bookings/:id | Yes | Get booking detail |
+| PATCH | /api/v1/bookings/:id/status | Yes | Update booking status |
+| POST | /api/v1/payments/initialize | Yes | Initialize Paystack payment |
+| POST | /api/v1/payments/webhook | No | Paystack webhook handler |
+| GET | /api/v1/payments/:bookingId | Yes | Get payment status |
+| GET | /api/v1/fleet | No | Legacy fleet endpoint |
 
 ---
 
@@ -152,5 +181,8 @@ Omni-Tier Vehicle Rental Platform with real-time IoT enforcement.
 - Monorepo with npm workspaces
 - Next.js build via Turbopack
 - Netlify hosting for web frontend
-- Docker Compose for local infrastructure
+- Docker Compose for local infrastructure (Postgres, Redis, EMQX, NATS, API)
+- Multi-stage Dockerfile for Go API (alpine)
 - Node.js 22 / npm 10 build environment
+- Environment-based configuration (.env.example provided)
+- Frontend graceful fallback: works in static mode (mock data) or connected mode (real API)

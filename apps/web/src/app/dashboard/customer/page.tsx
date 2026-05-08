@@ -1,156 +1,197 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useStore } from "@/store/use-store";
-import { useOfflineRental } from "@/hooks/use-offline-rental";
-import { 
-  CaretRight, 
-  Clock, 
-  MapPin, 
-  Crown, 
-  CalendarBlank, 
-  Receipt, 
-  User, 
-  Sparkle,
-  ChatCircleText,
-  ThermometerHot,
-  MusicNotes,
+import Image from "next/image";
+import {
+  Car,
+  CalendarBlank,
+  MapPin,
   ShieldCheck,
-  WifiSlash
+  ArrowRight,
+  Receipt,
+  MagnifyingGlass,
 } from "@phosphor-icons/react";
-import { Logo } from "@/components/ui/logo";
-import { motion } from "framer-motion";
+import { MOCK_LISTINGS } from "@/data/mock-listings";
+import { api, Booking } from "@/lib/api-client";
+
+// Fallback mock bookings for static/dev mode
+const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: "BK-20260501", listingId: "listing-1", listingTitle: "Mercedes-Benz GLE Coupe AMG",
+    listerRole: "admin", startDate: "2026-05-10", endDate: "2026-05-13",
+    status: "confirmed", days: 3, pricePerDay: 450, subtotal: 1350, serviceFee: 135,
+    total: 1485, currency: "NGN", paymentRef: "", createdAt: "2026-05-01",
+  },
+  {
+    id: "BK-20260428", listingId: "listing-17", listingTitle: "Saglev S5 EV",
+    listerRole: "admin", startDate: "2026-05-05", endDate: "2026-05-07",
+    status: "completed", days: 2, pricePerDay: 45, subtotal: 90, serviceFee: 9,
+    total: 99, currency: "NGN", paymentRef: "", createdAt: "2026-04-28",
+  },
+  {
+    id: "BK-20260507", listingId: "listing-9", listingTitle: "Jet Mover EV (White)",
+    listerRole: "lister", startDate: "2026-05-15", endDate: "2026-05-18",
+    status: "pending", days: 3, pricePerDay: 180, subtotal: 540, serviceFee: 54,
+    total: 594, currency: "NGN", paymentRef: "", createdAt: "2026-05-07",
+  },
+];
+
+function formatCurrency(price: number, currency: string) {
+  switch (currency) {
+    case "NGN": return `₦${price.toLocaleString()}`;
+    case "KES": return `KSh ${price.toLocaleString()}`;
+    case "ZAR": return `R${price.toLocaleString()}`;
+    default: return `$${price.toLocaleString()}`;
+  }
+}
+
+function getStatusBadge(status: Booking["status"]) {
+  const map: Record<string, { label: string; className: string }> = {
+    confirmed: { label: "Confirmed", className: "bg-green-100 text-green-700" },
+    paid: { label: "Paid", className: "bg-blue-100 text-blue-700" },
+    active: { label: "Active", className: "bg-indigo-100 text-indigo-700" },
+    pending: { label: "Pending", className: "bg-yellow-100 text-yellow-700" },
+    completed: { label: "Completed", className: "bg-gray-100 text-gray-700" },
+    cancelled: { label: "Cancelled", className: "bg-red-100 text-red-700" },
+  };
+  return map[status] || { label: status, className: "bg-gray-100 text-gray-600" };
+}
 
 export default function CustomerDashboard() {
   const [tab, setTab] = useState<"active" | "history">("active");
-  const { isOffline } = useOfflineRental();
+  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS);
+  const [loading, setLoading] = useState(true);
 
-  const mockRentals = [
-    { id: "EL-902", vehicle: "Mercedes G-Wagon G63", duration: "48 Hours", date: "May 4, 2026", price: "₦850,000", status: "active", hub: "Lagos", stage: "Vehicle in Prep" },
-    { id: "EL-002", vehicle: "Porsche Taycan Turbo S", duration: "24 Hours", date: "Apr 28, 2026", price: "₦580,000", status: "completed", hub: "Abuja" },
-  ];
+  useEffect(() => {
+    api.getMyBookings()
+      .then((data) => { if (data.length > 0) setBookings(data); })
+      .catch(() => {}) // Use mock fallback
+      .finally(() => setLoading(false));
+  }, []);
 
-  const active = mockRentals.filter(r => r.status === "active");
-  const history = mockRentals.filter(r => r.status === "completed");
+  const activeBookings = bookings.filter(b => ["confirmed", "paid", "active", "pending"].includes(b.status));
+  const historyBookings = bookings.filter(b => ["completed", "cancelled"].includes(b.status));
+  const currentBookings = tab === "active" ? activeBookings : historyBookings;
 
   return (
-    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh' }}>
-      <nav className="glass" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
-        <div className="container-wide" style={{ height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Logo />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div className="badge badge-accent" style={{ background: 'var(--gold-soft)', color: 'var(--gold)', border: '1px solid var(--gold)' }}>
-              ELITE MEMBER
-            </div>
-            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <User size={20} weight="duotone" />
-            </div>
+    <div className="flex-1 overflow-y-auto bg-white">
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="mb-8">
+          <h1 className="text-3xl font-semibold text-gray-900 mb-2">My Bookings</h1>
+          <p className="text-gray-600">Track your active rentals and booking history.</p>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p className="text-2xl font-semibold text-gray-900">{activeBookings.length}</p>
+            <p className="text-xs text-gray-600 font-medium">Active</p>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p className="text-2xl font-semibold text-gray-900">{historyBookings.length}</p>
+            <p className="text-xs text-gray-600 font-medium">Completed</p>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p className="text-2xl font-semibold text-gray-900">{bookings.length}</p>
+            <p className="text-xs text-gray-600 font-medium">Total Trips</p>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p className="text-2xl font-semibold text-gray-900">
+              {formatCurrency(bookings.reduce((sum, b) => sum + b.total, 0), "NGN")}
+            </p>
+            <p className="text-xs text-gray-600 font-medium">Total Spent</p>
           </div>
         </div>
-      </nav>
 
-      <div className="container-wide" style={{ paddingTop: 48, paddingBottom: 80 }}>
-        {isOffline && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="card" 
-            style={{ marginBottom: 32, background: 'rgba(255,69,58,0.1)', border: '1px solid var(--error)', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12 }}
-          >
-            <WifiSlash size={20} color="var(--error)" weight="bold" />
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--error)' }}>OFFLINE SHIELD ACTIVE: Using locally cached lease data. Some concierge features limited.</span>
-          </motion.div>
-        )}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 40 }}>
-          
-          <div>
-            <h1 style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-0.04em', marginBottom: 8 }}>Elite Concierge</h1>
-            <p style={{ fontSize: 16, color: 'var(--text-secondary)', marginBottom: 40 }}>Manage your luxury fleet and active concierge services.</p>
+        {/* Tabs */}
+        <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 max-w-xs">
+          <button onClick={() => setTab("active")} className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors ${tab === "active" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
+            Active ({activeBookings.length})
+          </button>
+          <button onClick={() => setTab("history")} className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors ${tab === "history" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
+            History ({historyBookings.length})
+          </button>
+        </div>
 
-            <div style={{ display: 'flex', gap: 4, background: 'var(--bg-surface)', borderRadius: 12, padding: 4, marginBottom: 32, border: '1px solid var(--border-primary)', maxWidth: 400 }}>
-              {(["active", "history"] as const).map(t => (
-                <button key={t} onClick={() => setTab(t)} style={{
-                  flex: 1, padding: '10px 0', borderRadius: 8, fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer',
-                  background: tab === t ? 'var(--accent)' : 'transparent',
-                  color: tab === t ? 'white' : 'var(--text-tertiary)', transition: 'all 0.2s',
-                }}>
-                  {t === "active" ? `Active (${active.length})` : `History (${history.length})`}
-                </button>
-              ))}
-            </div>
+        {/* Loading */}
+        {loading ? (
+          <div className="py-16 text-center text-gray-500 text-sm">Loading bookings...</div>
+        ) : currentBookings.length === 0 ? (
+          <div className="text-center py-16">
+            <Car size={48} weight="duotone" className="text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-600 mb-4">No bookings yet.</p>
+            <Link href="/listings">
+              <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800">
+                <MagnifyingGlass size={16} weight="bold" /> Browse Vehicles
+              </button>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {currentBookings.map((booking) => {
+              const listing = MOCK_LISTINGS.find(l => l.id === booking.listingId);
+              const badge = getStatusBadge(booking.status);
+              const isAdmin = booking.listerRole === "admin";
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {(tab === "active" ? active : history).map(r => (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={r.id} className="card" style={{ padding: 28 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-                    <div>
-                      <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-tertiary)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{r.id} • {r.hub} HUB</p>
-                      <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>{r.vehicle}</h3>
-                      <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-secondary)' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={16} /> {r.duration}</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><CalendarBlank size={16} /> {r.date}</span>
+              return (
+                <div key={booking.id} className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-sm transition-shadow">
+                  <div className="flex gap-4">
+                    <div className="relative w-24 h-24 md:w-32 md:h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      {listing && <Image src={listing.images[0]} alt={booking.listingTitle} fill className="object-cover" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 line-clamp-1">{booking.listingTitle}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            {isAdmin ? (
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-gray-900">
+                                <ShieldCheck size={12} weight="fill" /> CarKid0 Official
+                              </span>
+                            ) : (
+                              <span className="text-xs text-gray-600">Third-party lister</span>
+                            )}
+                          </div>
+                        </div>
+                        <span className={`text-xs font-semibold px-2 py-1 rounded ${badge.className}`}>{badge.label}</span>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <CalendarBlank size={14} />
+                          {new Date(booking.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          {" → "}
+                          {new Date(booking.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </span>
+                        {listing && (
+                          <span className="flex items-center gap-1">
+                            <MapPin size={14} /> {listing.location}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Receipt size={14} /> {formatCurrency(booking.total, booking.currency)}
+                        </span>
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontSize: 20, fontWeight: 900, color: 'var(--accent)' }}>{r.price}</p>
-                      {r.status === 'active' && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--success)', fontSize: 12, fontWeight: 700, marginTop: 4 }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--success)' }} />
-                          {r.stage}
-                        </div>
-                      )}
-                    </div>
                   </div>
-
-                  {r.status === 'active' && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, paddingTop: 20, borderTop: '1px solid var(--border-primary)' }}>
-                      <button className="btn btn-outline" style={{ height: 44, fontSize: 12, gap: 8 }}>
-                        <ThermometerHot size={16} /> Temp
-                      </button>
-                      <button className="btn btn-outline" style={{ height: 44, fontSize: 12, gap: 8 }}>
-                        <MusicNotes size={16} /> Cabin
-                      </button>
-                      <button className="btn btn-accent" style={{ height: 44, fontSize: 12, gap: 8 }}>
-                        Track Delivery
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <aside style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            <div className="card" style={{ padding: 24, background: 'var(--gold-soft)', border: '1px solid var(--gold)' }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--gold)', color: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                <ChatCircleText size={24} weight="fill" />
-              </div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: 'var(--gold)', marginBottom: 8 }}>Private Concierge</h3>
-              <p style={{ fontSize: 13, color: 'rgba(212, 175, 55, 0.8)', lineHeight: 1.5, marginBottom: 20 }}>
-                Your dedicated agent "Amara" is available 24/7 for custom requests and itinerary planning.
-              </p>
-              <button className="btn" style={{ width: '100%', height: 44, background: 'var(--gold)', color: '#1a1a1a', fontWeight: 700, fontSize: 13 }}>
-                Start Live Chat
-              </button>
-            </div>
-
-            <div className="card" style={{ padding: 24 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 20 }}>Elite Benefits</h3>
-              {[
-                { icon: <Sparkle />, label: "Complimentary Airport Pickup" },
-                { icon: <Crown />, label: "360° Inspection Guard" },
-                { icon: <ShieldCheck />, label: "Full Insurance Waiver" },
-              ].map((b, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                  <div style={{ color: 'var(--gold)' }}>{b.icon}</div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)' }}>{b.label}</span>
                 </div>
-              ))}
-            </div>
-          </aside>
+              );
+            })}
+          </div>
+        )}
 
+        <div className="mt-10 bg-gray-50 border border-gray-200 rounded-lg p-6 flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-1">Need another vehicle?</h3>
+            <p className="text-sm text-gray-600">Browse our fleet across all tiers.</p>
+          </div>
+          <Link href="/listings">
+            <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800">
+              Browse <ArrowRight size={16} weight="bold" />
+            </button>
+          </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
