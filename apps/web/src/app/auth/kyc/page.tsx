@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { IdentificationCard, Camera, CaretRight, Check } from "@phosphor-icons/react";
 import Link from "next/link";
@@ -10,8 +11,7 @@ export default function KycPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
-  const { role } = useStore();
+  const { role, redirectTo, setRedirectTo } = useStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +19,11 @@ export default function KycPage() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      if (role === "driver") {
+      if (redirectTo) {
+        const url = redirectTo;
+        setRedirectTo(null);
+        router.push(url);
+      } else if (role === "driver") {
         router.push("/auth/onboarding/driver");
       } else if (role === "logistics") {
         router.push("/dashboard/logistics");
@@ -29,110 +33,110 @@ export default function KycPage() {
     }, 2000);
   };
 
+  const steps = ["Personal Info", "ID Upload", "Review"];
+
   return (
-    <main style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <div style={{ width: '100%', maxWidth: 480 }}>
-        <div style={{ marginBottom: 32, textAlign: 'center' }}>
+    <main className="min-h-screen flex flex-col items-center justify-center bg-white px-6 py-12">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
           <Logo className="justify-center" />
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.03em', marginTop: 24, marginBottom: 8 }}>Verify Your Identity</h1>
-          <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Complete these steps to start booking vehicles.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 mt-6 mb-2">Verify Your Identity</h1>
+          <p className="text-sm text-gray-600">Complete these steps to start booking vehicles.</p>
         </div>
 
-        {/* Progress Steps */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 32 }}>
-          {["Personal Info", "ID Upload", "Review"].map((s, i) => (
-            <div key={i} style={{ flex: 1 }}>
-              <div style={{
-                height: 4, borderRadius: 100, marginBottom: 6,
-                background: i + 1 <= step ? 'var(--accent)' : 'var(--bg-surface)',
-                transition: 'background 0.3s',
-              }} />
-              <p style={{ fontSize: 11, fontWeight: 600, color: i + 1 <= step ? 'var(--accent)' : 'var(--text-tertiary)' }}>{s}</p>
+        {/* Progress */}
+        <div className="flex gap-2 mb-8">
+          {steps.map((s, i) => (
+            <div key={i} className="flex-1">
+              <div className={`h-1 rounded-full mb-1.5 transition-colors ${i + 1 <= step ? 'bg-gray-900' : 'bg-gray-200'}`} />
+              <p className={`text-xs font-semibold ${i + 1 <= step ? 'text-gray-900' : 'text-gray-400'}`}>{s}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-primary)', borderRadius: 16, padding: 24 }}>
+        {/* Form Card */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
           <form onSubmit={handleSubmit}>
             {step === 1 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Personal Information</h3>
+              <div className="space-y-4">
+                <h3 className="text-base font-bold text-gray-900 mb-1">Personal Information</h3>
                 <div>
-                  <label style={labelStyle}>Full Name</label>
-                  <input type="text" placeholder="Enter your full name" required style={fieldStyle} />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Full Name</label>
+                  <input type="text" placeholder="Enter your full name" required className="w-full h-11 px-4 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-gray-900" />
                 </div>
                 <div>
-                  <label style={labelStyle}>Date of Birth</label>
-                  <input type="date" required style={fieldStyle} />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Date of Birth</label>
+                  <input type="date" required className="w-full h-11 px-4 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-gray-900" />
                 </div>
                 <div>
-                  <label style={labelStyle}>Address</label>
-                  <input type="text" placeholder="Your current address" required style={fieldStyle} />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Address</label>
+                  <input type="text" placeholder="Your current address" required className="w-full h-11 px-4 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-gray-900" />
                 </div>
               </div>
             )}
 
             {step === 2 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Upload Identification</h3>
+              <div className="space-y-4">
+                <h3 className="text-base font-bold text-gray-900 mb-1">Upload Identification</h3>
                 <div>
-                  <label style={labelStyle}>ID Type</label>
-                  <select required style={fieldStyle}>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">ID Type</label>
+                  <select required className="w-full h-11 px-4 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-gray-900 appearance-none cursor-pointer">
                     <option value="">Select ID type</option>
                     <option value="nin">National ID (NIN)</option>
                     <option value="passport">International Passport</option>
-                    <option value="license">Driver's License</option>
-                    <option value="voter">Voter's Card</option>
+                    <option value="license">Driver&apos;s License</option>
+                    <option value="voter">Voter&apos;s Card</option>
                   </select>
                 </div>
                 <div>
-                  <label style={labelStyle}>Upload Front</label>
-                  <div style={{
-                    border: '2px dashed var(--border-primary)', borderRadius: 12, padding: 32, textAlign: 'center',
-                    background: 'var(--bg-surface)', cursor: 'pointer',
-                  }}>
-                    <Camera size={32} weight="duotone" style={{ color: 'var(--accent)', margin: '0 auto 8px' }} />
-                    <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Click to upload or drag & drop</p>
-                    <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>JPG, PNG up to 5MB</p>
-                    <input type="file" accept="image/*" style={{ display: 'none' }} />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Upload Front</label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50 cursor-pointer hover:border-gray-400 transition-colors">
+                    <Camera size={32} weight="duotone" className="text-gray-900 mx-auto mb-2" />
+                    <p className="text-sm font-semibold text-gray-900 mb-1">Click to upload or drag & drop</p>
+                    <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
+                    <input type="file" accept="image/*" className="hidden" />
                   </div>
                 </div>
                 <div>
-                  <label style={labelStyle}>Driver's License (Required for rentals)</label>
-                  <div style={{
-                    border: '2px dashed var(--border-primary)', borderRadius: 12, padding: 24, textAlign: 'center',
-                    background: 'var(--bg-surface)', cursor: 'pointer',
-                  }}>
-                    <IdentificationCard size={28} weight="duotone" style={{ color: 'var(--accent)', margin: '0 auto 8px' }} />
-                    <p style={{ fontSize: 13, fontWeight: 600 }}>Upload driver's license</p>
-                    <input type="file" accept="image/*" style={{ display: 'none' }} />
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Driver&apos;s License (Required for rentals)</label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center bg-gray-50 cursor-pointer hover:border-gray-400 transition-colors">
+                    <IdentificationCard size={28} weight="duotone" className="text-gray-900 mx-auto mb-2" />
+                    <p className="text-sm font-semibold text-gray-900">Upload driver&apos;s license</p>
+                    <input type="file" accept="image/*" className="hidden" />
                   </div>
                 </div>
               </div>
             )}
 
             {step === 3 && (
-              <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                <div style={{
-                  width: 56, height: 56, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'rgba(48, 209, 88, 0.1)', color: 'var(--success)', margin: '0 auto 16px',
-                }}>
-                  <Check size={28} weight="bold" />
+              <div className="text-center py-4">
+                <div className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center mx-auto mb-4">
+                  <Check size={28} weight="bold" className="text-green-600" />
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Ready to submit</h3>
-                <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  Your information will be verified within 24 hours. You'll be able to start booking immediately after approval.
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Ready to submit</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Your information will be verified within 24 hours. You&apos;ll be able to start booking immediately after approval.
                 </p>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+            {/* Actions */}
+            <div className="flex gap-3 mt-6">
               {step > 1 && (
-                <button type="button" onClick={() => setStep(step - 1)} className="btn btn-outline" style={{ flex: 1, height: 44, fontSize: 13 }}>
+                <button
+                  type="button"
+                  onClick={() => setStep(step - 1)}
+                  className="flex-1 h-11 text-sm font-semibold border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                >
                   Back
                 </button>
               )}
-              <button type="submit" disabled={isSubmitting} className="btn btn-accent" style={{ flex: 1, height: 44, fontSize: 13, opacity: isSubmitting ? 0.7 : 1 }}>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 h-11 bg-gray-900 text-white text-sm font-bold rounded-lg flex items-center justify-center gap-1.5 hover:bg-gray-800 transition-colors disabled:opacity-70"
+              >
                 {isSubmitting ? 'Submitting...' : step === 3 ? 'Submit & Continue' : 'Next'}
                 <CaretRight size={14} weight="bold" />
               </button>
@@ -140,17 +144,11 @@ export default function KycPage() {
           </form>
         </div>
 
-        <p style={{ fontSize: 12, color: 'var(--text-tertiary)', textAlign: 'center', marginTop: 20 }}>
-          Your data is encrypted and stored securely. <Link href="#" style={{ color: 'var(--accent)' }}>Privacy Policy</Link>
+        <p className="text-xs text-gray-500 text-center mt-5">
+          Your data is encrypted and stored securely.{' '}
+          <Link href="/legal" className="text-gray-900 font-medium hover:underline">Privacy Policy</Link>
         </p>
       </div>
     </main>
   );
 }
-
-const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 6 };
-const fieldStyle: React.CSSProperties = {
-  width: '100%', padding: '11px 14px', borderRadius: 10, fontSize: 14, fontWeight: 500,
-  background: 'var(--bg-surface)', border: '1px solid var(--border-primary)',
-  color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit',
-};

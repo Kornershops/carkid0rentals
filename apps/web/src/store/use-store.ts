@@ -17,6 +17,8 @@ interface AppState {
   country: OperatingCountry;
   hub: OperatingHub;
   tier: VehicleTier;
+  isAuthenticated: boolean;
+  redirectTo: string | null;
   route: {
     origin: string;
     destination: string;
@@ -26,6 +28,8 @@ interface AppState {
   setHub: (hub: OperatingHub) => void;
   setTier: (tier: VehicleTier) => void;
   setRoute: (origin: string, destination: string) => void;
+  setAuthenticated: (value: boolean) => void;
+  setRedirectTo: (url: string | null) => void;
 }
 
 
@@ -46,6 +50,8 @@ export const useStore = create<StoreState>()(
       country: "Nigeria",
       hub: "Lagos",
       tier: "all",
+      isAuthenticated: false,
+      redirectTo: null,
       route: {
         origin: "",
         destination: "",
@@ -57,6 +63,8 @@ export const useStore = create<StoreState>()(
       setHub: (hub) => set({ hub }),
       setTier: (tier) => set({ tier }),
       setRoute: (origin, destination) => set({ route: { origin, destination } }),
+      setAuthenticated: (value) => set({ isAuthenticated: value }),
+      setRedirectTo: (url) => set({ redirectTo: url }),
       
       addToCompare: (id) => set((state) => ({
         comparisonIds: state.comparisonIds.length < 3 && !state.comparisonIds.includes(id)
