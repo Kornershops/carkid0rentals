@@ -18,7 +18,7 @@ export default function HaulerVehiclesPage() {
 
   const filtered = heavyHaulVehicles
     .filter(v => 
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
+      v.title.toLowerCase().includes(search.toLowerCase()) ||
       v.brand.toLowerCase().includes(search.toLowerCase())
     )
     .filter(v => location === 'all' || v.location === location)

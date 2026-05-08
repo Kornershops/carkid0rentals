@@ -2,8 +2,8 @@
 
 import { Component, ReactNode } from 'react';
 import { WarningCircle } from '@phosphor-icons/react';
-import Button from './button';
-import Card from './card';
+import { Button } from './button';
+import { Card } from './card';
 
 interface Props {
   children: ReactNode;

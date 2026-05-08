@@ -197,7 +197,7 @@ export const componentVariants = {
       secondary: {
         backgroundColor: designTokens.colors.gray[100],
         color: designTokens.colors.gray[900],
-        border: `1px solid ${designTokens.colors.borders.color.light}`,
+        border: `1px solid ${designTokens.colors.gray[200]}`,
       },
       ghost: {
         backgroundColor: 'transparent',
@@ -237,7 +237,7 @@ export const componentVariants = {
     variant: {
       default: {
         backgroundColor: designTokens.colors.white,
-        border: `1px solid ${designTokens.colors.borders.color.light}`,
+        border: `1px solid ${designTokens.colors.gray[200]}`,
         borderRadius: designTokens.borders.radius.lg,
         boxShadow: designTokens.shadows.sm,
       },

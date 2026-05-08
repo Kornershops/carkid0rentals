@@ -24,7 +24,7 @@ export default function ListerFleetPage() {
 
   const filtered = myVehicles
     .filter(v => 
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
+      v.title.toLowerCase().includes(search.toLowerCase()) ||
       v.brand.toLowerCase().includes(search.toLowerCase())
     )
     .filter(v => category === 'all' || v.category === category);
@@ -78,18 +78,18 @@ export default function ListerFleetPage() {
                 <div className="flex flex-col md:flex-row gap-6">
                   <img
                     src={vehicle.images[0]}
-                    alt={vehicle.name}
+                    alt={vehicle.title}
                     className="w-full md:w-48 h-32 object-cover rounded-lg"
                   />
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-medium text-neutral-900">{vehicle.name}</h3>
+                          <h3 className="text-lg font-medium text-neutral-900">{vehicle.title}</h3>
                           <Badge variant={vehicle.status === 'available' ? 'success' : 'warning'} size="sm">
                             {vehicle.status === 'available' ? 'Available' : 'Rented'}
                           </Badge>
-                          <Badge variant="neutral" size="sm">{vehicle.category}</Badge>
+                          <Badge variant="default" size="sm">{vehicle.category}</Badge>
                         </div>
                         <p className="text-sm text-neutral-600">{vehicle.location}</p>
                       </div>
@@ -105,7 +105,7 @@ export default function ListerFleetPage() {
                       </div>
                       <div>
                         <p className="text-xs text-neutral-600 mb-1">Rating</p>
-                        <p className="text-sm font-medium text-neutral-900">{vehicle.rating} ★</p>
+                        <p className="text-sm font-medium text-neutral-900">{vehicle.lister.rating} ★</p>
                       </div>
                       <div>
                         <p className="text-xs text-neutral-600 mb-1">Year</p>
@@ -113,21 +113,21 @@ export default function ListerFleetPage() {
                       </div>
                       <div>
                         <p className="text-xs text-neutral-600 mb-1">Transmission</p>
-                        <p className="text-sm font-medium text-neutral-900">{vehicle.transmission}</p>
+                        <p className="text-sm font-medium text-neutral-900">{vehicle.specs.transmission || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       <Link href={`/listings/${vehicle.id}`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="secondary" size="sm">
                           <Eye size={16} weight="bold" />
                           View
                         </Button>
                       </Link>
-                      <Button variant="outline" size="sm">
+                      <Button variant="secondary" size="sm">
                         <PencilSimple size={16} weight="bold" />
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="secondary" size="sm">
                         <Trash size={16} weight="bold" />
                         Delete
                       </Button>

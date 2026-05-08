@@ -69,10 +69,10 @@ export default function ListerBookingsPage() {
 
   const filtered = bookings.filter(b => statusFilter === 'all' || b.status === statusFilter);
 
-  const getStatusVariant = (status: string) => {
+  const getStatusVariant = (status: string): 'default' | 'success' | 'error' | 'warning' | 'info' => {
     if (status === 'active') return 'success';
     if (status === 'upcoming') return 'info';
-    if (status === 'completed') return 'neutral';
+    if (status === 'completed') return 'default';
     return 'warning';
   };
 
@@ -159,10 +159,10 @@ export default function ListerBookingsPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">Contact Renter</Button>
-                      <Button variant="outline" size="sm">View Details</Button>
+                      <Button variant="secondary" size="sm">Contact Renter</Button>
+                      <Button variant="secondary" size="sm">View Details</Button>
                       {booking.status === 'upcoming' && (
-                        <Button variant="outline" size="sm">Cancel Booking</Button>
+                        <Button variant="secondary" size="sm">Cancel Booking</Button>
                       )}
                     </div>
                   </div>

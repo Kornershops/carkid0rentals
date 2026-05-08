@@ -15,9 +15,7 @@ import { RentalDuration } from "@/lib/pricing";
 import { getCurrencyForCountry } from "@/lib/currency";
 import { Logo } from "@/components/ui/logo";
 import { HUB_DATA } from "@/lib/constants";
-import { VehicleCard } from "@/components/vehicle-card";
 import { EnhancedDatePicker } from "@/components/enhanced-date-picker";
-import { SkeletonVehicleCard } from "@/components/skeleton-vehicle-card";
 
 export default function FleetPage() {
   const { tier, setTier, hub, setHub, country, route, setRoute } = useStore();
