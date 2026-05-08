@@ -106,11 +106,11 @@ export default function HaulerConfirmationPage() {
           </Card>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="outline" fullWidth>
+            <Button variant="secondary" fullWidth>
               <Download size={20} weight="bold" />
               Download Receipt
             </Button>
-            <Button variant="outline" fullWidth>
+            <Button variant="secondary" fullWidth>
               <FileText size={20} weight="bold" />
               View Contract
             </Button>

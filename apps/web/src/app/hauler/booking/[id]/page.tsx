@@ -181,10 +181,10 @@ export default function HaulerBookingPage() {
                 <div className="mb-6 pb-6 border-b border-neutral-200">
                   <img
                     src={vehicle.images[0]}
-                    alt={vehicle.name}
+                    alt={vehicle.title}
                     className="w-full h-32 object-cover rounded-lg mb-3"
                   />
-                  <h3 className="font-medium text-neutral-900">{vehicle.name}</h3>
+                  <h3 className="font-medium text-neutral-900">{vehicle.title}</h3>
                   <p className="text-sm text-neutral-600">{vehicle.location}</p>
                 </div>
 
