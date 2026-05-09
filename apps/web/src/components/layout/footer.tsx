@@ -3,51 +3,49 @@ import { Logo } from '../ui/logo';
 
 export function Footer() {
   return (
-    <footer className="border-t border-[#ebebeb] bg-white">
-      <div className="max-w-[1140px] mx-auto px-6 md:px-12 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
-          <div className="col-span-2 md:col-span-1">
+    <footer style={{ borderTop: '1px solid #ebebeb', background: '#fff' }}>
+      <div style={{ maxWidth: 1140, margin: '0 auto', padding: '64px 48px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 40, marginBottom: 56 }}>
+          <div>
             <Logo />
-            <p className="mt-4 text-[13px] text-[#999] leading-relaxed max-w-[200px]">
+            <p style={{ marginTop: 16, fontSize: 13, color: '#999', lineHeight: 1.6, maxWidth: 200 }}>
               Verified vehicle rentals across Africa.
             </p>
           </div>
 
           <div>
-            <h4 className="text-[13px] font-medium text-[#1a1a1a] mb-4">Platform</h4>
-            <ul className="space-y-3">
-              <li><Link href="/listings" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Browse Vehicles</Link></li>
-              <li><Link href="/how-it-works" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">How it Works</Link></li>
-              <li><Link href="/driver/register" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Become a Driver</Link></li>
-              <li><Link href="/lister/register" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">List Your Fleet</Link></li>
+            <h4 style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', marginBottom: 16 }}>Platform</h4>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <li><Link href="/listings" style={{ fontSize: 13, color: '#6b6b6b' }}>Browse Vehicles</Link></li>
+              <li><Link href="/how-it-works" style={{ fontSize: 13, color: '#6b6b6b' }}>How it Works</Link></li>
+              <li><Link href="/driver/register" style={{ fontSize: 13, color: '#6b6b6b' }}>Become a Driver</Link></li>
+              <li><Link href="/lister/register" style={{ fontSize: 13, color: '#6b6b6b' }}>List Your Fleet</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[13px] font-medium text-[#1a1a1a] mb-4">Company</h4>
-            <ul className="space-y-3">
-              <li><Link href="/about" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">About</Link></li>
-              <li><Link href="/help" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Help Center</Link></li>
-              <li><Link href="/contact" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Contact</Link></li>
+            <h4 style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', marginBottom: 16 }}>Company</h4>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <li><Link href="/about" style={{ fontSize: 13, color: '#6b6b6b' }}>About</Link></li>
+              <li><Link href="/help" style={{ fontSize: 13, color: '#6b6b6b' }}>Help Center</Link></li>
+              <li><Link href="/contact" style={{ fontSize: 13, color: '#6b6b6b' }}>Contact</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-[13px] font-medium text-[#1a1a1a] mb-4">Legal</h4>
-            <ul className="space-y-3">
-              <li><Link href="/legal" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/legal" className="text-[13px] text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">Terms of Service</Link></li>
+            <h4 style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', marginBottom: 16 }}>Legal</h4>
+            <ul style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <li><Link href="/legal" style={{ fontSize: 13, color: '#6b6b6b' }}>Privacy Policy</Link></li>
+              <li><Link href="/legal" style={{ fontSize: 13, color: '#6b6b6b' }}>Terms of Service</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-[#ebebeb] flex items-center justify-between">
-          <p className="text-[12px] text-[#999]">
-            © {new Date().getFullYear()} CarKid0 Rentals
-          </p>
-          <div className="flex items-center gap-5">
-            <Link href="/legal" className="text-[12px] text-[#999] hover:text-[#1a1a1a] transition-colors">Privacy</Link>
-            <Link href="/legal" className="text-[12px] text-[#999] hover:text-[#1a1a1a] transition-colors">Terms</Link>
+        <div style={{ paddingTop: 32, borderTop: '1px solid #ebebeb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontSize: 12, color: '#999' }}>© 2026 CarKid0 Rentals</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <Link href="/legal" style={{ fontSize: 12, color: '#999' }}>Privacy</Link>
+            <Link href="/legal" style={{ fontSize: 12, color: '#999' }}>Terms</Link>
           </div>
         </div>
       </div>

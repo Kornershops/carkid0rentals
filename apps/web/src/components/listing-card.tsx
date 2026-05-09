@@ -17,31 +17,29 @@ function formatCurrency(price: number, country: string) {
 
 export function ListingCard({ listing }: ListingCardProps) {
   return (
-    <Link href={`/listings/${listing.id}`}>
-      <div className="group">
+    <Link href={`/listings/${listing.id}`} style={{ textDecoration: 'none' }}>
+      <div>
         {/* Image */}
-        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#f5f5f3] mb-3">
+        <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 16, overflow: 'hidden', background: '#f5f5f3', marginBottom: 12 }}>
           <Image
             src={listing.images[0]}
             alt={listing.title}
             fill
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+            style={{ objectFit: 'cover' }}
           />
         </div>
 
         {/* Info */}
-        <div className="px-0.5">
-          <h3 className="text-[15px] font-medium text-[#1a1a1a] leading-snug line-clamp-1 mb-1">
-            {listing.title}
-          </h3>
-          <p className="text-[13px] text-[#999] mb-2">
-            {listing.location}, {listing.country}
-          </p>
-          <p className="text-[15px] font-semibold text-[#1a1a1a]">
-            {formatCurrency(listing.pricePerDay, listing.country)}
-            <span className="text-[13px] font-normal text-[#999]"> /day</span>
-          </p>
-        </div>
+        <h3 style={{ fontSize: 15, fontWeight: 500, color: '#1a1a1a', lineHeight: 1.3, marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {listing.title}
+        </h3>
+        <p style={{ fontSize: 13, color: '#999', marginBottom: 8 }}>
+          {listing.location}, {listing.country}
+        </p>
+        <p style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}>
+          {formatCurrency(listing.pricePerDay, listing.country)}
+          <span style={{ fontSize: 13, fontWeight: 400, color: '#999' }}> /day</span>
+        </p>
       </div>
     </Link>
   );

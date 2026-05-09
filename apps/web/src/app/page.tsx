@@ -32,22 +32,26 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main style={{ paddingTop: 0 }}>
 
         {/* ─── Hero ─── */}
-        <section className="pt-20 pb-24 md:pt-32 md:pb-36">
-          <div className="max-w-[1140px] mx-auto px-6 md:px-12">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <section style={{ padding: '100px 0 120px' }}>
+          <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
               {/* Text */}
               <div>
-                <h1 className="text-[clamp(2rem,4.5vw,3.5rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-[#1a1a1a] mb-5">
+                <h1 style={{ fontSize: 48, fontWeight: 600, lineHeight: 1.1, letterSpacing: '-0.03em', color: '#1a1a1a', marginBottom: 20 }}>
                   Rent verified vehicles across Africa.
                 </h1>
-                <p className="text-[17px] text-[#6b6b6b] leading-relaxed mb-10 max-w-md">
+                <p style={{ fontSize: 17, color: '#6b6b6b', lineHeight: 1.6, marginBottom: 40, maxWidth: 420 }}>
                   Exotic, gig, and commercial vehicles from trusted listers in Lagos, Nairobi, Johannesburg, and Accra.
                 </p>
                 <Link href="/listings">
-                  <button className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#1a1a1a] text-white text-[14px] font-medium rounded-full hover:bg-[#333] transition-colors">
+                  <button style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 10,
+                    padding: '14px 28px', background: '#1a1a1a', color: '#fff',
+                    fontSize: 14, fontWeight: 500, borderRadius: 100, border: 'none', cursor: 'pointer',
+                  }}>
                     Browse vehicles
                     <ArrowRight size={15} weight="bold" />
                   </button>
@@ -55,12 +59,12 @@ export default function Home() {
               </div>
 
               {/* Image */}
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-[#f5f5f3]">
+              <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 24, overflow: 'hidden', background: '#f5f5f3' }}>
                 <Image
                   src="/fleet/cars/mercedes-gle-coupe/exterior-front.png"
                   alt="Mercedes-Benz GLE Coupe"
                   fill
-                  className="object-cover"
+                  style={{ objectFit: 'cover' }}
                   priority
                 />
               </div>
@@ -69,15 +73,15 @@ export default function Home() {
         </section>
 
         {/* ─── Featured ─── */}
-        <section className="py-20 md:py-28 bg-[#f9f9f7]">
-          <div className="max-w-[1140px] mx-auto px-6 md:px-12">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-[22px] font-semibold text-[#1a1a1a] tracking-tight">Featured</h2>
-              <Link href="/listings" className="text-[13px] font-medium text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">
+        <section style={{ padding: '80px 0', background: '#f9f9f7' }}>
+          <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 40 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em' }}>Featured</h2>
+              <Link href="/listings" style={{ fontSize: 13, fontWeight: 500, color: '#6b6b6b' }}>
                 View all →
               </Link>
             </div>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
               {featured.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
@@ -86,27 +90,27 @@ export default function Home() {
         </section>
 
         {/* ─── Categories ─── */}
-        <section className="py-20 md:py-28">
-          <div className="max-w-[1140px] mx-auto px-6 md:px-12">
-            <h2 className="text-[22px] font-semibold text-[#1a1a1a] tracking-tight mb-10">Categories</h2>
-            <div className="grid md:grid-cols-3 gap-5">
+        <section style={{ padding: '80px 0' }}>
+          <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
+            <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 40 }}>Categories</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
               {[
-                { title: 'Premium & Exotic', image: '/fleet/cars/toyota-highlander/exterior-front.png', href: '/listings' },
-                { title: 'Eco-Gig', image: '/fleet/cars/wuling-bingo-ev-blue/exterior-front.png', href: '/driver/gig-vehicles' },
+                { title: 'Premium & Exotic', image: '/fleet/cars/mercedes-gle-coupe/exterior-side-1.png', href: '/listings' },
+                { title: 'Eco-Gig', image: '/fleet/cars/wuling-bingo-ev-green/exterior-front.png', href: '/driver/gig-vehicles' },
                 { title: 'Heavy-Haul', image: '/fleet/cars/jet-mover-ev-white/exterior-front.png', href: '/hauler/vehicles' },
               ].map((cat, i) => (
                 <Link key={i} href={cat.href}>
-                  <div className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#f5f5f3]">
+                  <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 20, overflow: 'hidden', background: '#f0f0ee' }}>
                     <Image
                       src={cat.image}
                       alt={cat.title}
                       fill
-                      className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+                      style={{ objectFit: 'cover' }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-5 left-5 flex items-center gap-2">
-                      <span className="text-[15px] font-medium text-white">{cat.title}</span>
-                      <ArrowRight size={14} weight="bold" className="text-white/70" />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%)' }} />
+                    <div style={{ position: 'absolute', bottom: 24, left: 24, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 15, fontWeight: 500, color: '#fff' }}>{cat.title}</span>
+                      <ArrowRight size={14} weight="bold" color="rgba(255,255,255,0.7)" />
                     </div>
                   </div>
                 </Link>
@@ -116,10 +120,10 @@ export default function Home() {
         </section>
 
         {/* ─── Value Props ─── */}
-        <section className="py-20 md:py-28 bg-[#f9f9f7]">
-          <div className="max-w-[1140px] mx-auto px-6 md:px-12">
-            <h2 className="text-[22px] font-semibold text-[#1a1a1a] tracking-tight mb-12">Why CarKid0</h2>
-            <div className="grid md:grid-cols-3 gap-12">
+        <section style={{ padding: '80px 0', background: '#f9f9f7' }}>
+          <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
+            <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 48 }}>Why CarKid0</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }}>
               {[
                 { icon: ShieldCheck, title: 'Verified & insured', desc: 'Every vehicle inspected. Every lister identity-verified. Full coverage included.' },
                 { icon: Globe, title: 'Pan-African', desc: 'One account across Lagos, Nairobi, Johannesburg, and Accra. More cities coming.' },
@@ -128,9 +132,9 @@ export default function Home() {
                 const Icon = item.icon;
                 return (
                   <div key={i}>
-                    <Icon size={24} weight="regular" className="text-[#1a1a1a] mb-4" />
-                    <h3 className="text-[15px] font-medium text-[#1a1a1a] mb-2">{item.title}</h3>
-                    <p className="text-[14px] text-[#6b6b6b] leading-relaxed">{item.desc}</p>
+                    <Icon size={22} weight="regular" color="#1a1a1a" style={{ marginBottom: 16 }} />
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', marginBottom: 8 }}>{item.title}</h3>
+                    <p style={{ fontSize: 14, color: '#6b6b6b', lineHeight: 1.6 }}>{item.desc}</p>
                   </div>
                 );
               })}
@@ -139,16 +143,20 @@ export default function Home() {
         </section>
 
         {/* ─── CTA ─── */}
-        <section className="py-20 md:py-28">
-          <div className="max-w-[1140px] mx-auto px-6 md:px-12 text-center">
-            <h2 className="text-[clamp(1.5rem,3vw,2.5rem)] font-semibold text-[#1a1a1a] tracking-tight mb-4">
+        <section style={{ padding: '100px 0' }}>
+          <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px', textAlign: 'center' }}>
+            <h2 style={{ fontSize: 32, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 12 }}>
               Ready to get started?
             </h2>
-            <p className="text-[16px] text-[#6b6b6b] mb-10 max-w-md mx-auto">
+            <p style={{ fontSize: 16, color: '#6b6b6b', marginBottom: 40 }}>
               Join thousands accessing verified vehicles across Africa.
             </p>
             <Link href="/listings">
-              <button className="inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#1a1a1a] text-white text-[14px] font-medium rounded-full hover:bg-[#333] transition-colors">
+              <button style={{
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+                padding: '14px 28px', background: '#1a1a1a', color: '#fff',
+                fontSize: 14, fontWeight: 500, borderRadius: 100, border: 'none', cursor: 'pointer',
+              }}>
                 Browse vehicles
                 <ArrowRight size={15} weight="bold" />
               </button>
