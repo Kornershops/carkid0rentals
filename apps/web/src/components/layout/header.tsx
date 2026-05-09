@@ -2,103 +2,67 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { List, X, User } from '@phosphor-icons/react';
+import { List, X } from '@phosphor-icons/react';
 import { Logo } from '../ui/logo';
-import { Button } from '../ui/button';
 import { useStore } from '@/store/use-store';
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { role } = useStore();
-  
-  const navigation = [
-    { name: 'Browse', href: '/listings' },
-    { name: 'How it Works', href: '/how-it-works' },
-    { name: 'Locations', href: '/locations' },
-  ];
-  
+  const { isAuthenticated } = useStore();
+
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="container">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb]">
+      <div className="max-w-[1140px] mx-auto px-6 md:px-12">
+        <div className="flex items-center justify-between h-[60px]">
+          <Link href="/">
             <Logo />
           </Link>
-          
-          {/* Desktop Navigation */}
+
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
+            <Link href="/listings" className="text-[13px] font-medium text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">
+              Browse
+            </Link>
+            <Link href="/how-it-works" className="text-[13px] font-medium text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">
+              How it Works
+            </Link>
           </nav>
-          
+
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            {role && (
-              <Link href={`/${role}/dashboard`}>
-                <Button variant="ghost" size="sm">
-                  <User size={16} weight="bold" />
-                  Dashboard
-                </Button>
+          <div className="hidden md:flex items-center gap-6">
+            {isAuthenticated && (
+              <Link href="/dashboard/customer" className="text-[13px] font-medium text-[#6b6b6b] hover:text-[#1a1a1a] transition-colors">
+                Dashboard
               </Link>
             )}
-            <Link href="/auth/login">
-              <Button variant="primary" size="sm">
-                Sign In
-              </Button>
+            <Link href="/auth/login" className="text-[13px] font-medium text-[#1a1a1a] hover:text-[#6b6b6b] transition-colors">
+              Sign in
             </Link>
           </div>
-          
-          {/* Mobile Menu Button */}
+
+          {/* Mobile Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            className="md:hidden p-2 text-[#1a1a1a]"
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? (
-              <X size={24} weight="bold" />
-            ) : (
-              <List size={24} weight="bold" />
-            )}
+            {isMobileMenuOpen ? <X size={20} /> : <List size={20} />}
           </button>
         </div>
-        
+
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+          <div className="md:hidden py-6 border-t border-[#ebebeb]">
             <nav className="flex flex-col gap-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
-                {role && (
-                  <Link href={`/${role}/dashboard`}>
-                    <Button variant="ghost" size="md" fullWidth>
-                      <User size={16} weight="bold" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
-                <Link href="/auth/login">
-                  <Button variant="primary" size="md" fullWidth>
-                    Sign In
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/listings" className="text-sm font-medium text-[#1a1a1a]" onClick={() => setIsMobileMenuOpen(false)}>
+                Browse
+              </Link>
+              <Link href="/how-it-works" className="text-sm font-medium text-[#1a1a1a]" onClick={() => setIsMobileMenuOpen(false)}>
+                How it Works
+              </Link>
+              <Link href="/auth/login" className="text-sm font-medium text-[#1a1a1a] pt-4 border-t border-[#ebebeb]" onClick={() => setIsMobileMenuOpen(false)}>
+                Sign in
+              </Link>
             </nav>
           </div>
         )}

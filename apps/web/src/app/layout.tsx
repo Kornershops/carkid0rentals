@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
 import ClientLayout from "@/components/layout/client-layout";
@@ -10,15 +10,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "CarKid0 — Premium Vehicle Rentals Across Africa",
-  description: "Access exotic vehicles, gig cars, and heavy-haul trucks from verified listers across Nigeria, Kenya, South Africa, Egypt, and Ghana.",
+  title: "CarKid0 — Vehicle Rentals Across Africa",
+  description: "Rent verified vehicles across Nigeria, Kenya, South Africa, and Ghana. Exotic, gig, and commercial vehicles from trusted listers.",
 };
 
 export default function RootLayout({
@@ -27,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body className="antialiased">
         <Providers>
           <ClientLayout>
