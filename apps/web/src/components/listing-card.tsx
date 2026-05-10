@@ -34,7 +34,7 @@ export function ListingCard({ listing }: ListingCardProps) {
             src={listing.images[0]}
             alt={listing.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover object-[center_70%] transition-transform duration-300 group-hover:scale-105"
           />
 
           {/* Overlays */}

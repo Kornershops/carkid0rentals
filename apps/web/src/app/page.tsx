@@ -12,10 +12,10 @@ import { useStore } from '@/store/use-store';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 
 const HERO_SLIDES = [
-  { src: '/fleet/cars/mercedes-gle-coupe/exterior-action.png', alt: 'Mercedes-Benz GLE Coupe AMG', tier: 'Exotic' },
-  { src: '/fleet/cars/lexus-gx460-facelift/exterior-front-side.jpg', alt: 'Lexus GX460 Facelift', tier: 'Premium' },
-  { src: '/fleet/cars/wuling-bingo-ev-blue/exterior-front.png', alt: 'Wuling Bingo EV', tier: 'Eco-Gig' },
-  { src: '/fleet/cars/toyota-hilux-adventure/exterior-side.jpg', alt: 'Toyota Hilux Adventure', tier: 'Heavy-Haul' },
+  { src: '/fleet/cars/mercedes-gle-coupe/exterior-front.png', alt: 'Mercedes-Benz GLE Coupe AMG', tier: 'Exotic' },
+  { src: '/fleet/cars/toyota-lc200-red-interior/exterior-side.jpg', alt: 'Toyota Land Cruiser 200', tier: 'Premium' },
+  { src: '/fleet/cars/saglev-s5-ev-white/exterior-front.jpg', alt: 'Saglev S5 EV', tier: 'Eco-Gig' },
+  { src: '/fleet/cars/toyota-hilux-adventure/exterior-front-left.jpg', alt: 'Toyota Hilux Adventure', tier: 'Heavy-Haul' },
 ];
 
 export default function Home() {
@@ -79,7 +79,7 @@ export default function Home() {
                     src={slide.src}
                     alt={slide.alt}
                     fill
-                    className={`object-cover transition-opacity duration-700 ${i === heroIndex ? 'opacity-100' : 'opacity-0'}`}
+                    className={`object-cover object-center transition-opacity duration-700 ${i === heroIndex ? 'opacity-100' : 'opacity-0'}`}
                     priority={i === 0}
                   />
                 ))}
