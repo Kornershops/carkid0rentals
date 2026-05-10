@@ -66,6 +66,13 @@ class ApiClient {
     return this.request<Listing>(`/listings/${id}`);
   }
 
+  async createListing(payload: CreateListingPayload) {
+    return this.request<Listing>('/listings', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
   // Bookings
   async createBooking(payload: CreateBookingPayload) {
     return this.request<Booking>('/bookings', {
@@ -121,6 +128,7 @@ export interface Listing {
   location: string;
   country: string;
   availability: string;
+  status: 'pending' | 'approved' | 'rejected';
   features: string[];
   isEV: boolean;
   listerId: string;
@@ -154,4 +162,19 @@ export interface CreateBookingPayload {
   email: string;
   phone: string;
   message?: string;
+}
+
+export interface CreateListingPayload {
+  title: string;
+  brand: string;
+  model: string;
+  year: number;
+  category: string;
+  pricePerDay: number;
+  images: string[];
+  location: string;
+  country: string;
+  features: string[];
+  isEV: boolean;
+  listerName?: string;
 }

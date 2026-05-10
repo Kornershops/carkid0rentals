@@ -15,7 +15,7 @@ type User struct {
 	Phone     string    `json:"phone" gorm:"uniqueIndex"`
 	Email     string    `json:"email" gorm:"uniqueIndex"`
 	FullName  string    `json:"fullName"`
-	Role      string    `json:"role" gorm:"default:customer"` // customer, driver, logistics, admin
+	Role      string    `json:"role" gorm:"default:customer"` // customer, driver, logistics, lister, admin
 	KYCStatus KYCStatus `json:"kycStatus" gorm:"default:pending"`
 	Country   string    `json:"country"`
 	City      string    `json:"city"`

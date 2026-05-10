@@ -14,6 +14,7 @@ type Listing struct {
 	Location     string    `json:"location"`
 	Country      string    `json:"country"`
 	Availability string    `json:"availability" gorm:"default:available"`
+	Status       string    `json:"status" gorm:"default:pending"` // pending, approved, rejected
 	Features     []string  `json:"features" gorm:"serializer:json"`
 	IsEV         bool      `json:"isEV"`
 	ListerID     string    `json:"listerId"`

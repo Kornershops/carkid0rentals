@@ -13,6 +13,9 @@ func SetupRoutes(router fiber.Router) {
 	l.Get("/", GetListings)
 	l.Get("/:id", GetListing)
 	l.Post("/", middleware.Protected(), CreateListing)
+	l.Put("/:id", middleware.Protected(), UpdateListing)
+	l.Delete("/:id", middleware.Protected(), DeleteListing)
+	l.Patch("/:id/status", middleware.Protected(), middleware.AdminOnly(), UpdateListingStatus)
 }
 
 func GetListings(c fiber.Ctx) error {
@@ -39,7 +42,7 @@ func GetListings(c fiber.Ctx) error {
 	}
 
 	var listings []Listing
-	query := config.DB.Model(&Listing{})
+	query := config.DB.Model(&Listing{}).Where("status = ?", "approved")
 
 	if filter.Category != "" && filter.Category != "all" {
 		query = query.Where("category = ?", filter.Category)
@@ -88,6 +91,11 @@ func CreateListing(c fiber.Ctx) error {
 	userID := c.Locals("userID").(string)
 	role := c.Locals("role").(string)
 
+	// Only admin and lister roles can create listings
+	if role != "admin" && role != "lister" {
+		return c.Status(403).JSON(fiber.Map{"error": "Only admin or lister accounts can create listings"})
+	}
+
 	var listing Listing
 	if err := c.Bind().JSON(&listing); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
@@ -97,8 +105,10 @@ func CreateListing(c fiber.Ctx) error {
 	if role == "admin" {
 		listing.ListerRole = "admin"
 		listing.ListerName = "CarKid0 Official"
+		listing.Status = "approved"
 	} else {
 		listing.ListerRole = "lister"
+		listing.Status = "pending"
 	}
 
 	if config.DB != nil {
@@ -108,4 +118,88 @@ func CreateListing(c fiber.Ctx) error {
 	}
 
 	return c.Status(201).JSON(listing)
+}
+
+func UpdateListing(c fiber.Ctx) error {
+	id := c.Params("id")
+	userID := c.Locals("userID").(string)
+	role := c.Locals("role").(string)
+
+	if config.DB == nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Database unavailable"})
+	}
+
+	var listing Listing
+	if err := config.DB.First(&listing, "id = ?", id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Listing not found"})
+	}
+
+	// Only owner or admin can update
+	if listing.ListerID != userID && role != "admin" {
+		return c.Status(403).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	var updates Listing
+	if err := c.Bind().JSON(&updates); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	// Prevent overwriting protected fields
+	updates.ID = ""
+	updates.ListerID = ""
+	updates.ListerRole = ""
+	updates.Status = ""
+
+	config.DB.Model(&listing).Updates(updates)
+	return c.JSON(listing)
+}
+
+func DeleteListing(c fiber.Ctx) error {
+	id := c.Params("id")
+	userID := c.Locals("userID").(string)
+	role := c.Locals("role").(string)
+
+	if config.DB == nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Database unavailable"})
+	}
+
+	var listing Listing
+	if err := config.DB.First(&listing, "id = ?", id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Listing not found"})
+	}
+
+	if listing.ListerID != userID && role != "admin" {
+		return c.Status(403).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	config.DB.Delete(&listing)
+	return c.JSON(fiber.Map{"message": "Listing deleted"})
+}
+
+func UpdateListingStatus(c fiber.Ctx) error {
+	id := c.Params("id")
+
+	if config.DB == nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Database unavailable"})
+	}
+
+	var body struct {
+		Status string `json:"status"`
+	}
+	if err := c.Bind().JSON(&body); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	if body.Status != "approved" && body.Status != "rejected" {
+		return c.Status(400).JSON(fiber.Map{"error": "Status must be 'approved' or 'rejected'"})
+	}
+
+	var listing Listing
+	if err := config.DB.First(&listing, "id = ?", id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Listing not found"})
+	}
+
+	config.DB.Model(&listing).Update("status", body.Status)
+	listing.Status = body.Status
+	return c.JSON(listing)
 }
