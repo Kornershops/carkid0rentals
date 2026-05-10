@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { MagnifyingGlass, Faders } from '@phosphor-icons/react';
 import { Container } from '@/components/layout/container';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Input, Select, Button } from '@/components/ui';
 import { ListingCard } from '@/components/listing-card';
-import { MOCK_LISTINGS } from '@/data/mock-listings';
+import { MOCK_LISTINGS, Listing } from '@/data/mock-listings';
+import { api, Listing as ApiListing } from '@/lib/api-client';
 
 export default function ListingsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,13 +17,56 @@ export default function ListingsPage() {
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [priceSort, setPriceSort] = useState<string>('default');
   const [showFilters, setShowFilters] = useState(false);
+  const [listings, setListings] = useState<Listing[]>(MOCK_LISTINGS);
+  const [usingApi, setUsingApi] = useState(false);
 
-  const locations = useMemo(() => {
-    return Array.from(new Set(MOCK_LISTINGS.map(l => l.location))).sort();
+  useEffect(() => {
+    api.getListings({ category: categoryFilter !== 'all' ? categoryFilter : undefined, source: sourceFilter !== 'all' ? sourceFilter : undefined })
+      .then(res => {
+        if (res.listings && res.listings.length > 0) {
+          const mapped: Listing[] = (res.listings as ApiListing[]).map(l => ({
+            id: l.id,
+            title: l.title,
+            brand: l.brand,
+            model: l.model,
+            year: l.year,
+            category: l.category as Listing['category'],
+            pricePerDay: l.pricePerDay,
+            images: l.images,
+            location: l.location,
+            country: l.country,
+            availability: l.availability as Listing['availability'],
+            features: l.features,
+            isEV: l.isEV,
+            specs: {},
+            lister: {
+              id: l.listerId,
+              name: l.listerName,
+              role: l.listerRole,
+              rating: 4.8,
+              reviewCount: 0,
+              responseTime: '< 2 hours',
+              verificationStatus: 'verified' as const,
+              fleetCount: 0,
+              joinedDate: '2024-01',
+              location: `${l.location}, ${l.country}`,
+            },
+          }));
+          setListings(mapped);
+          setUsingApi(true);
+        }
+      })
+      .catch(() => {
+        // API unavailable — keep using mock data
+      });
   }, []);
 
+  const locations = useMemo(() => {
+    return Array.from(new Set(listings.map(l => l.location))).sort();
+  }, [listings]);
+
   const filteredListings = useMemo(() => {
-    let filtered = MOCK_LISTINGS;
+    let filtered = listings;
 
     if (searchQuery) {
       filtered = filtered.filter(listing =>
@@ -51,7 +95,7 @@ export default function ListingsPage() {
     }
 
     return filtered;
-  }, [searchQuery, categoryFilter, locationFilter, sourceFilter, priceSort]);
+  }, [searchQuery, categoryFilter, locationFilter, sourceFilter, priceSort, listings]);
 
   const categoryOptions = [
     { value: 'all', label: 'All Categories' },

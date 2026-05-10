@@ -52,6 +52,15 @@ class ApiClient {
     return this.request<User>('/auth/me');
   }
 
+  async updateRole(role: 'lister' | 'driver') {
+    const res = await this.request<{ token: string; role: string }>('/auth/role', {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    });
+    localStorage.setItem('carkid0_token', res.token);
+    return res;
+  }
+
   // Listings
   async getListings(params?: { category?: string; source?: string; country?: string; page?: number }) {
     const query = new URLSearchParams();

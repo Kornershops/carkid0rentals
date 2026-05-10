@@ -13,6 +13,7 @@ func SetupRoutes(router fiber.Router) {
 	auth.Post("/login", Login)
 	auth.Post("/verify", VerifyOTP)
 	auth.Post("/kyc", middleware.Protected(), SubmitKYC)
+	auth.Patch("/role", middleware.Protected(), UpdateRole)
 	auth.Get("/me", middleware.Protected(), GetMe)
 }
 
@@ -105,4 +106,29 @@ func GetMe(c fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.JSON(user)
+}
+
+// UpdateRole allows a user to upgrade their role to lister
+func UpdateRole(c fiber.Ctx) error {
+	userID := c.Locals("userID").(string)
+
+	var body struct {
+		Role string `json:"role"`
+	}
+	if err := c.Bind().JSON(&body); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	// Users can only upgrade to lister or driver
+	if body.Role != "lister" && body.Role != "driver" {
+		return c.Status(400).JSON(fiber.Map{"error": "Can only upgrade to lister or driver"})
+	}
+
+	if config.DB != nil {
+		config.DB.Model(&User{}).Where("id = ?", userID).Update("role", body.Role)
+	}
+
+	// Generate new token with updated role
+	token, _ := middleware.GenerateToken(userID, body.Role)
+	return c.JSON(fiber.Map{"token": token, "role": body.Role})
 }
