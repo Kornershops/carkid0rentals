@@ -73,7 +73,7 @@ export default function ListingsPage() {
   ];
 
   const sortOptions = [
-    { value: 'default', label: 'Default' },
+    { value: 'default', label: 'Relevance' },
     { value: 'low-high', label: 'Price: Low to High' },
     { value: 'high-low', label: 'Price: High to Low' },
   ];
