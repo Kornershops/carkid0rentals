@@ -12,10 +12,10 @@ import { useStore } from '@/store/use-store';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 
 const HERO_SLIDES = [
-  { src: '/fleet/cars/mercedes-gle-coupe/exterior-front.png', alt: 'Mercedes-Benz GLE Coupe AMG', tier: 'Exotic' },
-  { src: '/fleet/cars/lexus-gx460-facelift/exterior-front.jpg', alt: 'Lexus GX460 Facelift', tier: 'Premium' },
+  { src: '/fleet/cars/mercedes-gle-coupe/exterior-action.png', alt: 'Mercedes-Benz GLE Coupe AMG', tier: 'Exotic' },
+  { src: '/fleet/cars/lexus-gx460-facelift/exterior-front-side.jpg', alt: 'Lexus GX460 Facelift', tier: 'Premium' },
   { src: '/fleet/cars/wuling-bingo-ev-blue/exterior-front.png', alt: 'Wuling Bingo EV', tier: 'Eco-Gig' },
-  { src: '/fleet/cars/toyota-hilux-adventure/exterior-front.jpg', alt: 'Toyota Hilux Adventure', tier: 'Heavy-Haul' },
+  { src: '/fleet/cars/toyota-hilux-adventure/exterior-side.jpg', alt: 'Toyota Hilux Adventure', tier: 'Heavy-Haul' },
 ];
 
 export default function Home() {
@@ -39,9 +39,9 @@ export default function Home() {
   }, []);
 
   const featured = [
-    MOCK_LISTINGS.find(l => l.id === 'listing-1')!,
-    MOCK_LISTINGS.find(l => l.id === 'listing-5')!,
-    MOCK_LISTINGS.find(l => l.id === 'listing-9')!,
+    MOCK_LISTINGS.find(l => l.id === 'listing-1')!,  // Lagos - Exotic
+    MOCK_LISTINGS.find(l => l.id === 'listing-4')!,  // Nairobi - Premium
+    MOCK_LISTINGS.find(l => l.id === 'listing-3')!,  // Johannesburg - Premium
   ].filter(Boolean);
 
   return (
@@ -84,7 +84,7 @@ export default function Home() {
                   />
                 ))}
                 {/* Tier label */}
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/90 text-[12px] font-medium text-gray-800 backdrop-blur-sm">
+                <span className="absolute top-5 left-5 px-3 py-1 rounded-full bg-white/90 text-[12px] font-medium text-gray-800 backdrop-blur-sm">
                   {HERO_SLIDES[heroIndex].tier}
                 </span>
                 {/* Dots */}
@@ -125,17 +125,17 @@ export default function Home() {
             <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 40 }}>Categories</h2>
             <div className="grid-3" style={{ gap: 20 }}>
               {[
-                { title: 'Premium & Exotic', image: '/fleet/cars/mercedes-gle-coupe/exterior-side-1.png', href: '/listings' },
-                { title: 'Eco-Gig', image: '/fleet/cars/wuling-bingo-ev-green/exterior-front.png', href: '/driver/gig-vehicles' },
-                { title: 'Heavy-Haul', image: '/fleet/cars/jet-mover-ev-white/exterior-front.png', href: '/hauler/vehicles' },
+                { title: 'Premium & Exotic', image: '/fleet/cars/mercedes-gle-coupe/exterior-action.png', href: '/listings' },
+                { title: 'Eco-Gig', image: '/fleet/cars/wuling-bingo-ev-blue/exterior-front.png', href: '/driver/gig-vehicles' },
+                { title: 'Heavy-Haul', image: '/fleet/cars/toyota-hilux-adventure/exterior-front.jpg', href: '/hauler/vehicles' },
               ].map((cat, i) => (
                 <Link key={i} href={cat.href}>
                   <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 20, overflow: 'hidden', background: '#f0f0ee' }}>
                     <Image src={cat.image} alt={cat.title} fill style={{ objectFit: 'cover' }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%)' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)' }} />
                     <div style={{ position: 'absolute', bottom: 24, left: 24, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 15, fontWeight: 500, color: '#fff' }}>{cat.title}</span>
-                      <ArrowRight size={14} weight="bold" color="rgba(255,255,255,0.7)" />
+                      <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>{cat.title}</span>
+                      <ArrowRight size={14} weight="bold" color="rgba(255,255,255,0.85)" />
                     </div>
                   </div>
                 </Link>
@@ -173,8 +173,11 @@ export default function Home() {
             <h2 style={{ fontSize: 32, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 12 }}>
               Ready to get started?
             </h2>
-            <p style={{ fontSize: 16, color: '#6b6b6b', marginBottom: 40 }}>
+            <p style={{ fontSize: 16, color: '#6b6b6b', marginBottom: 16 }}>
               Join thousands accessing verified vehicles across Africa.
+            </p>
+            <p style={{ fontSize: 13, color: '#999', marginBottom: 40 }}>
+              24+ verified vehicles · 4 countries · Instant confirmation
             </p>
             <Link href="/listings">
               <button style={{
