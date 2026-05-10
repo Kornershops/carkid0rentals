@@ -82,8 +82,8 @@ img { display: block; max-width: 100%; height: auto; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 
-/* Container */
-.container {
+/* Container — renamed to avoid Tailwind conflict */
+.site-container {
   max-width: var(--container);
   margin: 0 auto;
   padding-left: var(--container-px);
@@ -247,4 +247,28 @@ img { display: block; max-width: 100%; height: auto; }
   border-top-color: var(--color-text);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+}
+
+/* Landing page responsive grids */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
 }

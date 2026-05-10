@@ -32,13 +32,12 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main style={{ paddingTop: 0 }}>
+      <main>
 
         {/* ─── Hero ─── */}
         <section style={{ padding: '100px 0 120px' }}>
           <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
-              {/* Text */}
+            <div className="hero-grid">
               <div>
                 <h1 style={{ fontSize: 48, fontWeight: 600, lineHeight: 1.1, letterSpacing: '-0.03em', color: '#1a1a1a', marginBottom: 20 }}>
                   Rent verified vehicles across Africa.
@@ -58,7 +57,6 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Image */}
               <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 24, overflow: 'hidden', background: '#f5f5f3' }}>
                 <Image
                   src="/fleet/cars/mercedes-gle-coupe/exterior-front.png"
@@ -81,7 +79,7 @@ export default function Home() {
                 View all →
               </Link>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+            <div className="grid-3">
               {featured.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
               ))}
@@ -93,7 +91,7 @@ export default function Home() {
         <section style={{ padding: '80px 0' }}>
           <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
             <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 40 }}>Categories</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div className="grid-3" style={{ gap: 20 }}>
               {[
                 { title: 'Premium & Exotic', image: '/fleet/cars/mercedes-gle-coupe/exterior-side-1.png', href: '/listings' },
                 { title: 'Eco-Gig', image: '/fleet/cars/wuling-bingo-ev-green/exterior-front.png', href: '/driver/gig-vehicles' },
@@ -101,12 +99,7 @@ export default function Home() {
               ].map((cat, i) => (
                 <Link key={i} href={cat.href}>
                   <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 20, overflow: 'hidden', background: '#f0f0ee' }}>
-                    <Image
-                      src={cat.image}
-                      alt={cat.title}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
+                    <Image src={cat.image} alt={cat.title} fill style={{ objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%)' }} />
                     <div style={{ position: 'absolute', bottom: 24, left: 24, display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ fontSize: 15, fontWeight: 500, color: '#fff' }}>{cat.title}</span>
@@ -123,7 +116,7 @@ export default function Home() {
         <section style={{ padding: '80px 0', background: '#f9f9f7' }}>
           <div style={{ maxWidth: 1140, margin: '0 auto', padding: '0 48px' }}>
             <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.02em', marginBottom: 48 }}>Why CarKid0</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }}>
+            <div className="grid-3" style={{ gap: 48 }}>
               {[
                 { icon: ShieldCheck, title: 'Verified & insured', desc: 'Every vehicle inspected. Every lister identity-verified. Full coverage included.' },
                 { icon: Globe, title: 'Pan-African', desc: 'One account across Lagos, Nairobi, Johannesburg, and Accra. More cities coming.' },
