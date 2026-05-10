@@ -11,8 +11,16 @@ import { ListingCard } from '@/components/listing-card';
 import { useStore } from '@/store/use-store';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 
+const HERO_SLIDES = [
+  { src: '/fleet/cars/mercedes-gle-coupe/exterior-front.png', alt: 'Mercedes-Benz GLE Coupe AMG', tier: 'Exotic' },
+  { src: '/fleet/cars/lexus-gx460-facelift/exterior-front.jpg', alt: 'Lexus GX460 Facelift', tier: 'Premium' },
+  { src: '/fleet/cars/wuling-bingo-ev-blue/exterior-front.png', alt: 'Wuling Bingo EV', tier: 'Eco-Gig' },
+  { src: '/fleet/cars/toyota-hilux-adventure/exterior-front.jpg', alt: 'Toyota Hilux Adventure', tier: 'Heavy-Haul' },
+];
+
 export default function Home() {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [heroIndex, setHeroIndex] = useState(0);
   const { role } = useStore();
 
   useEffect(() => {
@@ -22,6 +30,13 @@ export default function Home() {
       localStorage.setItem('hasVisited', 'true');
     }
   }, [role]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroIndex((i) => (i + 1) % HERO_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   const featured = [
     MOCK_LISTINGS.find(l => l.id === 'listing-1')!,
@@ -58,13 +73,30 @@ export default function Home() {
               </div>
 
               <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 24, overflow: 'hidden', background: '#f5f5f3' }}>
-                <Image
-                  src="/fleet/cars/mercedes-gle-coupe/exterior-front.png"
-                  alt="Mercedes-Benz GLE Coupe"
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  priority
-                />
+                {HERO_SLIDES.map((slide, i) => (
+                  <Image
+                    key={slide.src}
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    className={`object-cover transition-opacity duration-700 ${i === heroIndex ? 'opacity-100' : 'opacity-0'}`}
+                    priority={i === 0}
+                  />
+                ))}
+                {/* Tier label */}
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/90 text-[12px] font-medium text-gray-800 backdrop-blur-sm">
+                  {HERO_SLIDES[heroIndex].tier}
+                </span>
+                {/* Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {HERO_SLIDES.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroIndex(i)}
+                      className={`w-2 h-2 rounded-full transition-all ${i === heroIndex ? 'bg-white scale-125' : 'bg-white/50'}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
