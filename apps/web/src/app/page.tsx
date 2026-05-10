@@ -58,7 +58,7 @@ export default function Home() {
                   Rent verified vehicles across Africa.
                 </h1>
                 <p style={{ fontSize: 17, color: '#6b6b6b', lineHeight: 1.6, marginBottom: 40, maxWidth: 420 }}>
-                  Exotic, gig, and commercial vehicles from trusted listers in Lagos, Nairobi, Johannesburg, and Accra.
+                  Exotic, gig, and commercial vehicles from trusted listers in Lagos, Nairobi, Johannesburg, Accra, and Cairo.
                 </p>
                 <Link href="/listings">
                   <button style={{
@@ -151,7 +151,7 @@ export default function Home() {
             <div className="grid-3" style={{ gap: 48 }}>
               {[
                 { icon: ShieldCheck, title: 'Verified & insured', desc: 'Every vehicle inspected. Every lister identity-verified. Full coverage included.' },
-                { icon: Globe, title: 'Pan-African', desc: 'One account across Lagos, Nairobi, Johannesburg, and Accra. More cities coming.' },
+                { icon: Globe, title: 'Pan-African', desc: 'One account across Lagos, Abuja, Nairobi, Johannesburg, Accra, and Cairo.' },
                 { icon: Lightning, title: 'Instant booking', desc: 'Platform vehicles confirm instantly. Pay securely via Paystack in seconds.' },
               ].map((item, i) => {
                 const Icon = item.icon;
@@ -177,7 +177,7 @@ export default function Home() {
               Join thousands accessing verified vehicles across Africa.
             </p>
             <p style={{ fontSize: 13, color: '#999', marginBottom: 40 }}>
-              24+ verified vehicles · 4 countries · Instant confirmation
+              24+ verified vehicles · 5 countries · 6 cities · Instant confirmation
             </p>
             <Link href="/listings">
               <button style={{

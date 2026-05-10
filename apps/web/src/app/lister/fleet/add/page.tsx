@@ -23,6 +23,7 @@ const COUNTRIES = [
   { value: 'Kenya', label: 'Kenya' },
   { value: 'South Africa', label: 'South Africa' },
   { value: 'Ghana', label: 'Ghana' },
+  { value: 'Egypt', label: 'Egypt' },
 ];
 
 const TRANSMISSIONS = [

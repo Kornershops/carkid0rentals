@@ -164,16 +164,16 @@ A user who wants to list vehicles:
 
 ---
 
-## Status: STEPS 1-5 COMPLETE
+## Status: COMPLETE ✅
 
-### Completed:
+### All Steps Done:
 - ✅ Step 1: Backend — `lister` role added, `Status` field on Listing model
 - ✅ Step 2: Backend — PUT, DELETE, PATCH /status endpoints with role-based access
 - ✅ Step 3: Backend — Role restriction on POST (only admin/lister can create)
 - ✅ Step 4: Frontend — `/lister/fleet/add` form page (full CRUD form)
 - ✅ Step 5: Frontend — `/dashboard/admin/listings` management page (approve/reject)
+- ✅ Step 6: Frontend — Browse page connected to API with mock fallback
+- ✅ Step 7: Frontend — Lister registration flow (`/auth/register/lister`) + `PATCH /auth/role` endpoint
 
-### Remaining:
-- ⬜ Step 3 (original): Image upload endpoint (Cloudinary integration)
-- ⬜ Step 6: Connect browse page to API with mock fallback
-- ⬜ Step 7: Lister registration flow
+### Remaining (deferred):
+- ⬜ Image upload endpoint (Cloudinary integration) — currently uses URL input
