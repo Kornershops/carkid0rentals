@@ -8,21 +8,24 @@ import { ArrowLeft, MapPin } from '@phosphor-icons/react';
 import { Container } from '@/components/layout/container';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { Button, Input } from '@/components/ui';
+import { Button, Input, LoadingSpinner } from '@/components/ui';
 import { DatePicker } from '@/components/forms';
 import { ListerCard } from '@/components/lister-card';
 import { MOCK_LISTINGS } from '@/data/mock-listings';
 import { useAuthGuard } from '@/lib/auth-guard';
 import { api } from '@/lib/api-client';
+import { useToast } from '@/hooks/useToast';
+import { useValidation } from '@/hooks/useValidation';
+import { commonRules, validators } from '@/lib/validation';
+import { getErrorMessage } from '@/lib/error-handling';
 
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
+  const toast = useToast();
   const isAuth = useAuthGuard(`/booking/${params.id}`);
   const listing = MOCK_LISTINGS.find(l => l.id === params.id);
 
-  if (!isAuth) return null;
-  
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [fullName, setFullName] = useState('');
@@ -30,7 +33,22 @@ export default function BookingPage() {
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+
+  const { errors, validateSingleField, validateAllFields, handleBlur, getFieldError } = useValidation({
+    fullName: commonRules.name,
+    email: commonRules.email,
+    phone: commonRules.phone,
+    startDate: [
+      { required: true, message: 'Start date is required' },
+      { custom: (value: string) => validators.isFutureDate(value), message: 'Start date must be in the future' },
+    ],
+    endDate: [
+      { required: true, message: 'End date is required' },
+      { custom: (value: string) => validators.isDateRange(startDate, value), message: 'End date must be after start date' },
+    ],
+  });
+
+  if (!isAuth) return <LoadingSpinner fullScreen message="Checking authentication..." />;
   
   if (!listing) {
     return (
@@ -70,11 +88,18 @@ export default function BookingPage() {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const formData = { fullName, email, phone, startDate, endDate };
+    const isValid = validateAllFields(formData);
+
+    if (!isValid) {
+      toast.error('Please fix the errors in the form');
+      return;
+    }
+
     setIsSubmitting(true);
-    setError('');
 
     try {
-      // Create booking via API
       const booking = await api.createBooking({
         listingId: listing.id,
         startDate,
@@ -85,18 +110,28 @@ export default function BookingPage() {
         message,
       });
 
-      // Initialize Paystack payment
       const payment = await api.initializePayment(booking.id);
-
-      // Redirect to Paystack checkout
-      window.location.href = payment.authorizationUrl;
-    } catch {
-      // Fallback: navigate to confirmation directly (static/dev mode)
-      router.push(`/booking/confirmation?listing=${listing.id}&start=${startDate}&end=${endDate}`);
+      toast.success('Booking created! Redirecting to payment...');
+      
+      setTimeout(() => {
+        window.location.href = payment.authorizationUrl;
+      }, 1000);
+    } catch (error) {
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage);
+      
+      // Fallback for development
+      if (process.env.NODE_ENV === 'development') {
+        setTimeout(() => {
+          router.push(`/booking/confirmation?listing=${listing.id}&start=${startDate}&end=${endDate}`);
+        }, 1500);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
-  const isFormValid = startDate && endDate && fullName && email && phone && calculateDays() > 0;
+  const isFormValid = startDate && endDate && fullName && email && phone && calculateDays() > 0 && Object.keys(errors).length === 0;
   
   return (
     <>
@@ -113,10 +148,6 @@ export default function BookingPage() {
           
           <div className="pb-20">
             <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-8">Request to Book</h1>
-            
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
-            )}
 
             <div className="grid lg:grid-cols-[1fr_400px] gap-12">
               {/* Form */}
@@ -124,17 +155,80 @@ export default function BookingPage() {
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Trip</h2>
                   <div className="grid md:grid-cols-2 gap-4">
-                    <DatePicker label="Start Date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required fullWidth />
-                    <DatePicker label="End Date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required fullWidth />
+                    <Input
+                      label="Start Date"
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        validateSingleField('startDate', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('startDate')}
+                      error={getFieldError('startDate')}
+                      required
+                      fullWidth
+                    />
+                    <Input
+                      label="End Date"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        validateSingleField('endDate', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('endDate')}
+                      error={getFieldError('endDate')}
+                      required
+                      fullWidth
+                    />
                   </div>
                 </div>
                 
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Information</h2>
                   <div className="space-y-4">
-                    <Input label="Full Name" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} required fullWidth />
-                    <Input label="Email" type="email" placeholder="john@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required fullWidth />
-                    <Input label="Phone Number" type="tel" placeholder="+234 800 000 0000" value={phone} onChange={(e) => setPhone(e.target.value)} required fullWidth />
+                    <Input
+                      label="Full Name"
+                      type="text"
+                      placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => {
+                        setFullName(e.target.value);
+                        validateSingleField('fullName', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('fullName')}
+                      error={getFieldError('fullName')}
+                      required
+                      fullWidth
+                    />
+                    <Input
+                      label="Email"
+                      type="email"
+                      placeholder="john@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        validateSingleField('email', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('email')}
+                      error={getFieldError('email')}
+                      required
+                      fullWidth
+                    />
+                    <Input
+                      label="Phone Number"
+                      type="tel"
+                      placeholder="+234 800 000 0000"
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        validateSingleField('phone', e.target.value);
+                      }}
+                      onBlur={() => handleBlur('phone')}
+                      error={getFieldError('phone')}
+                      required
+                      fullWidth
+                    />
                   </div>
                 </div>
                 
@@ -153,7 +247,13 @@ export default function BookingPage() {
                   <ListerCard lister={listing.lister} showContactButton={false} />
                 </div>
                 
-                <Button type="submit" variant="primary" size="lg" fullWidth disabled={!isFormValid || isSubmitting} loading={isSubmitting}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  disabled={!isFormValid || isSubmitting}
+                >
                   {isSubmitting ? 'Processing...' : 'Proceed to Payment'}
                 </Button>
                 

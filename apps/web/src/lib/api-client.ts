@@ -1,3 +1,14 @@
+import {
+  AppError,
+  NetworkError,
+  AuthenticationError,
+  AuthorizationError,
+  NotFoundError,
+  ServerError,
+  ValidationError,
+  logError,
+} from './error-handling';
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 class ApiClient {
@@ -7,21 +18,54 @@ class ApiClient {
   }
 
   private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
-    const token = this.getToken();
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...((options.headers as Record<string, string>) || {}),
-    };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    try {
+      const token = this.getToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...((options.headers as Record<string, string>) || {}),
+      };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+      const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
 
-    if (!res.ok) {
-      const error = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(error.error || `HTTP ${res.status}`);
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ error: 'Request failed' }));
+        
+        switch (res.status) {
+          case 400:
+            throw new ValidationError(error.error || 'Validation failed', error.fields);
+          case 401:
+            throw new AuthenticationError(error.error || 'Authentication required');
+          case 403:
+            throw new AuthorizationError(error.error || 'Access denied');
+          case 404:
+            throw new NotFoundError(error.error || 'Resource not found');
+          case 500:
+          case 502:
+          case 503:
+            throw new ServerError(error.error || 'Server error occurred');
+          default:
+            throw new AppError(error.error || `HTTP ${res.status}`, 'API_ERROR', res.status);
+        }
+      }
+
+      return res.json();
+    } catch (error) {
+      if (error instanceof AppError) {
+        logError(error, `API: ${path}`);
+        throw error;
+      }
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        const networkError = new NetworkError('Unable to connect to server');
+        logError(networkError, `API: ${path}`);
+        throw networkError;
+      }
+      
+      const appError = new AppError('An unexpected error occurred');
+      logError(appError, `API: ${path}`);
+      throw appError;
     }
-
-    return res.json();
   }
 
   // Auth
@@ -108,6 +152,147 @@ class ApiClient {
 
   async getPaymentStatus(bookingId: string) {
     return this.request<{ status: string; reference: string }>(`/payments/${bookingId}`);
+  }
+
+  // Lister
+  async getListerDashboard() {
+    return this.request<{
+      monthlyRevenue: number;
+      activeBookings: number;
+      fleetSize: number;
+      utilizationRate: number;
+    }>('/lister/dashboard');
+  }
+
+  async getListerBookings(status?: string) {
+    const query = status && status !== 'all' ? `?status=${status}` : '';
+    return this.request<Booking[]>(`/lister/bookings${query}`);
+  }
+
+  async registerLister(payload: { businessName: string; businessType: string; taxId: string }) {
+    return this.request<{ id: string; status: string }>('/lister/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Driver
+  async getDriverDashboard() {
+    return this.request<{
+      todayEarnings: number;
+      weeklyEarnings: number;
+      activeBookings: number;
+      availableVehicles: number;
+    }>('/drivers/dashboard');
+  }
+
+  async registerDriver(payload: {
+    licenseNumber: string;
+    licenseExpiry: string;
+    experience: number;
+    vehicleType: string;
+  }) {
+    return this.request<{ id: string; status: string }>('/drivers/register', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async getDriverVerificationStatus() {
+    return this.request<{ status: string; documents: any[] }>('/drivers/verification-status');
+  }
+
+  async uploadDocument(file: File, type: string) {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('type', type);
+
+    const token = this.getToken();
+    const res = await fetch(`${API_BASE}/drivers/upload-document`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error('Upload failed');
+    return res.json();
+  }
+
+  async completeDriverOnboarding(preferences: any) {
+    return this.request<{ status: string }>('/drivers/onboard', {
+      method: 'POST',
+      body: JSON.stringify({ preferences }),
+    });
+  }
+
+  // Messages
+  async getConversations() {
+    return this.request<any[]>('/messages');
+  }
+
+  async sendMessage(conversationId: string, message: string) {
+    return this.request<any>('/messages', {
+      method: 'POST',
+      body: JSON.stringify({ conversationId, message }),
+    });
+  }
+
+  // Company
+  async getCompanyFleet() {
+    return this.request<{ vehicles: Listing[]; stats: any }>('/company/fleet');
+  }
+
+  async getCompanyAnalytics() {
+    return this.request<any>('/company/analytics');
+  }
+
+  // IoT
+  async sendIoTCommand(vehicleId: string, command: string) {
+    return this.request<{ commandId: string; status: string }>('/iot/command', {
+      method: 'POST',
+      body: JSON.stringify({ vehicleId, command }),
+    });
+  }
+
+  async getVehicleStatus(vehicleId: string) {
+    return this.request<any>(`/iot/status/${vehicleId}`);
+  }
+
+  // Logistics
+  async getDeliveries() {
+    return this.request<any[]>('/logistics/deliveries');
+  }
+
+  async createDelivery(payload: any) {
+    return this.request<any>('/logistics/deliveries', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Hauler
+  async getHaulerDashboard() {
+    return this.request<any>('/hauler/dashboard');
+  }
+
+  async getHaulerVehicles() {
+    return this.request<Listing[]>('/hauler/vehicles');
+  }
+
+  async createHaulerBooking(payload: CreateBookingPayload) {
+    return this.request<Booking>('/hauler/book', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  // Public
+  async getPublicBooking(id: string) {
+    return this.request<Booking>(`/bookings/${id}/public`);
+  }
+
+  async getFleetDetail(id: string) {
+    return this.request<any>(`/fleet/${id}/detail`);
   }
 }
 

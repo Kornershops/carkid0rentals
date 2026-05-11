@@ -1,7 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // Remove 'output: export' to enable API proxy in dev mode
+  // output: "export",
+  
+  // API Proxy for development (single port convenience)
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: 'http://localhost:9090/api/v1/:path*',
+      },
+      {
+        source: '/health',
+        destination: 'http://localhost:9090/health',
+      },
+    ];
+  },
+  
   images: {
     loader: "custom",
     loaderFile: "./src/lib/cloudinary-loader.ts",

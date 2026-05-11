@@ -11,6 +11,8 @@ import (
 )
 
 func SetupRoutes(router fiber.Router) {
+	router.Get("/bookings/:id/public", GetBookingPublic)
+
 	b := router.Group("/bookings", middleware.Protected())
 	b.Post("/", CreateBooking)
 	b.Get("/", GetMyBookings)
@@ -139,4 +141,19 @@ func UpdateStatus(c fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": body.Status})
+}
+
+func GetBookingPublic(c fiber.Ctx) error {
+	id := c.Params("id")
+
+	if config.DB == nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Not found"})
+	}
+
+	var booking Booking
+	if err := config.DB.First(&booking, "id = ?", id).Error; err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "Booking not found"})
+	}
+
+	return c.JSON(booking)
 }

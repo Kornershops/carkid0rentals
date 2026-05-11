@@ -89,6 +89,7 @@ export const commonRules = {
   name: [
     { required: true, message: 'Name is required' },
     { minLength: 2, message: 'Name must be at least 2 characters' },
+    { maxLength: 100, message: 'Name must be less than 100 characters' },
   ],
   date: [
     { required: true, message: 'Date is required' },
@@ -105,4 +106,32 @@ export const commonRules = {
       message: 'Password must contain uppercase, lowercase, and number',
     },
   ],
+  price: [
+    { required: true, message: 'Price is required' },
+    { min: 0, message: 'Price must be positive' },
+  ],
+  year: [
+    { required: true, message: 'Year is required' },
+    { min: 1900, message: 'Invalid year' },
+    { max: new Date().getFullYear() + 1, message: 'Year cannot be in the future' },
+  ],
+  url: [
+    {
+      pattern: /^https?:\/\/.+/,
+      message: 'Invalid URL format',
+    },
+  ],
+};
+
+// Utility validators
+export const validators = {
+  isEmail: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  isPhone: (value: string) => /^\+?[0-9\s-]{10,}$/.test(value),
+  isUrl: (value: string) => /^https?:\/\/.+/.test(value),
+  isNumeric: (value: string) => /^\d+$/.test(value),
+  isAlpha: (value: string) => /^[a-zA-Z\s]+$/.test(value),
+  isAlphanumeric: (value: string) => /^[a-zA-Z0-9\s]+$/.test(value),
+  isFutureDate: (value: string) => new Date(value) > new Date(),
+  isPastDate: (value: string) => new Date(value) < new Date(),
+  isDateRange: (start: string, end: string) => new Date(start) < new Date(end),
 };

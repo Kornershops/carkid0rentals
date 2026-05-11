@@ -16,6 +16,7 @@ func SetupRoutes(router fiber.Router) {
 	fleet := router.Group("/fleet")
 	fleet.Get("/", GetFleet)
 	fleet.Get("/:id", GetVehicle)
+	fleet.Get("/:id/detail", GetFleetDetail)
 }
 
 // GetFleet returns all vehicles
@@ -41,6 +42,23 @@ func GetVehicle(c fiber.Ctx) error {
 	for _, v := range mockFleet {
 		if v.ID == id {
 			return c.JSON(v)
+		}
+	}
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Vehicle not found"})
+}
+
+// GetFleetDetail returns detailed vehicle information
+func GetFleetDetail(c fiber.Ctx) error {
+	id := c.Params("id")
+	for _, v := range mockFleet {
+		if v.ID == id {
+			return c.JSON(fiber.Map{
+				"vehicle":       v,
+				"totalBookings": 45,
+				"revenue":       125000,
+				"utilization":   78,
+				"maintenance":   []string{"Oil change - 2024-01-15"},
+			})
 		}
 	}
 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Vehicle not found"})

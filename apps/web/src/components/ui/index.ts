@@ -28,3 +28,13 @@ export type { RatingProps } from './rating';
 
 export { Logo } from './logo';
 export { BlurImage } from './blur-image';
+
+// Loading & Feedback
+export { default as LoadingSpinner } from './loading-spinner';
+export { SkeletonCard, SkeletonList, SkeletonTable, SkeletonStats, SkeletonText } from './skeleton';
+export { default as ToastContainer, useToastStore } from './toast';
+export { ToastProvider } from './toast-provider';
+export { default as ErrorBoundary } from './error-boundary';
+
+// Optimized Components
+export { OptimizedImage } from './optimized-image';

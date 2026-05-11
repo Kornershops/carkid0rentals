@@ -42,12 +42,12 @@ services:
       context: ./apps/api
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "9090:8080"
     environment:
       DATABASE_URL: "host=db user=admin password=password dbname=carkid0_rentals port=5432 sslmode=disable TimeZone=Africa/Lagos"
       JWT_SECRET: "${JWT_SECRET:-carkid0-dev-secret-change-in-production}"
       PAYSTACK_SECRET_KEY: "${PAYSTACK_SECRET_KEY:-sk_test_xxxxxxxxxxxxxxxxxxxxx}"
-      FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
+      FRONTEND_URL: "${FRONTEND_URL:-http://localhost:4200}"
     depends_on:
       db:
         condition: service_healthy

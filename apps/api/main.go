@@ -6,8 +6,15 @@ import (
 	"github.com/carkid0/rentals/api/config"
 	"github.com/carkid0/rentals/api/domain/auth"
 	"github.com/carkid0/rentals/api/domain/bookings"
+	"github.com/carkid0/rentals/api/domain/company"
+	"github.com/carkid0/rentals/api/domain/drivers"
 	"github.com/carkid0/rentals/api/domain/fleet"
+	"github.com/carkid0/rentals/api/domain/hauler"
+	"github.com/carkid0/rentals/api/domain/iot"
+	"github.com/carkid0/rentals/api/domain/lister"
 	"github.com/carkid0/rentals/api/domain/listings"
+	"github.com/carkid0/rentals/api/domain/logistics"
+	"github.com/carkid0/rentals/api/domain/messages"
 	"github.com/carkid0/rentals/api/domain/payments"
 	"github.com/carkid0/rentals/api/domain/telemetry"
 
@@ -25,6 +32,13 @@ func main() {
 			&listings.Listing{},
 			&bookings.Booking{},
 			&payments.Payment{},
+			&drivers.Driver{},
+			&drivers.Document{},
+			&lister.Lister{},
+			&messages.Conversation{},
+			&messages.Message{},
+			&iot.IoTCommand{},
+			&logistics.Delivery{},
 		)
 		log.Println("Database migrations complete")
 	}
@@ -35,7 +49,7 @@ func main() {
 
 	// CORS for frontend
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000", "https://*.netlify.app"},
+		AllowOrigins: []string{"http://localhost:4200", "https://*.netlify.app"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 	}))
@@ -52,11 +66,18 @@ func main() {
 	bookings.SetupRoutes(api)
 	payments.SetupRoutes(api)
 	fleet.SetupRoutes(api)
+	lister.SetupRoutes(api)
+	drivers.SetupRoutes(api)
+	messages.SetupRoutes(api)
+	company.SetupRoutes(api)
+	iot.SetupRoutes(api)
+	logistics.SetupRoutes(api)
+	hauler.SetupRoutes(api)
 
 	// IoT Safe-Halt (shadow mode)
 	engine := telemetry.NewSafeHaltEngine(true)
 	engine.MonitorVehicle("v-003")
 
-	log.Println("Starting CarKid0 Backend on :8080...")
-	log.Fatal(app.Listen(":8080"))
+	log.Println("Starting CarKid0 Backend on :9090...")
+	log.Fatal(app.Listen(":9090"))
 }
