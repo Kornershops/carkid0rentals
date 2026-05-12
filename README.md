@@ -58,13 +58,15 @@ docker-compose -f docker-compose.prod.yml up -d
 | Document | Description |
 |----------|-------------|
 | [QUICK_START.md](QUICK_START.md) | Quick reference with JWT tokens |
-| [API_REFERENCE.md](API_REFERENCE.md) | Complete API documentation (22 endpoints) |
-| [DEPLOYMENT.md](DEPLOYMENT.md) | Production deployment (4 options) |
-| [CHANGELOG.md](CHANGELOG.md) | Complete version history & features |
-| [FINAL_SUMMARY.md](FINAL_SUMMARY.md) | Complete implementation overview |
+| [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) | Complete API documentation (26 endpoints) |
+| [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) | Production deployment guide |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System architecture & design |
+| [docs/TESTING_GUIDE.md](docs/TESTING_GUIDE.md) | Testing procedures |
+| [docs/USER_GUIDE.md](docs/USER_GUIDE.md) | End-user guide |
+| [CHANGELOG.md](CHANGELOG.md) | Complete version history |
 | [TEST_RESULTS.md](TEST_RESULTS.md) | Live testing results |
-| [ENTERPRISE_ONBOARDING_COMPLETE.md](ENTERPRISE_ONBOARDING_COMPLETE.md) | Onboarding system architecture |
-| [PROJECT_ASSESSMENT_BRIEFING.md](PROJECT_ASSESSMENT_BRIEFING.md) | Executive project assessment |
+| [COMPREHENSIVE_ASSESSMENT.md](COMPREHENSIVE_ASSESSMENT.md) | Complete project assessment |
+| [PROJECT_ASSESSMENT_BRIEFING.md](PROJECT_ASSESSMENT_BRIEFING.md) | Executive briefing |
 
 ---
 
@@ -106,7 +108,7 @@ docker-compose -f docker-compose.prod.yml up -d
 - `GET /api/v1/hauler/vehicles` - Available vehicles
 - `POST /api/v1/hauler/book` - Create booking
 
-**+ Listings, Bookings, Payments, Fleet, Messages** (see [API_REFERENCE.md](API_REFERENCE.md))
+**+ Listings, Bookings, Payments, Fleet, Messages** (see [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md))
 
 ---
 
@@ -219,7 +221,7 @@ cd apps/web
 netlify deploy --prod --dir=out
 ```
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+See [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md) for detailed instructions.
 
 ---
 
