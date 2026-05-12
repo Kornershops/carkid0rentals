@@ -15,6 +15,7 @@ import (
 	"github.com/carkid0/rentals/api/domain/listings"
 	"github.com/carkid0/rentals/api/domain/logistics"
 	"github.com/carkid0/rentals/api/domain/messages"
+	"github.com/carkid0/rentals/api/domain/onboarding"
 	"github.com/carkid0/rentals/api/domain/payments"
 	"github.com/carkid0/rentals/api/domain/telemetry"
 
@@ -37,6 +38,8 @@ func main() {
 			&lister.Lister{},
 			&messages.Conversation{},
 			&messages.Message{},
+			&onboarding.OnboardingProgress{},
+			&onboarding.EmailReminder{},
 			&iot.IoTCommand{},
 			&logistics.Delivery{},
 		)
@@ -69,6 +72,7 @@ func main() {
 	lister.SetupRoutes(api)
 	drivers.SetupRoutes(api)
 	messages.SetupRoutes(api)
+	onboarding.SetupRoutes(api)
 	company.SetupRoutes(api)
 	iot.SetupRoutes(api)
 	logistics.SetupRoutes(api)
@@ -77,6 +81,9 @@ func main() {
 	// IoT Safe-Halt (shadow mode)
 	engine := telemetry.NewSafeHaltEngine(true)
 	engine.MonitorVehicle("v-003")
+
+	// Start onboarding reminder scheduler
+	onboarding.StartReminderScheduler()
 
 	log.Println("Starting CarKid0 Backend on :9090...")
 	log.Fatal(app.Listen(":9090"))

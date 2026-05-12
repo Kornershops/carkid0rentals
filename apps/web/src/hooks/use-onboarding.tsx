@@ -102,6 +102,9 @@ export function useOnboarding() {
 
       saveTimeoutRef.current = setTimeout(() => {
         localStorage.setItem(STORAGE_KEYS.ONBOARDING_PROGRESS, JSON.stringify(newProgress));
+        
+        // Sync to backend (optional)
+        syncToBackend(newProgress);
       }, 300);
 
       setProgress(newProgress);
@@ -110,6 +113,27 @@ export function useOnboarding() {
       setError('Failed to save progress');
     }
   }, []);
+
+  const syncToBackend = async (progress: OnboardingProgress) => {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) return; // User not authenticated yet
+
+      await fetch('/api/v1/onboarding/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(progress),
+      });
+    } catch (err) {
+      console.warn('Failed to sync progress to backend:', err);
+      // Don't throw - LocalStorage is primary, backend is backup
+    }
+  };
 
   const initializeOnboarding = useCallback((role: UserRole, roleSubType?: DriverServiceType | HaulerCargoType | ListerFleetType) => {
     const config = ONBOARDING_CONFIGURATIONS[role];
@@ -137,6 +161,14 @@ export function useOnboarding() {
     };
 
     saveProgress(initialProgress);
+    
+    // Track analytics
+    if (typeof window !== 'undefined') {
+      import('@/lib/analytics').then(({ analytics }) => {
+        analytics.roleSelected(role, roleSubType);
+      });
+    }
+    
     return initialProgress;
   }, [saveProgress]);
 
@@ -174,6 +206,18 @@ export function useOnboarding() {
     };
 
     saveProgress(updatedProgress);
+    
+    // Track analytics
+    if (typeof window !== 'undefined') {
+      import('@/lib/analytics').then(({ analytics }) => {
+        const completedStage = progress.stages.find(s => s.stage === progress.currentStage);
+        if (completedStage?.startedAt) {
+          const duration = Math.floor((new Date().getTime() - new Date(completedStage.startedAt).getTime()) / 1000);
+          analytics.stageCompleted(progress.currentStage, progress.userRole, duration);
+        }
+        analytics.stageStarted(stage, progress.userRole);
+      });
+    }
   }, [progress, saveProgress]);
 
   const completeOnboarding = useCallback(() => {
@@ -188,6 +232,15 @@ export function useOnboarding() {
     };
 
     setProgress(finalProgress);
+
+    // Track analytics
+    if (typeof window !== 'undefined') {
+      import('@/lib/analytics').then(({ analytics }) => {
+        const totalTime = Math.floor((new Date().getTime() - new Date(progress.createdAt).getTime()) / 1000);
+        const completedStages = progress.stages.filter(s => s.status === StageStatus.COMPLETED).length;
+        analytics.onboardingCompleted(progress.userRole, totalTime, completedStages);
+      });
+    }
 
     if (typeof window !== 'undefined') {
       try {
@@ -215,6 +268,19 @@ export function useOnboarding() {
     };
 
     saveProgress(abandonedProgress);
+    
+    // Track analytics
+    if (typeof window !== 'undefined') {
+      import('@/lib/analytics').then(({ analytics }) => {
+        const timeSpent = Math.floor((new Date().getTime() - new Date(progress.createdAt).getTime()) / 1000);
+        analytics.onboardingAbandoned(
+          progress.currentStage,
+          progress.userRole,
+          progress.completionPercentage,
+          timeSpent
+        );
+      });
+    }
   }, [progress, saveProgress]);
 
   return {

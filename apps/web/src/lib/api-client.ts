@@ -225,6 +225,12 @@ class ApiClient {
     });
   }
 
+  // Onboarding
+  onboardingProgress: () => api.get('/onboarding/progress'),
+  saveOnboardingProgress: (data: any) => api.post('/onboarding/progress', data),
+  deleteOnboardingProgress: () => api.delete('/onboarding/progress'),
+  getOnboardingAnalytics: () => api.get('/onboarding/analytics'),
+
   // Messages
   async getConversations() {
     return this.request<any[]>('/messages');

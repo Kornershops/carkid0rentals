@@ -40,3 +40,8 @@ proj blueprint.txt
 docs/
 planning/
 architecture/
+# Ignore build artifacts
+apps/api/main
+apps/api/*.log
+apps/web/*.log
+apps/web/tsconfig.tsbuildinfo

@@ -60,8 +60,11 @@ docker-compose -f docker-compose.prod.yml up -d
 | [QUICK_START.md](QUICK_START.md) | Quick reference with JWT tokens |
 | [API_REFERENCE.md](API_REFERENCE.md) | Complete API documentation (22 endpoints) |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | Production deployment (4 options) |
+| [CHANGELOG.md](CHANGELOG.md) | Complete version history & features |
 | [FINAL_SUMMARY.md](FINAL_SUMMARY.md) | Complete implementation overview |
 | [TEST_RESULTS.md](TEST_RESULTS.md) | Live testing results |
+| [ENTERPRISE_ONBOARDING_COMPLETE.md](ENTERPRISE_ONBOARDING_COMPLETE.md) | Onboarding system architecture |
+| [PROJECT_ASSESSMENT_BRIEFING.md](PROJECT_ASSESSMENT_BRIEFING.md) | Executive project assessment |
 
 ---
 
