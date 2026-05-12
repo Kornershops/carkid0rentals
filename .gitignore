@@ -45,3 +45,11 @@ apps/api/main
 apps/api/*.log
 apps/web/*.log
 apps/web/tsconfig.tsbuildinfo
+
+# Log files (should never be committed)
+*.log
+api.log
+web.log
+
+# Cleanup scripts (temporary)
+cleanup.sh
