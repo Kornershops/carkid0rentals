@@ -43,6 +43,8 @@ docs/
 apps/api/main
 apps/api/server
 apps/api/carkid0-api
+apps/web/.next/
+apps/web/out/
 apps/web/tsconfig.tsbuildinfo
 
 # Log files
