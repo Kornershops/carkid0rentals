@@ -31,25 +31,43 @@ postgres_data/
 *.swp
 *.swo
 
-# Planning and Blueprint files
+# Planning files (specific patterns only)
 proj blueprint.txt
-*blueprint*.txt
-*blueprint*.md
-*roadmap*.md
-*tasks*.md
-docs/
 planning/
 architecture/
-# Ignore build artifacts
+
+# Documentation (keep in git history, regenerate as needed)
+docs/
+
+# Build artifacts
 apps/api/main
-apps/api/*.log
-apps/web/*.log
+apps/api/server
+apps/api/carkid0-api
 apps/web/tsconfig.tsbuildinfo
 
-# Log files (should never be committed)
+# Log files
 *.log
-api.log
-web.log
 
-# Cleanup scripts (temporary)
+# Temporary files
+.DS_Store
+*~
+*.tmp
+*.temp
+
+# Cleanup scripts
 cleanup.sh
+cleanup*.sh
+
+# Assessment and status reports (keep in git history only)
+COMPREHENSIVE_ASSESSMENT.md
+IMPLEMENTATION_STATUS.md
+IMPLEMENTATION_PLAN.md
+INDEPENDENT_TASKS.md
+PROJECT_ASSESSMENT_BRIEFING.md
+ONBOARDING_COMPLETE.md
+CLEANUP_COMPLETE.md
+*_ASSESSMENT.md
+*_STATUS.md
+*_COMPLETE.md
+*_SUMMARY.md
+*_REPORT.md
