@@ -14,9 +14,12 @@ import (
 	"github.com/carkid0/rentals/api/domain/lister"
 	"github.com/carkid0/rentals/api/domain/listings"
 	"github.com/carkid0/rentals/api/domain/logistics"
+	"github.com/carkid0/rentals/api/domain/loyalty"
 	"github.com/carkid0/rentals/api/domain/messages"
+	"github.com/carkid0/rentals/api/domain/notifications"
 	"github.com/carkid0/rentals/api/domain/onboarding"
 	"github.com/carkid0/rentals/api/domain/payments"
+	"github.com/carkid0/rentals/api/domain/support"
 	"github.com/carkid0/rentals/api/domain/telemetry"
 
 	"github.com/gofiber/fiber/v3"
@@ -38,10 +41,37 @@ func main() {
 			&lister.Lister{},
 			&messages.Conversation{},
 			&messages.Message{},
+			&notifications.Notification{},
+			&notifications.NotificationPreference{},
+			&notifications.DeviceToken{},
 			&onboarding.OnboardingProgress{},
 			&onboarding.EmailReminder{},
 			&iot.IoTCommand{},
 			&logistics.Delivery{},
+			// Enhanced payment models
+			&payments.PaymentMethod{},
+			&payments.PaymentPlan{},
+			&payments.Refund{},
+			&payments.SplitPayment{},
+			&payments.SplitPaymentParticipant{},
+			// Support models
+			&support.Ticket{},
+			&support.TicketMessage{},
+			&support.CannedResponse{},
+			&support.KnowledgeBaseArticle{},
+			&support.FAQ{},
+			&support.LiveChatSession{},
+			&support.LiveChatMessage{},
+			// Loyalty models
+			&loyalty.LoyaltyPoints{},
+			&loyalty.PointTransaction{},
+			&loyalty.Reward{},
+			&loyalty.Referral{},
+			// Enhanced booking models
+			&bookings.PriceAlert{},
+			&bookings.BookingModification{},
+			&bookings.BookingCancellation{},
+			&bookings.InsurancePolicy{},
 		)
 		log.Println("Database migrations complete")
 	}
@@ -68,10 +98,37 @@ func main() {
 	listings.SetupRoutes(api)
 	bookings.SetupRoutes(api)
 	payments.SetupRoutes(api)
+	
+	// Enhanced payments
+	paymentService := payments.NewService(config.DB)
+	paymentHandler := payments.NewHandler(paymentService)
+	paymentHandler.RegisterEnhancedRoutes(app)
+	
 	fleet.SetupRoutes(api)
 	lister.SetupRoutes(api)
 	drivers.SetupRoutes(api)
 	messages.SetupRoutes(api)
+	
+	// Notifications
+	notificationService := notifications.NewService(config.DB)
+	notificationHandler := notifications.NewHandler(notificationService)
+	notificationHandler.RegisterRoutes(app)
+	
+	// Support
+	supportService := support.NewService(config.DB)
+	supportHandler := support.NewHandler(supportService)
+	supportHandler.RegisterRoutes(app)
+	
+	// Loyalty
+	loyaltyService := loyalty.NewService(config.DB)
+	loyaltyHandler := loyalty.NewHandler(loyaltyService)
+	loyaltyHandler.RegisterRoutes(api, auth.JWTMiddleware)
+	
+	// Enhanced bookings
+	enhancedBookingService := bookings.NewEnhancedService(config.DB)
+	enhancedBookingHandler := bookings.NewEnhancedHandler(enhancedBookingService)
+	enhancedBookingHandler.RegisterEnhancedRoutes(app, auth.JWTMiddleware)
+	
 	onboarding.SetupRoutes(api)
 	company.SetupRoutes(api)
 	iot.SetupRoutes(api)
