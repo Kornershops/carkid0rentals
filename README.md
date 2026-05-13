@@ -59,28 +59,30 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ### 🚀 Quick Access
 - **[Quick Start Guide](QUICK_START.md)** - Get started in 5 minutes
-- **[Project Status](PROJECT_STATUS_COMPLETE.md)** - Current status & achievements
-- **[Days 11-17 Summary](DAYS_11-17_COMPLETE_SUMMARY.md)** - Complete 7-day roadmap results
+- **[Changelog](CHANGELOG.md)** - Complete version history
 
 ### 📖 Technical Guides
-- **[Environment Configuration](ENVIRONMENT_CONFIGURATION_GUIDE.md)** - Complete setup (70+ variables)
-- **[Security Audit Report](SECURITY_AUDIT_REPORT.md)** - Security assessment (90/100)
-- **[Performance Optimization](PERFORMANCE_OPTIMIZATION_GUIDE.md)** - 64% faster API, 55% faster pages
-- **[Monitoring Setup](MONITORING_SETUP_GUIDE.md)** - Sentry + UptimeRobot + metrics
-- **[Staging Deployment](STAGING_DEPLOYMENT_GUIDE.md)** - Railway + Netlify deployment
-- **[Production Readiness](PRODUCTION_READINESS_CHECKLIST.md)** - 98/100 readiness score
-- **[Notifications Setup](NOTIFICATIONS_SETUP_GUIDE.md)** - Multi-channel notifications
+- **[Environment Configuration](docs/guides/ENVIRONMENT_CONFIGURATION_GUIDE.md)** - Complete setup (70+ variables)
+- **[Performance Optimization](docs/guides/PERFORMANCE_OPTIMIZATION_GUIDE.md)** - 64% faster API, 55% faster pages
+- **[Monitoring Setup](docs/guides/MONITORING_SETUP_GUIDE.md)** - Sentry + UptimeRobot + metrics
+- **[Staging Deployment](docs/guides/STAGING_DEPLOYMENT_GUIDE.md)** - Railway + Netlify deployment
+- **[Notifications Setup](docs/guides/NOTIFICATIONS_SETUP_GUIDE.md)** - Multi-channel notifications
 
-### 📊 Assessments & Planning
-- **[User Journey Assessment](USER_JOURNEY_ASSESSMENT.md)** - 80/100 → 95/100 journey
-- **[Competitive Analysis](COMPETITIVE_INSTITUTION_ANALYSIS.md)** - vs Uber/Turo/Getaround
-- **[Institution-Grade Roadmap](INSTITUTION_GRADE_ROADMAP.md)** - 16-week roadmap to 95/100
-- **[VC Readiness Plan](VC_READINESS_TODO.md)** - Path to Series A funding
+### 📊 Assessments
+- **[Security Audit Report](docs/assessments/SECURITY_AUDIT_REPORT.md)** - Security assessment (90/100)
+- **[User Journey Assessment](docs/assessments/USER_JOURNEY_ASSESSMENT.md)** - 80/100 → 95/100 journey
+- **[Competitive Analysis](docs/assessments/COMPETITIVE_INSTITUTION_ANALYSIS.md)** - vs Uber/Turo/Getaround
 
-### ✅ Project Status
-- **[Test Results](TEST_RESULTS.md)** - 104 tests, 85%+ coverage
-- **[Target Achievement](TARGET_ACHIEVED.md)** - All goals met
-- **[Changelog](CHANGELOG.md)** - Complete version history
+### 📋 Planning
+- **[Institution-Grade Roadmap](docs/planning/INSTITUTION_GRADE_ROADMAP.md)** - 16-week roadmap to 95/100
+- **[Production Readiness](docs/planning/PRODUCTION_READINESS_CHECKLIST.md)** - 98/100 readiness score
+- **[VC Readiness Plan](docs/planning/VC_READINESS_TODO.md)** - Path to Series A funding
+
+### ✅ Status Reports
+- **[Days 11-17 Summary](docs/status/DAYS_11-17_COMPLETE_SUMMARY.md)** - Complete 7-day roadmap results
+- **[Project Status](docs/status/PROJECT_STATUS_COMPLETE.md)** - Current status & achievements
+- **[Test Results](docs/status/TEST_RESULTS.md)** - 104 tests, 85%+ coverage
+- **[Target Achievement](docs/status/TARGET_ACHIEVED.md)** - All goals met
 
 ---
 
