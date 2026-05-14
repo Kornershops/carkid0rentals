@@ -36,8 +36,27 @@ proj blueprint.txt
 planning/
 architecture/
 
-# Documentation (keep in git history, regenerate as needed)
-docs/
+# Keep these essential files
+!PROJECT_BLUEPRINT.txt
+!.blueprint-lock
+
+# Documentation (keep essential docs, ignore internal)
+# Keep: README.md, QUICK_START.md, CHANGELOG.md, PROJECT_STATUS.md, PROJECT_BLUEPRINT.txt
+# Ignore: Internal working files and generated reports
+docs/internal/
+docs/archive/
+*_ASSESSMENT.md
+*_STATUS.md
+*_COMPLETE.md
+*_SUMMARY.md
+*_REPORT.md
+!PROJECT_STATUS.md
+!docs/status/FRONTEND_TESTING_*.md
+!docs/status/BLUEPRINT_UPDATE_*.md
+!docs/status/PROJECT_CONSOLIDATION_*.md
+!docs/status/PROJECT_STATUS_COMPLETE.md
+!docs/status/TEST_RESULTS.md
+!docs/status/TARGET_ACHIEVED.md
 
 # Build artifacts
 apps/api/main
@@ -60,7 +79,7 @@ apps/web/tsconfig.tsbuildinfo
 cleanup.sh
 cleanup*.sh
 
-# Assessment and status reports (keep in git history only)
+# Assessment and status reports (keep essential, ignore generated)
 COMPREHENSIVE_ASSESSMENT.md
 IMPLEMENTATION_STATUS.md
 IMPLEMENTATION_PLAN.md
@@ -68,8 +87,11 @@ INDEPENDENT_TASKS.md
 PROJECT_ASSESSMENT_BRIEFING.md
 ONBOARDING_COMPLETE.md
 CLEANUP_COMPLETE.md
-*_ASSESSMENT.md
-*_STATUS.md
-*_COMPLETE.md
-*_SUMMARY.md
-*_REPORT.md
+
+# Internal working files
+.wrangler/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+.nyc_output/

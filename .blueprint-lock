@@ -1,0 +1,38 @@
+# Blueprint Protection File
+
+**DO NOT DELETE THIS FILE OR PROJECT_BLUEPRINT.txt**
+
+This file serves as a protection marker for the project blueprint.
+
+## Protected Files
+- PROJECT_BLUEPRINT.txt - The master project blueprint and source of truth
+
+## Why This Exists
+The PROJECT_BLUEPRINT.txt file is the single source of truth for the entire CarKid0 Rentals project. It contains:
+- Complete project vision and story
+- All feature specifications
+- Hardware integration plans
+- IoT implementation details
+- Pan-African expansion strategy
+- Business model and revenue streams
+- Technical architecture
+- Growth roadmap (5-year and 10-year plans)
+
+## If You Need to Update the Blueprint
+1. Open PROJECT_BLUEPRINT.txt
+2. Make your changes
+3. Save the file
+4. Commit with message: "docs: update project blueprint - [brief description]"
+
+## If the Blueprint is Accidentally Deleted
+1. Check git history: `git log --all --full-history -- PROJECT_BLUEPRINT.txt`
+2. Restore from git: `git checkout <commit-hash> -- PROJECT_BLUEPRINT.txt`
+3. If not in git, check docs/archive/ for backups
+
+## Blueprint Backup Strategy
+- Primary: PROJECT_BLUEPRINT.txt (root directory)
+- Git history: All versions tracked
+- Documentation references: README.md, PROJECT_STATUS.md
+
+**Last Updated:** January 2025
+**Blueprint Version:** 2.0 (Pan-African Edition)
